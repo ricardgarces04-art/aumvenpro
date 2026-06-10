@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUMVEN</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0714;--sf:rgba(26,21,48,.80);--sf2:rgba(35,29,64,.92);
+  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
+  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;
+  --tx:#f1f0ff;--mt:#9e97c4;
+  --r:22px;--rs:13px;--rx:8px;
+  --gb:rgba(168,85,247,.22);--gs:0 8px 32px rgba(124,58,237,.22);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;
+  min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;
+  padding:1rem;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 5%,rgba(124,58,237,.32) 0%,transparent 65%),
+    radial-gradient(ellipse 55% 60% at 85% 95%,rgba(168,85,247,.24) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(236,72,153,.10) 0%,transparent 60%)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.app{position:relative;z-index:1;width:100%;max-width:440px;padding-bottom:5rem}
+.screen{display:none}.screen.active{display:block}
+
+/* GLASS CARD */
+.card{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.4rem;margin-bottom:1rem;box-shadow:var(--gs)}
+
+/* FORM ELEMENTS */
+.sec{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ac2);margin-bottom:.85rem;
+  display:flex;align-items:center;gap:.4rem}
+label{display:block;font-size:.73rem;font-weight:700;color:var(--mt);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:.25rem}
+input[type=text],input[type=number],select,textarea{
+  width:100%;background:rgba(10,7,20,.75);border:1.5px solid rgba(124,58,237,.28);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
+  font-size:.93rem;font-weight:600;padding:.72rem 1rem;outline:none;
+  transition:border-color .2s,box-shadow .2s;margin-bottom:.75rem}
+input:focus,select:focus,textarea:focus{border-color:var(--ac2);box-shadow:0 0 0 3px rgba(168,85,247,.16)}
+select{cursor:pointer}
+textarea{resize:vertical;min-height:68px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:800;padding:.82rem 1.15rem;transition:transform .15s,box-shadow .15s,filter .15s;
+  font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;gap:.42rem}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:active{transform:scale(.97)}
+.btn-pk{width:100%;background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
+  letter-spacing:.02em;font-size:1.02rem;
+  box-shadow:0 4px 24px rgba(236,72,153,.54),inset 0 0 0 1px rgba(255,255,255,.07)}
+.btn-pk:hover{box-shadow:0 6px 32px rgba(236,72,153,.70)}
+.btn-gd{width:100%;background:linear-gradient(135deg,#d97706,var(--gd));color:#fff;
+  box-shadow:0 4px 20px rgba(245,158,11,.32)}
+.btn-tl{width:100%;background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;
+  box-shadow:0 4px 16px rgba(20,184,166,.32)}
+.btn-wa{width:100%;background:#25D366;color:#fff;text-decoration:none;
+  box-shadow:0 4px 20px rgba(37,211,102,.32)}
+.btn-wa:hover{box-shadow:0 6px 28px rgba(37,211,102,.50)}
+.btn-gh{background:transparent;border:1.5px solid rgba(124,58,237,.40);color:var(--mt)}
+.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
+.btn-dr{background:rgba(239,68,68,.13);border:1.5px solid rgba(239,68,68,.28);color:#fca5a5}
+.divider{height:1px;background:rgba(124,58,237,.18);margin:.1rem 0 .85rem}
+.wa-ico{width:19px;height:19px;flex-shrink:0}
+
+/* ALERTS */
+.alert{display:none;align-items:center;gap:.45rem;border-radius:var(--rs);
+  font-size:.86rem;font-weight:600;margin-bottom:.85rem;padding:.7rem .95rem}
+.alert.show{display:flex}
+.a-err{background:rgba(239,68,68,.11);border:1px solid rgba(239,68,68,.32);color:#fca5a5}
+.a-ok{background:rgba(16,185,129,.11);border:1px solid rgba(16,185,129,.32);color:#6ee7b7}
+
+/* ── LOGIN ── */
+#sc-login{display:none;padding-top:1.5rem}
+#sc-login.active{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:90dvh}
+.lw{width:100%;max-width:380px}
+.aumven-wrap{text-align:center;margin-bottom:2rem}
+.aumven-brand{font-family:'Fredoka One',cursive;font-size:3.6rem;letter-spacing:.04em;
+  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.aumven-tag{color:var(--mt);font-size:.83rem;font-weight:600;
+  margin-top:.35rem;letter-spacing:.06em;text-transform:uppercase}
+.login-card{background:var(--sf);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid rgba(168,85,247,.32);border-radius:var(--r);padding:2rem 1.75rem 1.75rem;
+  box-shadow:0 0 60px rgba(124,58,237,.24),inset 0 0 0 1px rgba(255,255,255,.04)}
+.login-sub{color:var(--mt);font-size:.86rem;margin-bottom:1.5rem;text-align:center}
+.cod-in{width:100%;background:rgba(10,7,20,.78);border:1.5px solid rgba(124,58,237,.36);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
+  font-size:1.25rem;font-weight:800;letter-spacing:.2em;padding:1.05rem 1.2rem;
+  text-align:center;text-transform:uppercase;outline:none;
+  transition:border-color .2s,box-shadow .2s;margin-bottom:1rem}
+.cod-in::placeholder{letter-spacing:.05em;font-weight:400;color:var(--mt);
+  text-transform:none;font-size:.95rem}
+.cod-in:focus{border-color:var(--pk2);
+  box-shadow:0 0 0 3px rgba(244,114,182,.24),0 0 20px rgba(168,85,247,.18)}
+
+/* ── GAME ── */
+.game-wrap{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--gb);border-radius:var(--r);overflow:hidden;box-shadow:var(--gs)}
+.game-hdr{display:flex;align-items:center;justify-content:center;flex-direction:column;
+  padding:1.4rem 1rem .85rem;text-align:center;gap:.4rem;
+  border-bottom:1px solid rgba(124,58,237,.16);
+  background:linear-gradient(180deg,rgba(124,58,237,.09) 0%,transparent 100%)}
+.b-logo{max-height:60px;max-width:170px;object-fit:contain;border-radius:10px}
+.b-emoji{font-size:3rem;line-height:1;filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
+.b-name{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--tx)}
+.game-ins{background:rgba(124,58,237,.10);border-bottom:1px solid rgba(124,58,237,.15);
+  color:var(--mt);font-size:.87rem;font-weight:600;padding:.6rem 1rem;text-align:center}
+#game-zone{padding:.5rem}
+
+/* ── BALLOONS ── */
+.bal-area{background:linear-gradient(180deg,rgba(10,7,20,.95),rgba(26,21,48,.88));
+  border-radius:var(--rs);height:340px;overflow:hidden;position:relative}
+.balloon{position:absolute;bottom:-80px;cursor:pointer;animation:floatUp linear infinite;user-select:none}
+.balloon:hover{filter:brightness(1.18) drop-shadow(0 0 6px rgba(255,255,255,.3))}
+.balloon.popped{animation:popA .4s ease-out forwards!important;pointer-events:none}
+@keyframes floatUp{0%{bottom:-80px;transform:translateX(0);opacity:1}
+  50%{transform:translateX(10px)}100%{bottom:110%;transform:translateX(0);opacity:.75}}
+@keyframes popA{0%{transform:scale(1);opacity:1}30%{transform:scale(1.6);opacity:.8}
+  100%{transform:scale(.1);opacity:0}}
+
+/* ── CHEST ── */
+.chest-area{display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:.8rem;padding:1.4rem 0 1.8rem}
+.chests-row{display:flex;align-items:flex-end;justify-content:center;gap:1rem}
+.chest-btn{cursor:pointer;user-select:none;transition:transform .15s,opacity .5s;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  background:none;border:none;padding:.4rem}
+.chest-btn:hover:not(.locked):not(.opened){transform:scale(1.08) translateY(-5px)}
+.chest-btn:active:not(.locked){transform:scale(.96)}
+.chest-btn.locked{opacity:.2;pointer-events:none}
+.chest-icon{transition:filter .3s}
+.chest-btn:not(.locked):not(.opened) .chest-icon{
+  filter:drop-shadow(0 0 10px rgba(245,158,11,.54));
+  animation:chPulse 2s ease-in-out infinite}
+@keyframes chPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(245,158,11,.42))}
+  50%{filter:drop-shadow(0 0 20px rgba(245,158,11,.80))}}
+.chest-btn.opened .chest-icon{
+  animation:chOpen .5s ease-out forwards;
+  filter:drop-shadow(0 0 18px rgba(245,158,11,.90))}
+@keyframes chOpen{0%{transform:scale(1)}40%{transform:scale(1.22) rotate(-3deg)}
+  70%{transform:scale(.95) rotate(2deg)}100%{transform:scale(1.05)}}
+.chest-lbl{color:var(--mt);font-size:.72rem;font-weight:700}
+.chest-hint{color:var(--mt);font-size:.87rem;font-weight:600}
+
+/* ── SCRATCH ── */
+.scratch-area{display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:.75rem;padding:.6rem 0 1.6rem}
+.scratch-wrap{position:relative;border-radius:var(--rs);overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.50);cursor:crosshair;touch-action:none}
+.scratch-cv{display:block;position:absolute;top:0;left:0;border-radius:var(--rs)}
+.scratch-rev{display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px}
+.sc-prog{background:rgba(124,58,237,.20);border-radius:100px;height:6px;overflow:hidden;width:220px}
+.sc-bar{background:linear-gradient(90deg,var(--pk),var(--ac2));
+  border-radius:100px;height:100%;transition:width .2s;width:0%}
+.sc-hint{color:var(--mt);font-size:.83rem;font-weight:600;text-align:center}
+
+/* ── RESULT ── */
+.result-card{background:var(--sf);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-radius:var(--r);padding:2.4rem 1.75rem;text-align:center;
+  border:1px solid rgba(236,72,153,.26);
+  box-shadow:0 0 60px rgba(124,58,237,.22),inset 0 0 0 1px rgba(255,255,255,.04)}
+.r-trophy{font-size:5.5rem;line-height:1;margin-bottom:.5rem;display:block;
+  animation:bncIn .65s cubic-bezier(.175,.885,.32,1.275) forwards}
+@keyframes bncIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.18);opacity:1}
+  100%{transform:scale(1)}}
+.r-title{font-family:'Fredoka One',cursive;font-size:1.85rem;margin-bottom:.4rem;color:var(--gd)}
+.r-prize{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(236,72,153,.10));
+  border:1px solid rgba(245,158,11,.28);border-radius:var(--rs);
+  font-size:1.15rem;font-weight:800;margin:.7rem 0;padding:.88rem 1.2rem}
+.r-sub{color:var(--mt);font-size:.86rem;margin-bottom:1.2rem}
+.con-badge{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);
+  border-radius:100px;color:var(--mt);display:inline-block;
+  font-size:.76rem;font-weight:700;margin-bottom:.65rem;padding:.26rem .76rem}
+
+/* ── ADMIN ── */
+#sc-admin{padding-top:.75rem}
+.adm-top{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.1rem;gap:.65rem}
+.adm-title{font-family:'Fredoka One',cursive;font-size:1.5rem;
+  background:linear-gradient(135deg,var(--ac2),var(--pk2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.adm-badge{background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.28);
+  border-radius:100px;color:var(--ac2);font-size:.69rem;font-weight:700;
+  letter-spacing:.07em;padding:.2rem .6rem;text-transform:uppercase}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}
+.kpi-card{background:rgba(25,18,50,.92);backdrop-filter:blur(10px);
+  border:1px solid rgba(124,58,237,.22);border-radius:var(--rs);padding:.9rem;text-align:center}
+.kpi-val{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--gd);
+  line-height:1;margin-bottom:.16rem}
+.kpi-lbl{color:var(--mt);font-size:.70rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.04em}
+.h-list{list-style:none;display:flex;flex-direction:column;gap:.3rem;
+  max-height:170px;overflow-y:auto;padding-right:.2rem}
+.h-list::-webkit-scrollbar{width:4px}
+.h-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.40);border-radius:2px}
+.h-item{background:rgba(25,18,50,.88);border-radius:var(--rx);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.45rem;font-size:.79rem;font-weight:600;padding:.44rem .68rem}
+.h-date{color:var(--mt);font-size:.68rem;white-space:nowrap}
+.empty{color:var(--mt);font-size:.83rem;text-align:center;padding:.85rem}
+.f-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem}
+.f-row select{margin-bottom:0;flex:1;font-size:.85rem;padding:.56rem .85rem}
+.calc-r{background:linear-gradient(135deg,rgba(124,58,237,.13),rgba(236,72,153,.09));
+  border:1px solid rgba(124,58,237,.28);border-radius:var(--rs);
+  padding:.85rem;margin-bottom:.75rem;font-size:.87rem;font-weight:700;
+  line-height:1.65;display:none}
+.calc-r.show{display:block}
+.c-hi{color:var(--gd);font-size:1rem}
+.prob-leg{display:flex;flex-direction:column;gap:.32rem;
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);
+  border-radius:var(--rx);padding:.65rem .85rem;margin-bottom:.78rem;
+  font-size:.75rem;font-weight:700}
+.prob-row{display:flex;align-items:center;gap:.5rem}
+.prob-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.toast{position:fixed;bottom:1.5rem;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--gr);color:#fff;border-radius:100px;
+  padding:.62rem 1.4rem;font-weight:800;font-size:.87rem;
+  z-index:9999;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);
+  white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.pop-pt{position:fixed;width:8px;height:8px;border-radius:50%;
+  pointer-events:none;animation:ptA .5s ease-out forwards;z-index:9999}
+@keyframes ptA{0%{transform:scale(1) translate(0,0);opacity:1}
+  100%{transform:scale(0) translate(var(--tx),var(--ty));opacity:0}}
+.rst-btn{background:transparent;border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;bottom:.65rem;color:rgba(255,255,255,.15);cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.65rem;padding:.2rem .48rem;
+  position:fixed;right:.65rem;transition:color .2s;z-index:100}
+.rst-btn:hover{color:rgba(255,255,255,.44)}
+.l-hint{font-size:.74rem;color:var(--mt);margin-top:-.5rem;margin-bottom:.72rem;line-height:1.5}
+.lp-wrap{display:none;text-align:center;margin-bottom:.8rem}
+.lp-wrap img{max-height:56px;border-radius:10px;border:1px solid rgba(124,58,237,.28)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ========== LOGIN ========== -->
+<div class="screen active" id="sc-login">
+  <div class="lw">
+    <div class="aumven-wrap">
+      <img id="app-logo-aumven" src="logo_aumven.png" alt="AUMVEN"
+        style="max-height:130px;width:auto;display:inline-block;margin-bottom:10px;
+               filter:drop-shadow(0 0 15px rgba(255,65,108,0.5))"
+        onerror="this.style.display='none';document.getElementById('aumven-fb').style.display='block'">
+      <div id="aumven-fb" class="aumven-brand" style="display:none">&#127880; AUMVEN &#127880;</div>
+      <p class="aumven-tag">Sucursal Cari&#xF1;itos Box</p>
+    </div>
+    <div class="login-card">
+      <p class="login-sub">Ingresa tu c&#xF3;digo &#xFA;nico para jugar y ganar</p>
+      <div id="alerta" class="alert a-err"></div>
+      <input class="cod-in" type="text" id="cod-in"
+        placeholder="Tu c&#xF3;digo aqu&#xED;" maxlength="14"
+        autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button class="btn btn-pk" onclick="entrar()">&#10024; Ingresar y Jugar</button>
+<br><a href="#" style="color:#666; font-size:11px; display:block; margin-top:25px; text-decoration:none;" onclick="alert('CONDICIONES DE LA DINÁMICA SERNAC:\n1. PARTICIPACIÓN: Válido por compras sobre la meta del local.\n2. CÓDIGOS: Un solo uso por cliente, bloqueándose tras jugar.\n3. PREMIO SEGURO: Asignación automatizada mediante motor de probabilidades.\n4. RESTRICCIÓN: Premios no canjeables por dinero.\n5. STOCK: Consolación calibrada estrictamente al 20% de probabilidad.')">Bases Legales y Condiciones SERNAC</a>
+
+    </div>
+    <p style="text-align:center;margin-top:1.1rem">
+      <a href="#" onclick="mostrarBases();return false;"
+        style="color:rgba(158,151,196,0.55);font-size:.72rem;font-weight:600;
+               text-decoration:none;letter-spacing:.04em;
+               transition:color .2s"
+        onmouseover="this.style.color='rgba(168,85,247,0.8)'"
+        onmouseout="this.style.color='rgba(158,151,196,0.55)'">
+        &#128196; Bases Legales y Condiciones SERNAC
+      </a>
+    </p>
+  </div>
+</div>
+
+<!-- ========== GAME ========== -->
+<div class="screen" id="sc-game">
+  <div class="game-wrap">
+    <div class="game-hdr" id="game-hdr"></div>
+    <div class="game-ins" id="game-ins"></div>
+    <div id="game-zone"></div>
+  </div>
+</div>
+
+<!-- ========== RESULT ========== -->
+<div class="screen" id="sc-result">
+  <div class="result-card" id="result-card"></div>
+</div>
+
+<!-- ========== ADMIN ========== -->
+<div class="screen" id="sc-admin">
+  <div class="adm-top">
+    <div>
+      <div class="adm-title">&#9881;&#65039; Panel Admin</div>
+      <span class="adm-badge">AUMVEN Pro</span>
+    </div>
+    <button class="btn btn-gh" style="width:auto" onclick="goLogin()">&#8592; Salir</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="card">
+    <div class="sec">&#128202; M&#xe9;tricas de la Tienda</div>
+    <div class="f-row">
+      <label style="margin:0;white-space:nowrap">Per&#xED;odo:</label>
+      <select id="kpi-fil" onchange="renderKPIs()">
+        <option value="hoy">Hoy</option>
+        <option value="semana">Esta Semana (7 d&#xED;as)</option>
+        <option value="mes" selected>Este Mes</option>
+      </select>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-val" id="kpi-tot">0</div>
+        <div class="kpi-lbl">Juegos totales</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" id="kpi-prem">0</div>
+        <div class="kpi-lbl">Premios entregados</div>
+      </div>
+      <div class="kpi-card" style="grid-column:span 2">
+        <div class="kpi-val" id="kpi-ing" style="font-size:1.35rem">$0</div>
+        <div class="kpi-lbl">Utilidad acumulada real (80% neto)</div>
+      </div>
+      <div class="kpi-card" style="grid-column:span 2;background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.28)">
+        <div class="kpi-val" id="kpi-proy" style="font-size:1.15rem;color:#10b981">—</div>
+        <div class="kpi-lbl" style="color:#6ee7b7">Proyecci&#xF3;n 30 d&#xED;as &#x2022; juegos &#xD7; utilidad</div>
+      </div>
+    </div>
+    <div class="sec" style="margin-top:.1rem">&#127885; Historial de Premios</div>
+    <ul class="h-list" id="h-list">
+      <li class="empty">Sin registros en el per&#xED;odo</li>
+    </ul>
+    <div style="height:.75rem"></div>
+    <button class="btn btn-tl" onclick="exportCSV()">&#128202; Exportar a Excel (.csv)</button>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="card">
+    <div class="sec">&#129518; Calculadora de Ticket Promedio</div>
+    <label>Per&#xED;odo de los datos</label>
+    <select id="calc-per" oninput="calcTicket()">
+      <option value="1">1 D&#xED;a</option>
+      <option value="7">7 D&#xED;as (Semana)</option>
+      <option value="30" selected>30 D&#xED;as (Mes)</option>
+    </select>
+    <div class="row2">
+      <div><label>Ventas del per&#xED;odo ($)</label>
+        <input type="number" id="c-ventas" placeholder="Ej: 350000" oninput="calcTicket()"></div>
+      <div><label>N&#xBA; de pedidos</label>
+        <input type="number" id="c-ped" placeholder="Ej: 28" oninput="calcTicket()"></div>
+    </div>
+    <div class="calc-r" id="calc-r"></div>
+    <label>Meta de compra para el juego ($) <span style="color:var(--ac2);font-size:.72rem;font-weight:700">(se calcula autom&#xe1;ticamente: Ticket + Variable X)</span></label>
+    <input type="number" id="f-meta" placeholder="Se llena en vivo" style="opacity:.8;background:rgba(124,58,237,.08)" readonly>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="sec">&#127978; Configuraci&#xF3;n del Negocio</div>
+    <label>Nombre del Negocio</label>
+    <input type="text" id="f-nom" placeholder="Ej: Cari&#xF1;itos Box">
+    <label>Tel&#xe9;fono WhatsApp (c&#xF3;digo pa&#xED;s + n&#xFA;mero)</label>
+    <input type="text" id="f-wa" placeholder="Ej: 56912345678">
+    <label>Monto Adicional requerido por juego ($)</label>
+    <input type="number" id="cfg-adicional" placeholder="Ej: 2500 (piso si vac&#xED;o)" oninput="calcTicket()">
+    <p class="l-hint">&#128176; Dinero extra exigido al cliente para jugar. Meta = Ticket + este monto. Utilidad = monto &#xD7; 80%.</p>
+    <label>Prefijo de C&#xF3;digos</label>
+    <input type="text" id="f-pre" placeholder="Ej: CARI"
+      style="text-transform:uppercase;letter-spacing:.1em"
+      autocapitalize="characters" spellcheck="false">
+    <p class="l-hint">&#128273; Clientes usan prefijo + n&#xFA;meros (ej: <strong>CARI025</strong>). Cada c&#xF3;digo se bloquea individualmente.</p>
+    <div class="divider"></div>
+    <div class="sec" style="font-size:.93rem">&#128444;&#65039; Marca Visual</div>
+    <label>URL o nombre de archivo de logo</label>
+    <input type="text" id="f-logo" placeholder="https://... &#xF3; logo.png" oninput="prevLogo(this.value)">
+    <p class="l-hint">&#128161; URL externa o nombre de archivo local en la misma carpeta.</p>
+    <div class="lp-wrap" id="lp-wrap"><img id="lp-img" src="" alt="Logo"></div>
+    <input type="file" id="f-logofile" accept="image/*" style="display:none" onchange="loadLogoFile(event)">
+    <button class="btn btn-gh"
+      style="width:auto;margin-bottom:.75rem;font-size:.82rem;padding:.5rem .9rem"
+      onclick="document.getElementById('f-logofile').click()">
+      &#128193; Cargar imagen desde dispositivo
+    </button>
+    <label>Emoji de Marca (respaldo si no hay logo)</label>
+    <input type="text" id="f-emo" placeholder="Ej: &#127838; &#128599; &#128142;" maxlength="4">
+    <div class="divider"></div>
+    <div class="sec" style="font-size:.93rem">&#127918; Din&#xe1;mica del Juego</div>
+    <label>Tipo de juego activo</label>
+    <select id="f-juego">
+      <option value="3_cofres" selected>&#129521; 3 Cofres &#8212; elige uno</option>
+      <option value="globos">&#127880; Globos &#8212; pincha uno</option>
+      <option value="raspe">&#128133; Raspa y Gana</option>
+    </select>
+    <label>Premios Mayores (3 a 5, separados por coma)</label>
+    <p class="l-hint" style="margin-top:0">De <strong>menor a mayor costo</strong>: 1&#xBA; y 2&#xBA; = 60%, 3&#xBA; y 4&#xBA; = 30%, 5&#xBA; = 10%.</p>
+    <textarea id="f-prem"
+      placeholder="Ej: &#127838; Pan gratis, &#9749; Caf&#xe9;, &#128666; Env&#xED;o, &#128176; 10% dcto, &#127881; VIP"
+      oninput="renderLeyenda()"></textarea>
+    <div class="prob-leg" id="prob-leg"></div>
+    <label>Premio de Consolaci&#xF3;n (20% &#8212; siempre seguro)</label>
+    <input type="text" id="f-con"
+      placeholder="Ej: &#127903;&#65039; Cup&#xF3;n 10% en tu pr&#xF3;xima compra">
+    <button class="btn btn-gd" onclick="guardarCfg()">&#128190; Guardar Configuraci&#xF3;n</button>
+  </div>
+
+  <button class="btn btn-dr" style="width:100%" onclick="goLogin()">&#128274; Cerrar Sesi&#xF3;n de Admin</button>
+</div>
+
+</div><!-- /app -->
+<button class="rst-btn" onclick="devReset()">&#9881; Reset</button>
+<div class="toast" id="toast"></div>
+
+
+<script>
+// ================================================================
+//  LOCALSTORAGE -- LLAVES FIJAS, COMPACTAS, UNIFICADAS
+//  av_cfg = configuracion del negocio
+//  av_usd = codigos ya usados
+//  av_hst = historial de premios
+// ================================================================
+var K_CFG = 'av_cfg';
+var K_USD = 'av_usd';
+var K_HST = 'av_hst';
+
+function lsR(k, fb) {
+  try { var v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : fb; }
+  catch(e) { return fb; }
+}
+function lsW(k, val) {
+  try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {}
+}
+
+function getCfg()   { return lsR(K_CFG, null); }
+function getUsd()   { return lsR(K_USD, []); }
+function getHst()   { return lsR(K_HST, []); }
+function addUsd(c)  { var a = getUsd(); a.push(c); lsW(K_USD, a); }
+function addHst(e) {
+  try {
+    var a = lsR(K_HST, []); 
+    if (e && typeof e === 'object') {
+      if (!e.ts) e.ts = Date.now();
+      if (!e.Fecha) e.Fecha = new Date().toISOString().split('T')[0];
+    }
+    a.push(e); 
+    lsW(K_HST, a); 
+    console.log("✅ Juego registrado con éxito en AUMVEN Pro. Total: " + a.length);
+  } catch(err) {
+    console.error("❌ Error crítico al guardar el juego:", err);
+  }
+}
+
+var CFG0 = {
+  nombre:'Mi Negocio', logo:'', logoData:'', emoji:'\uD83D\uDED2',
+  juego:'3_cofres',
+  premios:['\uD83C\uDF81 Premio A','\uD83C\uDF81 Premio B','\uD83C\uDF81 Premio C'],
+  consolacion:'\uD83C\uDF9F\uFE0F Cup\xF3n 10% en tu pr\xF3xima compra',
+  wa:'56900000000', meta:15000, ticket:0, adicional:2500, prefijo:''
+};
+
+var DEMO = {
+  PAN123:{nombre:'La Panader\xEDa',   emoji:'\uD83E\uDD56', wa:'56912345678'},
+  TIE123:{nombre:'Tienda de Ropa',    emoji:'\uD83D\uDC57', wa:'56912345679'},
+  JOY123:{nombre:'Joyer\xEDa Oro&Co',emoji:'\uD83D\uDC8E', wa:'56912345680'}
+};
+
+var inq  = null;
+var cod  = null;
+var used = false;
+
+// ================================================================
+//  NAVEGACION
+// ================================================================
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function goLogin() {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var ls = document.getElementById('sc-login');
+  if (ls) ls.classList.add('active');
+  var inp = document.getElementById('cod-in');
+  if (inp) inp.value = '';
+  window.scrollTo(0, 0);
+}
+
+// ================================================================
+//  ALERTAS
+// ================================================================
+function alerta(msg, tipo) {
+  var el = document.getElementById('alerta');
+  el.textContent = msg;
+  el.className = 'alert show ' + (tipo === 'ok' ? 'a-ok' : 'a-err');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 3800);
+}
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
+// ================================================================
+//  ENTRAR -- CORREGIDO: funcion completa, todas las llaves cerradas
+// ================================================================
+function entrar() {
+  var raw = document.getElementById('cod-in').value.trim().toUpperCase();
+  if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
+
+  if (raw === 'ADMIN123') {
+    document.getElementById('cod-in').value = '';
+    abrirAdmin();
+    return;
+  }
+
+  // 🔒 CANDADO INDEPENDIENTE ULTRA-BLINDADO (Clave oculta en disco duro)
+  var listaNegra = JSON.parse(localStorage.getItem('av_black_list') || '[]');
+  if (listaNegra.indexOf(raw) !== -1) {
+    alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
+    return;
+  }
+
+  var cfg = getCfg() || CFG0;
+  var pfx = (cfg.prefijo || '').trim().toUpperCase();
+
+  if (pfx) {
+    var re = new RegExp('^' + pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d+$');
+    if (re.test(raw)) {
+      cod = raw; 
+      
+      // 🔥 QUEMADO FÍSICO ATÓMICO INMEDIATO
+      listaNegra.push(raw);
+      localStorage.setItem('av_black_list', JSON.stringify(listaNegra));
+      localStorage.setItem('aumven_cod_actual', raw);
+      
+      // Ejecutar las funciones visuales nativas de tu archivo
+      if (typeof addUsd === 'function') addUsd(raw);
+      if (typeof buildInq === 'function') buildInq(null); 
+      launchGame(); 
+      return;
+    }
+    alerta('\u274C C\xF3digo inv\xE1lido. Formato: ' + pfx + '001');
+    return;
+  }
+
+  if (typeof DEMO !== 'undefined' && !DEMO[raw]) { alerta('\u274C C\xF3digo inv\xE1lido. Verifica con tu vendedor.'); return; }
+  cod = raw; 
+  
+  // Quemado para códigos DEMO
+  listaNegra.push(raw);
+  localStorage.setItem('av_black_list', JSON.stringify(listaNegra));
+  localStorage.setItem('aumven_cod_actual', raw);
+
+  if (typeof addUsd === 'function') addUsd(raw); 
+  if (typeof buildInq === 'function') buildInq(raw); 
+  launchGame();
+}
+
+// Vinculación limpia del botón Enter
+document.getElementById('cod-in').addEventListener('keydown', function(e) { 
+  if (e.key === 'Enter') entrar(); 
+});
+// ================================================================
+//  LANZAR JUEGO
+// ================================================================
+function launchGame() {
+  // 🛡️ SALVAVAIDAS SENIOR: Si inq es nulo, usa la configuración por defecto para no congelar el botón
+  var t = inq || (typeof getCfg === 'function' ? getCfg() : null) || JSON.parse(localStorage.getItem('av_cfg')) || CFG0;
+  
+  // Asegurar que existan las propiedades básicas para evitar más caídas de null
+  if (!t.nombre) t.nombre = 'Mi Negocio';
+  if (!t.emoji) t.emoji = '✨';
+  if (!t.juego) t.juego = 'globos';
+
+  // Header: logo o emoji + nombre
+  var lh = t.logo
+    ? '<img class="b-logo" src="' + t.logo + '" alt="' + t.nombre
+      + '" onerror="this.style.display=\'none\';document.getElementById(\'fb\').style.display=\'block\'">'
+      + '<span id="fb" class="b-emoji" style="display:none">' + t.emoji + '</span>'
+    : '<span class="b-emoji">' + t.emoji + '</span>';
+  document.getElementById('game-hdr').innerHTML = lh + '<div class="b-name">' + t.nombre + '</div>';
+
+  var ins = {
+    '3_cofres': '\uD83E\uDE99 Elige un cofre del tesoro',
+    globos:     '\uD83C\uDF88 Pincha un globo para descubrir tu premio',
+    raspe:      '\uD83D\uDC85 Raspa la tarjeta para revelar tu premio'
+  };
+  document.getElementById('game-ins').textContent = ins[t.juego] || '\xA1Juega para ganar!';
+
+  var zone = document.getElementById('game-zone');
+  zone.innerHTML = '';
+  used = false;
+
+  if      (t.juego === '3_cofres') renderCofres(zone);
+  else if (t.juego === 'globos')   renderGlobos(zone);
+  else                             renderRaspe(zone);
+
+  goScreen('sc-game');
+}
+// ================================================================
+//  MOTOR DE PREMIOS — distribución 80% mayores / 20% consolación
+//  Capa exterior: r < 0.80 → premio mayor | r >= 0.80 → consolación
+//  Capa interior (solo al ganar premio mayor):
+//    n<=2 : uniforme entre premios disponibles
+//    n=3  : A(0,1)=90%  C(2)=10%
+//    n=4  : A(0,1)=60%  B(2,3)=20%
+//    n>=5 : A(0,1)=48%  B(2,3)=37.5%  C(4)=12.5%   (→ real 48/30/10 / 20con)
+// ================================================================
+function sortearPremio() {
+  var p = (inq && inq.premios && inq.premios.length) ? inq.premios : CFG0.premios;
+  var c = (inq && inq.consolacion) ? inq.consolacion : CFG0.consolacion;
+  var n = p.length;
+  var r = Math.random();
+
+  // CAPA EXTERIOR: 20% fijo de consolación garantizada
+  if (r >= 0.80) return { gano:false, txt:c };
+
+  // El 80% restante se reparte entre los premios mayores
+  var inner = Math.random();
+  if (n <= 2) return { gano:true, txt:p[Math.floor(Math.random()*n)] };
+  if (n === 3) {
+    // A(0,1)=90% del 80% | C(2)=10% del 80%
+    return inner < 0.90
+      ? { gano:true, txt:p[Math.floor(Math.random()*2)] }
+      : { gano:true, txt:p[2] };
+  }
+  if (n === 4) {
+    // A(0,1)=60% | B(2,3)=40%
+    return inner < 0.60
+      ? { gano:true, txt:p[Math.floor(Math.random()*2)] }
+      : { gano:true, txt:p[2+Math.floor(Math.random()*2)] };
+  }
+  // n >= 5: A(0,1)=60% | B(2,3)=30% | C(4)=10%
+  if (inner < 0.60) return { gano:true, txt:p[Math.floor(Math.random()*2)] };
+  if (inner < 0.90) return { gano:true, txt:p[2+Math.floor(Math.random()*2)] };
+  return { gano:true, txt:p[4] };
+}
+
+// ================================================================
+//  MOSTRAR RESULTADO — guarda en av_hst y navega
+// ================================================================
+function mostrarRes(premio) {
+  if (used) return;
+  used = true;
+
+  const cod = (localStorage.getItem('aumven_cod_actual') || '').toUpperCase();
+  var ahora = new Date();
+  var fechaChile = ahora.toLocaleDateString('es-CL');
+  var horaChile = ahora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  var fechaCompleta = fechaChile + ' ' + horaChile;
+
+  // 🔒 REGISTRO ULTRA-COMPATIBLE CON EL PANEL ORIGINAL DE AUMVEN PRO
+  var entrada = {
+    txt:    premio.txt,
+    gano:   premio.gano,
+    cod:    cod,
+    ts:     Date.now(),
+    fecha:  fechaChile + ' ' + horaChile,
+    
+    // Propiedades exactas en mayúsculas que lee la función del panel
+    Premio: premio.txt,
+    Tipo:   premio.gano ? 'Ganador' : 'No Ganador',
+    Codigo: cod,
+    Fecha:  fechaChile,
+    Hora:   horaChile
+  };
+
+    // 🔒 BÓVEDA OCULTA SENIOR (El panel no la puede borrar ni resetear)
+  var clavePanel = (typeof K_HST !== 'undefined') ? K_HST : 'aumven_historial';
+  var boveda = JSON.parse(localStorage.getItem('av_boveda_segura') || '[]');
+  boveda.unshift(entrada);
+  localStorage.setItem('av_boveda_segura', JSON.stringify(boveda));
+
+  // Alimentamos de forma forzada todas las llaves que lee el panel original
+  localStorage.setItem(clavePanel, JSON.stringify(boveda));
+  localStorage.setItem('aumven_historial', JSON.stringify(boveda));
+  localStorage.setItem('av_hst', JSON.stringify(boveda));
+
+  // Forzar la ejecución del conteo nativo
+  if (typeof addHst === 'function') addHst(entrada);
+  if (typeof renderKPIs === 'function') renderKPIs();
+  if (typeof calcDinamica === 'function') calcDinamica();
+
+
+  var card = document.getElementById('result-card');
+  var wa   = (inq && inq.wa) ? inq.wa : CFG0.wa;
+  var ico  = '<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
+
+  function waLink(txt, lbl) {
+    return '<a class="btn btn-wa" href="https://wa.me' + wa
+           + '?text=' + encodeURIComponent(txt)
+           + '" target="_blank" rel="noopener">' + ico + ' ' + lbl + '</a>';
+  }
+
+  if (premio.gano) {
+    if (typeof sndWin === 'function') sndWin();
+    setTimeout(function(){
+      try {
+        confetti({particleCount:160,spread:90,origin:{y:.4}, colors:['#7c3aed','#a855f7','#ec4899','#f59e0b','#10b981']});
+        confetti({particleCount:70,angle:60, spread:55,origin:{x:0}});
+        confetti({particleCount:70,angle:120,spread:55,origin:{x:1}});
+      } catch(e) {}
+    }, 200);
+    card.innerHTML = '<span class="r-trophy">🏆</span>'
+      + '<div class="r-title">¡Felicitaciones!</div>'
+      + '<div class="r-prize">' + premio.txt + '</div>'
+      + '<p class="r-sub">Muestra este mensaje al vendedor 🎉</p>'
+      + waLink('¡Hola! Gané el premio: ' + premio.txt + ' con código ' + cod + ' 🎉', 'Canjear por WhatsApp');
+  } else {
+    if (typeof sndPop === 'function') sndPop();
+    card.innerHTML = '<span class="r-trophy">🎁</span>'
+      + '<span class="con-badge">Premio de consolación</span>'
+      + '<div class="r-title" style="color:var(--ac2)">¡Casi!</div>'
+      + '<div class="r-prize">' + premio.txt + '</div>'
+      + '<p class="r-sub">Válido en tu próxima compra.</p>'
+      + waLink('¡Hola! Obtuve: ' + premio.txt + ' con código ' + cod, 'Mostrar al vendedor');
+  }
+  setTimeout(function(){ goScreen('sc-result'); }, premio.gano ? 600 : 300);
+}
+
+// ================================================================
+//  AUDIO — Web Audio API (funciona offline)
+// ================================================================
+var _ac = null;
+function ac() { if(!_ac) _ac = new(window.AudioContext||window.webkitAudioContext)(); return _ac; }
+function sndPop() {
+  try { var c=ac(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='sine';
+    o.frequency.setValueAtTime(640,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(180,c.currentTime+.16);
+    g.gain.setValueAtTime(.42,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);
+    o.start();o.stop(c.currentTime+.2); } catch(e){}
+}
+function sndOpen() {
+  try { var c=ac(); [0,.08,.16].forEach(function(t,i){
+    var o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
+    o.type='triangle'; o.frequency.setValueAtTime([400,620,920][i],c.currentTime+t);
+    g.gain.setValueAtTime(.28,c.currentTime+t);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.2);
+    o.start(c.currentTime+t);o.stop(c.currentTime+t+.2); }); } catch(e){}
+}
+function sndWin() {
+  try { var c=ac(); [523,659,784,1047].forEach(function(f,i){
+    var o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
+    o.type='sine'; o.frequency.setValueAtTime(f,c.currentTime+i*.14);
+    g.gain.setValueAtTime(.36,c.currentTime+i*.14);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.14+.26);
+    o.start(c.currentTime+i*.14);o.stop(c.currentTime+i*.14+.26); }); } catch(e){}
+}
+
+// ================================================================
+//  JUEGO: 3 COFRES (default)
+// ================================================================
+function renderCofres(zone) {
+  var premio = sortearPremio();
+  var sz = Math.min(96, Math.floor((window.innerWidth - 110) / 3));
+
+  // SVG del cofre cerrado
+  function svgCofre(uid) {
+    return '<svg width="' + sz + '" height="' + Math.round(sz*150/180) + '" viewBox="0 0 180 150">'
+    + '<defs>'
+    + '<radialGradient id="gL' + uid + '" cx="50%" cy="30%">'
+    + '<stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#d97706"/></radialGradient>'
+    + '<radialGradient id="gT' + uid + '" cx="50%" cy="20%">'
+    + '<stop offset="0%" stop-color="#92400e"/><stop offset="100%" stop-color="#451a03"/></radialGradient>'
+    + '<radialGradient id="gB' + uid + '" cx="50%" cy="70%">'
+    + '<stop offset="0%" stop-color="#78350f"/><stop offset="100%" stop-color="#2c1503"/></radialGradient>'
+    + '</defs>'
+    + '<g id="lid' + uid + '">'
+    + '<rect x="15" y="18" width="150" height="55" rx="12" fill="url(#gT' + uid + ')"/>'
+    + '<rect x="15" y="18" width="150" height="10" rx="6" fill="#d97706" opacity=".38"/>'
+    + '<rect x="20" y="55" width="140" height="8" rx="4" fill="#92400e" opacity=".48"/>'
+    + '<rect x="35" y="25" width="6" height="40" rx="3" fill="#d97706" opacity=".38"/>'
+    + '<rect x="139" y="25" width="6" height="40" rx="3" fill="#d97706" opacity=".38"/>'
+    + '</g>'
+    + '<rect x="15" y="72" width="150" height="65" rx="10" fill="url(#gB' + uid + ')"/>'
+    + '<rect x="15" y="95" width="150" height="8" rx="4" fill="#d97706" opacity=".48"/>'
+    + '<rect x="15" y="118" width="150" height="8" rx="4" fill="#d97706" opacity=".48"/>'
+    + '<rect x="82" y="72" width="16" height="30" rx="4" fill="#d97706" opacity=".38"/>'
+    + '<circle cx="90" cy="63" r="14" fill="url(#gL' + uid + ')" stroke="#d97706" stroke-width="2"/>'
+    + '<circle cx="90" cy="60" r="6" fill="none" stroke="#92400e" stroke-width="2.5"/>'
+    + '<rect x="86" y="61" width="8" height="9" rx="2" fill="#92400e"/>'
+    + '<rect x="20" y="68" width="16" height="8" rx="4" fill="#d97706"/>'
+    + '<rect x="144" y="68" width="16" height="8" rx="4" fill="#d97706"/>'
+    + '<ellipse cx="50" cy="32" rx="12" ry="5" fill="white" opacity=".06"/>'
+    + '</svg>';
+  }
+
+  var html = '<div class="chest-area"><div class="chests-row">';
+  for (var i = 0; i < 3; i++) {
+    html += '<button class="chest-btn" id="cb' + i + '" onclick="abrirCofre(' + i + ')">'
+          + '<div class="chest-icon" id="ci' + i + '">' + svgCofre('c' + i) + '</div>'
+          + '<div class="chest-lbl">Cofre ' + (i+1) + '</div>'
+          + '</button>';
+  }
+  html += '</div><p class="chest-hint">&#128070; Elige un cofre para abrirlo</p></div>';
+  zone.innerHTML = html;
+  zone.dataset.pr = JSON.stringify(premio);
+}
+
+function abrirCofre(idx) {
+  if (used) return;
+  var zone  = document.getElementById('game-zone');
+  var pr    = JSON.parse(zone.dataset.pr || '{}');
+  var btn   = document.getElementById('cb' + idx);
+  var icon  = document.getElementById('ci' + idx);
+
+  // Abrir cofre elegido
+  btn.classList.add('opened');
+  // Animar tapa SVG
+  var lid = icon.querySelector('[id^="lid"]');
+  if (lid) {
+    lid.style.transition = 'transform .5s cubic-bezier(.25,.46,.45,.94)';
+    lid.style.transformOrigin = '90px 73px';
+    lid.style.transform = 'rotate(-108deg)';
+  }
+
+  // Bloquear los otros dos (opacity:0.2)
+  for (var i = 0; i < 3; i++) {
+    if (i !== idx) {
+      var ob = document.getElementById('cb' + i);
+      if (ob) ob.classList.add('locked');
+    }
+  }
+
+  sndOpen();
+  var prCopy = pr;
+  setTimeout(function(){ mostrarRes(prCopy); }, 600);
+}
+
+// ================================================================
+//  JUEGO: GLOBOS
+// ================================================================
+var BC=[['#ef4444','#dc2626'],['#f97316','#ea580c'],['#eab308','#ca8a04'],
+  ['#22c55e','#16a34a'],['#06b6d4','#0891b2'],['#8b5cf6','#7c3aed'],
+  ['#ec4899','#db2777'],['#14b8a6','#0d9488'],['#f43f5e','#e11d48'],['#a78bfa','#7c3aed']];
+
+function renderGlobos(zone) {
+  zone.innerHTML = '<div class="bal-area" id="bal-area"></div>';
+  var area = document.getElementById('bal-area');
+  var pr = sortearPremio();
+  for (var i = 0; i < 10; i++) {
+    (function(idx){
+      var c1=BC[idx][0], c2=BC[idx][1];
+      var sz=44+Math.random()*22, lft=4+idx*9.2+Math.random()*3;
+      var dly=Math.random()*4, dur=4.5+Math.random()*4;
+      var b = document.createElement('div');
+      b.className = 'balloon';
+      b.style.cssText = 'left:'+lft+'%;animation-duration:'+dur+'s;animation-delay:-'+dly+'s;width:'+sz+'px;';
+      b.innerHTML = '<svg width="'+sz+'" height="'+(sz*1.3)+'" viewBox="0 0 50 65">'
+        + '<ellipse cx="25" cy="22" rx="20" ry="22" fill="'+c1+'"/>'
+        + '<ellipse cx="17" cy="13" rx="6" ry="7" fill="'+c2+'" opacity=".28"/>'
+        + '<polygon points="22,44 25,51 28,44" fill="'+c1+'"/>'
+        + '<path stroke="rgba(255,255,255,.32)" stroke-width="1.5" fill="none" d="M25 51 Q20 58 25 64"/>'
+        + '</svg>';
+      b.addEventListener('click', function(e){
+        if (b.classList.contains('popped') || used) return;
+        b.classList.add('popped');
+        for(var j=0;j<8;j++){
+          var p=document.createElement('div'); p.className='pop-pt';
+          p.style.cssText='left:'+e.clientX+'px;top:'+e.clientY+'px;background:'+c1
+            +';--tx:'+((Math.random()-.5)*80)+'px;--ty:'+((Math.random()-.5)*80)+'px;';
+          document.body.appendChild(p);
+          (function(el){ setTimeout(function(){ el.remove(); },600); })(p);
+        }
+        sndPop(); mostrarRes(pr);
+      });
+      area.appendChild(b);
+    })(i);
+  }
+}
+
+// ================================================================
+//  JUEGO: RASPE Y GANA
+// ================================================================
+function renderRaspe(zone) {
+  var pr = sortearPremio();
+  var W=Math.min(300,window.innerWidth-64), H=160;
+  zone.innerHTML = '<div class="scratch-area">'
+    + '<div class="scratch-wrap" style="width:'+W+'px;height:'+H+'px;">'
+    + '<div class="scratch-rev" id="s-rev" style="width:'+W+'px;height:'+H+'px;background:linear-gradient(135deg,#1a1530,#231d40);">'
+    + '<span style="font-size:2.4rem">'+(pr.gano?'\uD83C\uDFC6':'\uD83C\uDF9F\uFE0F')+'</span>'
+    + '<div style="font-size:.93rem;font-weight:800;color:'+(pr.gano?'#f59e0b':'#a855f7')
+    + ';padding:0 1rem;text-align:center">'+pr.txt+'</div></div>'
+    + '<canvas class="scratch-cv" id="s-cv" width="'+W+'" height="'+H+'"></canvas></div>'
+    + '<div class="sc-prog"><div class="sc-bar" id="sc-bar"></div></div>'
+    + '<p class="sc-hint">&#9757;&#65039; Arrastra para raspar</p></div>';
+
+  var cv=document.getElementById('s-cv'), ctx=cv.getContext('2d');
+  var gr=ctx.createLinearGradient(0,0,W,H);
+  gr.addColorStop(0,'#4b5563');gr.addColorStop(.45,'#6b7280');gr.addColorStop(1,'#4b5563');
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  for(var i=0;i<28;i++){ctx.fillStyle='rgba(255,255,255,.055)';
+    ctx.fillRect(Math.random()*W,Math.random()*H,2+Math.random()*5,1);}
+  ctx.fillStyle='#d1d5db';ctx.font='bold 13px Nunito,sans-serif';ctx.textAlign='center';
+  ctx.fillText('\u2728 RASPA AQU\xCD \u2728',W/2,H/2-6);
+  ctx.fillStyle='#9ca3af';ctx.font='11px Nunito,sans-serif';
+  ctx.fillText('Desliza para revelar tu premio',W/2,H/2+14);
+  ctx.globalCompositeOperation='destination-out';
+
+  var drw=false,rev=false,R=22;
+  function gp(e){var r=cv.getBoundingClientRect();
+    return e.touches?{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}
+                    :{x:e.clientX-r.left,y:e.clientY-r.top};}
+  function rasp(x,y){ctx.beginPath();ctx.arc(x,y,R,0,Math.PI*2);ctx.fill();}
+  function chk(){if(rev)return;
+    var d=ctx.getImageData(0,0,W,H).data,t=0;
+    for(var ii=3;ii<d.length;ii+=4)if(d[ii]<128)t++;
+    var pct=t/(W*H);
+    document.getElementById('sc-bar').style.width=Math.min(100,pct*100)+'%';
+    if(pct>.55){rev=true;cv.style.transition='opacity .5s';cv.style.opacity='0';
+      sndPop();(function(p){setTimeout(function(){mostrarRes(p);},400);})(pr);}}
+  cv.addEventListener('mousedown', function(e){drw=true;var p=gp(e);rasp(p.x,p.y);});
+  cv.addEventListener('mousemove', function(e){if(!drw)return;var p=gp(e);rasp(p.x,p.y);chk();});
+  cv.addEventListener('mouseup',   function(){drw=false;});
+  cv.addEventListener('mouseleave',function(){drw=false;});
+  cv.addEventListener('touchstart',function(e){e.preventDefault();drw=true;var p=gp(e);rasp(p.x,p.y);},{passive:false});
+  cv.addEventListener('touchmove', function(e){e.preventDefault();if(!drw)return;var p=gp(e);rasp(p.x,p.y);chk();},{passive:false});
+  cv.addEventListener('touchend',  function(){drw=false;});
+}
+
+function abrirAdmin() {
+  // 🔥 ESCUDO DE RESCATE: Restaura los juegos de la bóveda antes de que loadForm actúe
+  var clavePanel = (typeof K_HST !== 'undefined') ? K_HST : 'aumven_historial';
+  var juegosGuardados = localStorage.getItem('av_boveda_segura');
+  if (juegosGuardados) {
+    localStorage.setItem(clavePanel, juegosGuardados);
+    localStorage.setItem('aumven_historial', juegosGuardados);
+    localStorage.setItem('av_hst', juegosGuardados);
+  }
+  
+  // Ejecución original intacta
+  loadForm(); 
+  renderKPIs(); 
+  goScreen('sc-admin'); 
+}
+
+function loadForm() {
+  var c = getCfg() || CFG0;
+  document.getElementById('f-nom').value   = c.nombre      || '';
+  document.getElementById('f-wa').value    = c.wa          || '';
+  document.getElementById('f-pre').value   = c.prefijo     || '';
+  document.getElementById('f-logo').value  = c.logo        || '';
+  document.getElementById('f-emo').value   = c.emoji       || '';
+  document.getElementById('f-juego').value = c.juego       || '3_cofres';
+  document.getElementById('f-prem').value  = (c.premios||[]).join(', ');
+  document.getElementById('f-con').value         = c.consolacion || '';
+  document.getElementById('cfg-adicional').value = c.adicional    || '';
+  document.getElementById('f-meta').value        = '';  // se llenara en vivo por calcTicket()
+  // Memoria de acero: restaurar ventas, pedidos y meta guardados
+  document.getElementById('c-ventas').value = c.ventasGuard  || '';
+  document.getElementById('c-ped').value    = c.pedidosGuard || '';
+  // f-meta ya se carga arriba; si habia ventas guardadas, refrescar la grilla
+  document.getElementById('calc-r').classList.remove('show');
+  if (c.ventasGuard || c.meta) { calcTicket(); }
+  c.logoData ? prevLogo(c.logoData) : (c.logo ? prevLogo(c.logo) : hideLogo());
+  renderLeyenda();
+}
+
+// GUARDAR CONFIG — FIX 3:
+// 1. Construye objeto con todas las claves explícitas desde los inputs DOM
+// 2. JSON.stringify nativo al escribir en av_cfg
+// 3. NO toca av_hst en ningún momento
+// 4. Llama renderKPIs() para reflejar el cambio inmediatamente
+function guardarCfg() {
+  var pRaw   = document.getElementById('f-prem').value;
+  var premios = pRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  var ex     = getCfg() || CFG0;
+
+  var cfg = {
+    nombre:      document.getElementById('f-nom').value.trim()   || ex.nombre      || CFG0.nombre,
+    wa:          document.getElementById('f-wa').value.trim()    || ex.wa          || CFG0.wa,
+    prefijo:     document.getElementById('f-pre').value.trim().toUpperCase() || '',
+    logo:        document.getElementById('f-logo').value.trim()  || '',
+    logoData:    ex.logoData || '',
+    emoji:       document.getElementById('f-emo').value.trim()   || ex.emoji       || CFG0.emoji,
+    juego:       document.getElementById('f-juego').value        || CFG0.juego,
+    premios:     premios.length ? premios : (ex.premios || CFG0.premios),
+    consolacion: document.getElementById('f-con').value.trim()   || ex.consolacion || CFG0.consolacion,
+    adicional:   parseFloat(document.getElementById('cfg-adicional').value)  || ex.adicional || 2500,
+    meta:        (function(){
+                   var v = parseFloat(document.getElementById('c-ventas').value) || 0;
+                   var p = Math.max(parseFloat(document.getElementById('c-ped').value) || 1, 1);
+                   var tk = v > 0 ? Math.round(v / p) : Math.max(parseFloat(ex.ticket)||0, 0);
+                   var add = parseFloat(document.getElementById('cfg-adicional').value) || ex.adicional || 2500;
+                   return tk + Math.round(add);
+                 })(),
+    // Memoria de acero: ventas y pedidos se persisten para restaurarlos al recargar
+    ventasGuard: parseFloat(document.getElementById('c-ventas').value)       || ex.ventasGuard || 0,
+    pedidosGuard:parseFloat(document.getElementById('c-ped').value)          || ex.pedidosGuard|| 0,
+    ticket:      parseFloat(ex.ticket) || 0
+  };
+
+  // Escritura atómica con JSON.stringify nativo en av_cfg
+  localStorage.removeItem(K_CFG);
+  localStorage.setItem(K_CFG, JSON.stringify(cfg));
+
+  // Actualizar inquilino en memoria si hay sesión activa
+  if (inq) buildInq(null);
+
+  renderLeyenda();
+  renderKPIs();   // refresca KPIs inmediatamente sin tocar av_hst
+  toast('\u2705 Guardado en av_cfg \u2014 ' + premios.length
+        + ' premios, prefijo: ' + (cfg.prefijo || 'ninguno'));
+}
+
+// ================================================================
+//  renderKPIs — CONTADOR INDESTRUCTIBLE (FIX 1+2)
+//  - Cuenta por historial.length físico del array filtrado
+//  - Ingreso con piso $2.500 si meta-ticket <= 0
+//  - NO altera av_hst
+// ================================================================
+function filtrHst(h, periodo) {
+  var now   = new Date();
+  var hoyMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
+
+  if (periodo === 'hoy') {
+    // Medianoche local exacta — sin desfase de zona horaria
+    return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= hoyMs; });
+  }
+  if (periodo === 'semana') {
+    var s7 = new Date(now.getFullYear(), now.getMonth(), now.getDate()-6, 0,0,0,0).getTime();
+    return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= s7; });
+  }
+  // mes (30 dias)
+  var s30 = new Date(now.getFullYear(), now.getMonth(), now.getDate()-29, 0,0,0,0).getTime();
+  return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= s30; });
+}
+
+// ================================================================
+//  calcDinamica -- UNICA instancia, sin efectos secundarios
+//  Lee las casillas vivas del DOM para preview en pantalla.
+//  NO escribe en localStorage. Solo calcTicket() la usa para display.
+//  renderKPIs() y exportCSV() la llaman para tarjetas y CSV.
+// ================================================================
+function calcDinamica() {
+  var ventas  = parseFloat((document.getElementById('c-ventas')      || {}).value) || 0;
+  var pedidos = parseFloat((document.getElementById('c-ped')         || {}).value) || 1;
+  var cfg     = getCfg() || CFG0;
+
+  // TK: ticket promedio real desde los campos; fallback cfg.ticket guardado
+  var TK = ventas > 0 ? Math.round(ventas / pedidos) : Math.max(parseFloat(cfg.ticket) || 0, 0);
+
+  // ADICIONAL (Variable X): UNICA fuente de verdad = cfg-adicional
+  // Prioridad: campo vivo cfg-adicional > cfg.adicional guardado > piso 2500
+  var cfgAdicEl = document.getElementById('cfg-adicional');
+  var adicional = cfgAdicEl && cfgAdicEl.value
+    ? Math.round(parseFloat(cfgAdicEl.value))
+    : Math.round(parseFloat(cfg.adicional) || 2500);
+  if (!adicional || adicional < 1) adicional = 2500;
+
+  // META FINAL = TK + adicional (siempre aditivo, nunca substractivo)
+  var meta          = TK + adicional;
+  var utilidadJuego = Math.round(adicional * 0.8); // 80% neto de Variable X
+
+  return { TK: TK, adicional: adicional, meta: meta, utilidadJuego: utilidadJuego, cfg: cfg };
+}
+
+// ================================================================
+//  renderKPIs -- UNICA instancia, indestructible
+//  Cuenta por hF.length fisico. Sin dedup. Sin localStorage en escritura.
+// ================================================================
+function renderKPIs() {
+  var hAll = lsR(K_HST, []);
+  var per  = document.getElementById('kpi-fil').value;
+  var hF   = filtrHst(hAll, per);
+  var totalJuegos = hF.length;
+
+  var d = calcDinamica();
+  var utilidadAcumulada = totalJuegos * d.utilidadJuego;
+  var juegosMensuales   = totalJuegos * 30;
+  var utilidadMensual   = juegosMensuales * d.utilidadJuego;
+
+  document.getElementById('kpi-tot').textContent  = totalJuegos;
+  document.getElementById('kpi-prem').textContent = totalJuegos;
+  document.getElementById('kpi-ing').textContent  =
+    '$' + utilidadAcumulada.toLocaleString('es-CL')
+    + ' \u2022 $' + d.utilidadJuego.toLocaleString('es-CL') + '/juego';
+
+  var proyEl = document.getElementById('kpi-proy');
+  if (proyEl) {
+    proyEl.textContent = juegosMensuales + ' juegos \u2192 $' + utilidadMensual.toLocaleString('es-CL');
+  }
+
+  var lista = document.getElementById('h-list');
+  if (totalJuegos === 0) {
+    lista.innerHTML = '<li class="empty">Sin registros en el per\xEDodo seleccionado</li>';
+    return;
+  }
+  var html = '';
+  var rev  = hF.slice().reverse();
+  for (var i = 0; i < rev.length; i++) {
+    var e = rev[i];
+    html += '<li class="h-item">'
+          + '<span style="flex:1">' + (e.gano ? '\uD83C\uDFC6' : '\uD83C\uDF9F\uFE0F')
+          + ' ' + e.txt + '</span>'
+          + '<span class="h-date">' + (e.fecha || '&#8212;') + '</span>'
+          + '</li>';
+  }
+  lista.innerHTML = html;
+}
+
+// ================================================================
+//  calcTicket -- preview en vivo al tipear (SIN localStorage)
+//  oninput en c-ventas y c-ped llama esta funcion.
+//  Solo actualiza el DOM. Guardado real: solo al presionar "Guardar".
+// ================================================================
+function calcTicket() {
+  var el = document.getElementById('calc-r');
+  if (!el) return;
+
+  var d = calcDinamica();
+
+  if (d.TK <= 0 && d.adicional <= 0) { el.classList.remove('show'); return; }
+
+  var hAll = lsR(K_HST, []);
+  var jProy = hAll.length * 30;
+  var uProy = jProy * d.utilidadJuego;
+
+  el.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem .8rem;font-size:.86rem">'
+    + '<div style="color:var(--mt);font-weight:700">Ticket Promedio Real</div>'
+    + '<div style="color:var(--tx);font-weight:800">$' + d.TK.toLocaleString('es-CL') + '</div>'
+    + '<div style="color:var(--mt);font-weight:700">Monto Adicional (Variable X)</div>'
+    + '<div style="color:var(--tx);font-weight:800">$' + d.adicional.toLocaleString('es-CL') + '</div>'
+    + '<div style="color:var(--mt);font-weight:700;border-top:1px solid rgba(124,58,237,.2);padding-top:.4rem">Meta Final (Ticket + Adicional)</div>'
+    + '<div style="color:var(--ac2);font-weight:900;font-size:1rem;border-top:1px solid rgba(124,58,237,.2);padding-top:.4rem">$' + d.meta.toLocaleString('es-CL') + '</div>'
+    + '<div style="color:var(--mt);font-weight:700">Utilidad por Juego (80% neto)</div>'
+    + '<div style="color:var(--gd);font-weight:900;font-size:1rem">$' + d.utilidadJuego.toLocaleString('es-CL') + '</div>'
+    + '<div style="color:var(--mt);font-weight:700;border-top:1px solid rgba(16,185,129,.15);padding-top:.4rem">Proy. 30 d\xEDas (' + jProy + ' juegos)</div>'
+    + '<div style="color:#10b981;font-weight:900;border-top:1px solid rgba(16,185,129,.15);padding-top:.4rem">$' + uProy.toLocaleString('es-CL') + '</div>'
+    + '</div>';
+  el.classList.add('show');
+
+  // f-meta es OUTPUT: muestra la Meta Final calculada (TK + Variable X)
+  var fMetaEl = document.getElementById('f-meta');
+  if (fMetaEl) fMetaEl.value = d.meta.toLocaleString('es-CL');
+}
+
+function exportCSV() {
+  // sep=; nativo chileno — Excel/Sheets abre en columnas automaticamente
+  var hAll = lsR(K_HST, []);
+  var per  = document.getElementById('kpi-fil').value;
+  var hF   = filtrHst(hAll, per);
+  var may  = hF.filter(function(e){ return e.gano; }).length;
+  var totalJuegos = hF.length;
+
+  // Ganancia 100% dinamica — misma formula que renderKPIs, sin numero fijo
+  var d = calcDinamica();
+  var utilidadAcumulada = totalJuegos * d.utilidadJuego;   // entero CLP
+  var juegosMensuales   = totalJuegos * 30;
+  var utilidadMensual   = juegosMensuales * d.utilidadJuego; // entero CLP
+
+  var etiq = {hoy:'Hoy', semana:'\xDAltimos 7 d\xEDas', mes:'Este mes'};
+
+  // Cabecera — montos como enteros limpios (sin $ ni puntos) para que Sheets los lea como numero
+  var lineas = [
+    'AUMVEN;Reporte de Caja',
+    'Negocio;' + (d.cfg.nombre || '\u2014'),
+    'Per\xEDodo;' + (etiq[per] || per),
+    'Exportado;' + new Date().toLocaleString('es-CL'),
+    ';;',
+    'Ticket promedio real (CLP);' + d.TK,
+    'Monto adicional por juego (CLP);' + d.adicional,
+    'Meta calculada TK+Adicional (CLP);' + d.meta,
+    'Utilidad por juego 80% del adicional (CLP);' + d.utilidadJuego,
+    ';;',
+    'Juegos totales en per\xEDodo;' + totalJuegos,
+    'Premios entregados;' + totalJuegos,
+    'Premios mayores;' + may,
+    'Consolaciones;' + (totalJuegos - may),
+    'Utilidad acumulada real (CLP);' + utilidadAcumulada,
+    ';;',
+    'Proyecci\xF3n 30 d\xEDas (juegos);' + juegosMensuales,
+    'Proyecci\xF3n 30 d\xEDas utilidad (CLP);' + utilidadMensual,
+    ';;',
+    'Fecha;Hora;Premio;Tipo;C\xF3digo'
+  ];
+
+  // Historial detallado — columnas separadas por punto y coma
+  for (var i = 0; i < hF.length; i++) {
+    var e = hF[i];
+    var partes     = (e.fecha || '').split(', ');
+    var fechaParte = partes[0] || '';
+    var horaParte  = partes[1] || '';
+    var tipo       = e.gano ? 'Premio Mayor' : 'Consolaci\xF3n';
+    var premio     = (e.txt || '').replace(/;/g, ',');
+    lineas.push(fechaParte + ';' + horaParte + ';' + premio + ';' + tipo + ';' + (e.cod || ''));
+  }
+
+  var csvContent = 'sep=;\r\n' + lineas.join('\r\n');
+  var blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'AUMVEN_' + (d.cfg.nombre || 'Tienda') + '_'
+               + new Date().toLocaleDateString('es-CL').replace(/\//g, '-') + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('\uD83D\uDCCA CSV descargado \u2014 Utilidad real: $' + utilidadAcumulada.toLocaleString('es-CL') + ' CLP');
+}
+
+// ================================================================
+//  LEYENDA PROBABILIDADES
+// ================================================================
+function renderLeyenda() {
+  var raw = document.getElementById('f-prem').value;
+  var arr = raw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  var el  = document.getElementById('prob-leg');
+  var n   = arr.length;
+  if (!n) { el.innerHTML=''; return; }
+  var r = '';
+  if (n <= 2) {
+    r = '<div class="prob-row"><div class="prob-dot" style="background:#a855f7"></div>'
+      + '<span style="color:var(--mt)">80% Premio Mayor &#183; 20% Consolaci\xF3n</span></div>';
+  } else {
+    var tiers=[
+      {c:'#22c55e',l:'60% &#8212; Bajo costo', ii:[0,1]},
+      {c:'#f59e0b',l:'30% &#8212; Mediana cuant&#xEDa',ii:[2,3]},
+      {c:'#ef4444',l:'10% &#8212; Mayor costo',  ii:[4]}
+    ];
+    tiers.forEach(function(t){
+      var names=t.ii.filter(function(i){return i<n;})
+        .map(function(i){return '<em>'+arr[i]+'</em>';}).join(', ');
+      if(!names) return;
+      r+='<div class="prob-row"><div class="prob-dot" style="background:'+t.c+'"></div>'
+        +'<span style="color:var(--mt)">'+t.l+': '+names+'</span></div>';
+    });
+  }
+  el.innerHTML = r;
+}
+
+// ================================================================
+//  LOGO
+// ================================================================
+function prevLogo(src) {
+  if (!src) { hideLogo(); return; }
+  var w=document.getElementById('lp-wrap'), img=document.getElementById('lp-img');
+  img.src=src; w.style.display='block'; img.onerror=function(){hideLogo();};
+}
+function hideLogo() {
+  document.getElementById('lp-wrap').style.display='none';
+  document.getElementById('lp-img').src='';
+}
+function loadLogoFile(e) {
+  var f=e.target.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(ev){
+    var d=ev.target.result;
+    var cfg=lsR(K_CFG,CFG0); cfg.logoData=d;
+    localStorage.removeItem(K_CFG); localStorage.setItem(K_CFG,JSON.stringify(cfg));
+    prevLogo(d); document.getElementById('f-logo').value=f.name;
+    toast('\uD83D\uDDBC\uFE0F Logo cargado');
+  };
+  rd.readAsDataURL(f);
+}
+
+function mostrarBases() {
+  // Bases Legales SERNAC — 5 cláusulas adaptadas a 20% consolación
+  alert(
+    'BASES LEGALES Y CONDICIONES \u2014 AUMVEN\n\n'
+    + '1. V\xE1lido por compras iguales o superiores a la meta de compra establecida por el local, en una misma boleta.\n\n'
+    + '2. Un solo uso por c\xF3digo correlativo de caja. El c\xF3digo se bloquea de forma permanente e irrevocable tras ser utilizado para jugar.\n\n'
+    + '3. Se garantiza un premio autom\xE1tico por cada c\xF3digo v\xE1lido. El motor de probabilidades distribuye: 80% premios mayores (60% bajo costo / 30% mediana cuant\xEDa / 10% mayor costo) y 20% premio de consolaci\xF3n garantizado.\n\n'
+    + '4. Los premios son personales e intransferibles. No son canjeables por dinero en efectivo ni por productos distintos a los informados en pantalla.\n\n'
+    + '5. Ante quiebre de stock de cualquier premio mayor, el local se reserva el derecho de sustituir el premio sorteado por el premio de consolaci\xF3n vigente sin previo aviso.'
+  );
+}
+
+function devReset() {
+  localStorage.removeItem(K_USD);
+  localStorage.removeItem(K_HST);
+  inq=null; cod=null; used=false;
+  document.getElementById('cod-in').value='';
+  document.getElementById('game-zone').innerHTML='';
+  document.getElementById('game-hdr').innerHTML='';
+  document.getElementById('result-card').innerHTML='';
+  goLogin();
+  alerta('\u2705 Reset: av_usd y av_hst limpiados. av_cfg intacto.','ok');
+}
+
+</script>
+</body>
+</html>

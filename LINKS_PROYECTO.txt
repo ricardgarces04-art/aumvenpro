@@ -1,0 +1,18 @@
+LINK DE MI JUEGO EN INTERNET:
+https://aumven-pro-chile.netlify.app
+
+ZONA DE CARGA (Por si cambio el código):
+https://netlify.com
+
+Aumvenpro2026#
+
+LLAVE_ANON
+sb_publishable__ezeyIndD2_mAfAFIWNHtA_JaPXkRql
+
+PROJECT_ID:
+wfosczhszouukypsvasx
+
+URL_PROYECTO:
+https://wfosczhszouukypsvasx.supabase.co
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY
