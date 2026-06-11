@@ -248,7 +248,8 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
 <script>
   const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY"; 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = supabase;
 
   // Función Senior para cargar la configuración real del Admin en pantalla
 // ================================================================
