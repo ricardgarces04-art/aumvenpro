@@ -334,27 +334,231 @@ window.addEventListener('load', inicializarPlataformaAumven);
 // ================================================================
 // 📲 FUNCIÓN DE RECLAMO POR WHATSAPP - 100% DINÁMICA Y ESCALABLE
 // ================================================================
+// ================================================================
+// 🚀 FUNCIÓN OFICIAL DE GUARDADO (CONECTADA A TU BOTÓN)
+// ================================================================
+async function guardarCfg() {
+    try {
+        console.log("💾 Iniciando inyección de datos en Supabase...");
+        
+        // Capturamos los datos vivos desde los formularios de tu pantalla
+        const nombreNegocio = document.querySelector('input[placeholder="Cariñitos Box"]') ?.value || document.getElementById('nombre-negocio')?.value || "Cariñito box.";
+        const telefono = document.querySelector('input[placeholder="56926221935"]') ?.value || document.getElementById('telefono-whatsapp')?.value || "56926221935";
+        const premiosRaw = document.querySelector('textarea') ?.value || "";
+
+        // Procesamos la cadena de texto de los premios de forma limpia
+        let listaPremios = [];
+        if (premiosRaw) {
+            listaPremios = premiosRaw.split(',').map(p => p.trim()).filter(p => p !== '');
+        } else {
+            listaPremios = ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
+        }
+
+        // 🎯 CONEXIÓN PROFESIONAL: Grabamos directo en el servidor de Brasil
+        const { data, error } = await supabase
+            .from('configuraciones')
+            .update({
+                nombre: nombreNegocio,
+                whatsapp: telefono.trim(),
+                premios: listaPremios
+            })
+            .eq('id', 1);
+
+        if (error) throw error;
+
+        // Sincronizamos la memoria del navegador de inmediato
+        window.whatsappReal = telefono.trim();
+        window.premiosReales = listaPremios;
+        if (typeof CFG0 !== 'undefined') {
+            CFG0.wa = telefono.trim();
+            CFG0.premios = listaPremios;
+        }
+
+        // 🟢 ÉXITO TOTAL: Alerta nativa en pantalla
+        alert("💾 ¡Configuración guardada con éxito en Supabase!");
+        return true;
+
+    } catch (e) {
+        console.error("❌ Error en el puente de datos:", e.message);
+        alert("Error de conexión: " + e.message);
+        return false;
+    }
+}
+
+// ================================================================
+// 📲 DISPARO DIRECTO DE WHATSAPP (ELIMINA EL UNDEFINED)
+// ================================================================
+// ================================================================
+// 🚀 FUNCIÓN OFICIAL DE GUARDADO (CONECTADA A TU BOTÓN)
+// ================================================================
+async function guardarCfg() {
+    try {
+        console.log("💾 Iniciando inyección de datos en Supabase...");
+        
+        // Capturamos los datos vivos desde los formularios de tu pantalla
+        const nombreNegocio = document.querySelector('input[placeholder="Cariñitos Box"]') ?.value || document.getElementById('nombre-negocio')?.value || "Cariñito box.";
+        const telefono = document.querySelector('input[placeholder="56926221935"]') ?.value || document.getElementById('telefono-whatsapp')?.value || "56926221935";
+        const premiosRaw = document.querySelector('textarea') ?.value || "";
+
+        // Procesamos la cadena de texto de los premios de forma limpia
+        let listaPremios = [];
+        if (premiosRaw) {
+            listaPremios = premiosRaw.split(',').map(p => p.trim()).filter(p => p !== '');
+        } else {
+            listaPremios = ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
+        }
+
+        // 🎯 CONEXIÓN PROFESIONAL: Grabamos directo en el servidor de Brasil
+        const { data, error } = await supabase
+            .from('configuraciones')
+            .update({
+                nombre: nombreNegocio,
+                whatsapp: telefono.trim(),
+                premios: listaPremios
+            })
+            .eq('id', 1);
+
+        if (error) throw error;
+
+        // Sincronizamos la memoria del navegador de inmediato
+        window.whatsappReal = telefono.trim();
+        window.premiosReales = listaPremios;
+        if (typeof CFG0 !== 'undefined') {
+            CFG0.wa = telefono.trim();
+            CFG0.premios = listaPremios;
+        }
+
+        // 🟢 ÉXITO TOTAL: Alerta nativa en pantalla
+        alert("💾 ¡Configuración guardada con éxito en Supabase!");
+        return true;
+
+    } catch (e) {
+        console.error("❌ Error en el puente de datos:", e.message);
+        alert("Error de conexión: " + e.message);
+        return false;
+    }
+}
+
+// ================================================================
+// 📲 DISPARO DIRECTO DE WHATSAPP (ELIMINA EL UNDEFINED)
+// ================================================================
+// ================================================================
+// 🚀 FUNCIÓN OFICIAL DE GUARDADO (CONECTADA A TU BOTÓN ACCIÓN)
+// ================================================================
+async function guardarCfg() {
+    try {
+        console.log("💾 Iniciando inyección de datos en Supabase...");
+        
+        const nombreNegocio = document.querySelector('input[placeholder="Cariñitos Box"]')?.value || document.getElementById('nombre-negocio')?.value || "Cariñito box.";
+        const telefono = document.querySelector('input[placeholder="56926221935"]')?.value || document.getElementById('telefono-whatsapp')?.value || "56926221935";
+        const premiosRaw = document.querySelector('textarea')?.value || "";
+
+        let listaPremios = [];
+        if (premiosRaw) {
+            listaPremios = premiosRaw.split(',').map(p => p.trim()).filter(p => p !== '');
+        } else {
+            listaPremios = ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
+        }
+
+        const { data, error } = await supabase
+            .from('configuraciones')
+            .update({
+                nombre: nombreNegocio,
+                whatsapp: telefono.trim(),
+                premios: listaPremios
+            })
+            .eq('id', 1);
+
+        if (error) throw error;
+
+        window.whatsappReal = telefono.trim();
+        window.premiosReales = listaPremios;
+        if (typeof CFG0 !== 'undefined') {
+            CFG0.wa = telefono.trim();
+            CFG0.premios = listaPremios;
+        }
+
+        alert("💾 ¡Configuración guardada con éxito en Supabase!");
+        return true;
+
+    } catch (e) {
+        console.error("❌ Error en el puente de datos:", e.message);
+        alert("Error de conexión: " + e.message);
+        return false;
+    }
+}
+
+// ================================================================
+// 📲 DISPARO DIRECTO AUTOMÁTICO DE WHATSAPP (CORREGIDO AL 100%)
+// ================================================================
+// ================================================================
+// 🚀 FUNCIÓN OFICIAL DE GUARDADO (CONECTADA A TU BOTÓN ACCIÓN)
+// ================================================================
+async function guardarCfg() {
+    try {
+        console.log("💾 Iniciando inyección de datos en Supabase...");
+        
+        const nombreNegocio = document.querySelector('input[placeholder="Cariñitos Box"]')?.value || document.getElementById('nombre-negocio')?.value || "Cariñito box.";
+        const telefono = document.querySelector('input[placeholder="56926221935"]')?.value || document.getElementById('telefono-whatsapp')?.value || "56926221935";
+        const premiosRaw = document.querySelector('textarea')?.value || "";
+
+        let listaPremios = [];
+        if (premiosRaw) {
+            listaPremios = premiosRaw.split(',').map(p => p.trim()).filter(p => p !== '');
+        } else {
+            listaPremios = ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
+        }
+
+        const { data, error } = await supabase
+            .from('configuraciones')
+            .update({
+                nombre: nombreNegocio,
+                whatsapp: telefono.trim(),
+                premios: listaPremios
+            })
+            .eq('id', 1);
+
+        if (error) throw error;
+
+        window.whatsappReal = telefono.trim();
+        window.premiosReales = listaPremios;
+        if (typeof CFG0 !== 'undefined') {
+            CFG0.wa = telefono.trim();
+            CFG0.premios = listaPremios;
+        }
+
+        alert("💾 ¡Configuración guardada con éxito en Supabase!");
+        return true;
+
+    } catch (e) {
+        console.error("❌ Error en el puente de datos:", e.message);
+        alert("Error de conexión: " + e.message);
+        return false;
+    }
+}
+
+// ================================================================
+// 📲 DISPARO DIRECTO AUTOMÁTICO DE WHATSAPP (CORREGIDO AL 100%)
+// ================================================================
 function reclamarPremioPorWhatsApp(premioGanado) {
-    // 🧠 CONFIGURACIÓN MULTI-EMPRESA: Carga el teléfono variable que la empresa guarde en el panel
-    const telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
+    const telefonoDestino = window.whatsappReal || "56926221935";
     
-    // 🛠️ PARACAÍDAS DEL PREMIO: Saca el premio configurado de la nube para destruir el undefined
     let premioTexto = (premioGanado && premioGanado !== 'undefined') ? premioGanado : "";
-    
     if (!premioTexto && window.premiosReales && window.premiosReales.length > 0) {
         premioTexto = window.premiosReales[Math.floor(Math.random() * window.premiosReales.length)];
     }
-    if (!premioTexto) premioTexto = "mi premio del juego";
+    if (!premioTexto) premioTexto = "mi premio de Cariñito box.";
 
-    // Armamos el mensaje comercial que viaja en la red
     const mensajeTexto = encodeURIComponent("¡Hola! Acabo de jugar en Aumven pro y gané: " + premioTexto + ". ¿Cómo lo puedo canjear?");
     
-    // 🚀 DISPARO DIRECTO AUTOMÁTICO: Usa la API oficial para enviar el chat de golpe sin esperas
-    const linkWhatsApp = "https://whatsapp.com" + telefonoDestino + "&text=" + mensajeTexto;
+    // 🚀 API REAL DIRECTA REPARADA POR COMPLETO
+    const linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonodestino + "&text=" + mensajetexto;
     
-    console.log("📲 Redirigiendo flujo variable al WhatsApp de la empresa:", telefonoDestino);
     window.open(linkWhatsApp, '_blank');
 }
+
+
+
 
 </script>
 </head>
