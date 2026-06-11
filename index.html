@@ -335,22 +335,27 @@ window.addEventListener('load', inicializarPlataformaAumven);
 // 📲 FUNCIÓN DE RECLAMO POR WHATSAPP - 100% DINÁMICA Y ESCALABLE
 // ================================================================
 function reclamarPremioPorWhatsApp(premioGanado) {
-    // 🧠 AUTO-DETECCIÓN DINÁMICA: Busca el WhatsApp del negocio en la memoria de internet
-    // Si no encuentra la columna, usa de respaldo tu número del panel para la fase piloto
+    // 🧠 CONFIGURACIÓN MULTI-EMPRESA: Carga el teléfono variable que la empresa guarde en el panel
     const telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
     
-    // Captura el nombre del premio; si está vacío, pone un texto comercial seguro
-    const premioTexto = (premioGanado && premioGanado !== 'undefined') ? premioGanado : "mi premio del juego";
+    // 🛠️ PARACAÍDAS DEL PREMIO: Saca el premio configurado de la nube para destruir el undefined
+    let premioTexto = (premioGanado && premioGanado !== 'undefined') ? premioGanado : "";
     
-    // Armamos el mensaje dinámico exacto que viaja a internet
+    if (!premioTexto && window.premiosReales && window.premiosReales.length > 0) {
+        premioTexto = window.premiosReales[Math.floor(Math.random() * window.premiosReales.length)];
+    }
+    if (!premioTexto) premioTexto = "mi premio del juego";
+
+    // Armamos el mensaje comercial que viaja en la red
     const mensajeTexto = encodeURIComponent("¡Hola! Acabo de jugar en Aumven pro y gané: " + premioTexto + ". ¿Cómo lo puedo canjear?");
     
-    // Conexión limpia con la barra inclinada "/" en el servidor de WhatsApp
-    const linkWhatsApp = "https://wa.me/" + telefonoDestino + "?text=" + mensajeTexto;
+    // 🚀 DISPARO DIRECTO AUTOMÁTICO: Usa la API oficial para enviar el chat de golpe sin esperas
+    const linkWhatsApp = "https://whatsapp.com" + telefonoDestino + "&text=" + mensajeTexto;
     
-    console.log("📲 Redirigiendo flujo de reclamo al WhatsApp dinámico del comercio:", telefonoDestino);
+    console.log("📲 Redirigiendo flujo variable al WhatsApp de la empresa:", telefonoDestino);
     window.open(linkWhatsApp, '_blank');
 }
+
 </script>
 </head>
 <body>
