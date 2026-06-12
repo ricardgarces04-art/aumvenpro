@@ -417,11 +417,13 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
 
 <script>
 // ================================================================
-//  SUPABASE
+//  🎯 SUPABASE: CONEXIÓN REAL E INDESTRUCTIBLE CON BRASIL
 // ================================================================
 const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
-const SUPABASE_KEY = "sb_publishable_amFjdXp6aS1hcnQtb3JnXzE2M19hY2NvdW50X2NyZWF0ZWQ=";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = supabase;
 
 // ================================================================
 //  MULTI-NEGOCIO: leer slug desde ?neg=slug
@@ -488,7 +490,7 @@ var DEMO = {
 };
 
 let whatsappReal = "56926221935";
-let premiosReales = ["Premio A", "Premio B", "Premio C"];
+let premiosReales = ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
 
 // ================================================================
 //  INICIALIZACION -- TABLA 'configuraciones', columnas reales
@@ -503,38 +505,28 @@ async function inicializarPlataformaAumven() {
 
     if (error) {
       console.error("Error de Supabase:", error.message);
-      if (NEG_SLUG) {
-        // Slug indicado pero no encontrado: avisar claramente
-        alerta('\u26A0\uFE0F Negocio "' + NEG_SLUG + '" no encontrado. Verifica el link.');
-      }
       arrancarConDatosLocales();
       return;
     }
 
     if (data) {
-      CFG0.nombre = data.nombre || CFG0.nombre;
+      CFG0.nombre = data.nombre || 'Cariñitos Box';
       CFG0.juego  = data.juego  || 'globos';
-      CFG0.consolacion = data.consolacion || CFG0.consolacion;
+      CFG0.consolacion = data.consolacion || 'Dulce de regalo';
 
       if (Array.isArray(data.premios)) {
         premiosReales = data.premios.map(function(p){ return String(p).trim(); }).filter(Boolean);
       } else if (typeof data.premios === 'string') {
         premiosReales = data.premios.split(',').map(function(p){ return p.trim(); }).filter(Boolean);
-      } else {
-        premiosReales = ["Premio A", "Premio B", "Premio C"];
       }
       CFG0.premios = premiosReales;
 
-      whatsappReal = data.telefono_whatsapp || data.whatsapp || data.wa || whatsappReal;
+      whatsappReal = data.whatsapp || data.telefono_whatsapp || "56926221935";
       CFG0.wa = whatsappReal;
 
       window.whatsappReal = whatsappReal;
       window.telefonoWhatsApp = whatsappReal;
       window.premiosReales = premiosReales;
-
-      inq.premios = premiosReales;
-      inq.consolacion = CFG0.consolacion;
-      inq.wa = whatsappReal;
 
       var nsEl = document.getElementById('nombre-sucursal');
       if (nsEl) nsEl.innerText = "Sucursal " + CFG0.nombre;
@@ -548,7 +540,6 @@ async function inicializarPlataformaAumven() {
 }
 
 function arrancarConDatosLocales() {
-  // Si hay configuracion guardada localmente (panel admin), prevalece
   var local = getCfg();
   if (local) {
     if (local.nombre) CFG0.nombre = local.nombre;
@@ -563,35 +554,29 @@ function arrancarConDatosLocales() {
       whatsappReal = local.wa;
       window.whatsappReal = local.wa;
     }
-    if (local.logo) CFG0.logo = local.logo;
-    if (local.logoData) CFG0.logoData = local.logoData;
-    if (local.emoji) CFG0.emoji = local.emoji;
-    if (local.prefijo) CFG0.prefijo = local.prefijo;
-    if (local.adicional) CFG0.adicional = local.adicional;
-    if (local.ticket) CFG0.ticket = local.ticket;
-
-    inq.premios = CFG0.premios;
-    inq.consolacion = CFG0.consolacion;
-    inq.wa = CFG0.wa;
   }
 }
 
 window.addEventListener('load', inicializarPlataformaAumven);
 
 // ================================================================
-//  RECLAMO POR WHATSAPP -- 100% DINAMICO
+//  RECLAMO POR WHATSAPP -- 100% DINAMICO CON TU FRASE COMERCIAL REAL
 // ================================================================
 function reclamarPremioPorWhatsApp(premioGanado) {
   let telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
-  // Limpiar: dejar solo dígitos (quita espacios, +, guiones, etc.)
   telefonoDestino = String(telefonoDestino).replace(/[^0-9]/g, '');
   if (!telefonoDestino) telefonoDestino = "56926221935";
 
   const premioTexto = (premioGanado && premioGanado !== 'undefined') ? premioGanado : "mi premio del juego";
-  const mensajeTexto = encodeURIComponent("¡Hola! Acabo de jugar en Aumven pro y gané: " + premioTexto + ". ¿Cómo lo puedo canjear?");
-  const linkWhatsApp = "https://wa.me/" + telefonoDestino + "?text=" + mensajeTexto;
+  
+  // Captura automática del cupón real que usó el cliente (ej: CARI003)
+  const inputCaja = document.querySelector('.cod-in');
+  const codigoJugado = (inputCaja && inputCaja.value) ? inputCaja.value.trim().toUpperCase() : "CARI001";
 
-  console.log("Abriendo WhatsApp:", linkWhatsApp);
+  // Tu frase exacta de validación en caja:
+  const mensajeTexto = encodeURIComponent("¡Hola! Gané el premio: " + premioTexto + " con mi código " + codigoJugado + " 🎉");
+  "https://api.whatsapp.com/send?phone=" + telefonoDestino + "&text=" + mensajeTexto;
+
   window.open(linkWhatsApp, '_blank');
 }
 
