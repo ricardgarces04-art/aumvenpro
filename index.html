@@ -444,12 +444,26 @@ var K_USD = 'av_usd' + SLUG_SUFFIX;
 var K_HST = 'av_hst' + SLUG_SUFFIX;
 var K_BLK = 'av_black_list' + SLUG_SUFFIX;
 
+function sanitizeForJSON(val) {
+  // Elimina surrogates solitarios (emojis corruptos) que rompen JSON.parse al recuperar
+  function fixStr(s) {
+    return s.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g, '');
+  }
+  if (typeof val === 'string') return fixStr(val);
+  if (Array.isArray(val)) return val.map(sanitizeForJSON);
+  if (val && typeof val === 'object') {
+    var out = {};
+    for (var k in val) out[k] = sanitizeForJSON(val[k]);
+    return out;
+  }
+  return val;
+}
 function lsR(k, fb) {
   try { var v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : fb; }
-  catch(e) { return fb; }
+  catch(e) { console.error("lsR JSON.parse fall\xF3 para", k, e); return fb; }
 }
 function lsW(k, val) {
-  try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {}
+  try { localStorage.setItem(k, JSON.stringify(sanitizeForJSON(val))); } catch(e) { console.error("lsW fall\xF3 para", k, e); }
 }
 
 function getCfg()   { return lsR(K_CFG, null); }
@@ -499,7 +513,9 @@ async function inicializarPlataformaAumven() {
     if (NEG_SLUG) {
       query = query.eq('slug', NEG_SLUG);
     }
-    const { data, error } = await query.single();
+    query = query.limit(1);
+    const { data: rows, error } = await query;
+    const data = (rows && rows.length) ? rows[0] : null;
 
     if (error) {
       console.error("Error de Supabase:", error.message);
@@ -512,14 +528,14 @@ async function inicializarPlataformaAumven() {
     }
 
     if (data) {
-      CFG0.nombre = data.nombre || CFG0.nombre;
+      CFG0.nombre = sanitizeForJSON(data.nombre || CFG0.nombre);
       CFG0.juego  = data.juego  || 'globos';
-      CFG0.consolacion = data.consolacion || CFG0.consolacion;
+      CFG0.consolacion = sanitizeForJSON(data.consolacion || CFG0.consolacion);
 
       if (Array.isArray(data.premios)) {
-        premiosReales = data.premios.map(function(p){ return String(p).trim(); }).filter(Boolean);
+        premiosReales = sanitizeForJSON(data.premios.map(function(p){ return String(p).trim(); }).filter(Boolean));
       } else if (typeof data.premios === 'string') {
-        premiosReales = data.premios.split(',').map(function(p){ return p.trim(); }).filter(Boolean);
+        premiosReales = sanitizeForJSON(data.premios.split(',').map(function(p){ return p.trim(); }).filter(Boolean));
       } else {
         premiosReales = ["Premio A", "Premio B", "Premio C"];
       }
