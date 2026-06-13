@@ -640,15 +640,60 @@ function toast(msg) {
 // ================================================================
 //  ENTRAR
 // ================================================================
-function entrar() {
-  var raw = document.getElementById('cod-in').value.trim().toUpperCase();
-  if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
-
+async function entrar() {
+  var raw = document.querySelector('.cod-in').value.trim().toUpperCase();
+  if (!raw) { alert('⚠️ Ingresa tu código'); return; }
+  
   if (raw === 'ADMIN123') {
-    document.getElementById('cod-in').value = '';
+    document.querySelector('.cod-in').value = '';
     abrirAdmin();
     return;
   }
+
+  // 🔒 VALIDACIÓN DE SEGURIDAD CONTRA TRAMPAS DIRECTO EN SUPABASE
+  const { data: existe, error: errCheck } = await supabaseClient
+    .from('historial')
+    .select('codigo')
+    .eq('codigo', raw)
+    .maybeSingle();
+
+  if (existe) {
+    alert('🔒 Este código ya fue usado en esta sucursal. Intente con otro.');
+    return;
+  }
+
+  var cfg = getCfg() || CFG0;
+  var pfx = (cfg.prefijo || 'CARI').trim().toUpperCase();
+
+  // 📡 ENTRADA EXITOSA: REGISTRO INMEDIATO EN LA NUBE DE BRASIL
+  if (raw.startsWith(pfx)) {
+    window.codigoJuegoActual = raw;
+    localStorage.setItem('aumven_cod_actual', raw);
+
+    // Seleccionamos un premio al azar del panel para simular el tiro
+    let listaP = window.premiosReales || ["🎁Entrada vip BTS", "👕Camiseta de Wanderers", "🎆Cena con BTS"];
+    let premioSorteado = listaP[Math.floor(Math.random() * listaP.length)];
+
+    // 🚀 INYECCIÓN MAESTRA: SENSACIÓN DE CORRIENTE AL TABLERO
+    const { error: errInsert } = await supabaseClient
+      .from('historial')
+      .insert([{ 
+        codigo: raw, 
+        premio: premioSorteado,
+        fecha: new Date().toISOString()
+      }]);
+
+    if (errInsert) {
+      console.error("Error al registrar juego:", errInsert.message);
+    }
+
+    launchGame();
+    return;
+  }
+  
+  alert('❌ Código inválido. Formato correcto: ' + pfx + '001');
+}
+
 
   var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
   if (listaNegra.indexOf(raw) !== -1) {
