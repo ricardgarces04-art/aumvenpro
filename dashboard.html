@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUMVEN Pro — Dashboard de Resultados</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0714;--sf:rgba(26,21,48,.80);--sf2:rgba(35,29,64,.92);
+  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
+  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;
+  --tx:#f1f0ff;--mt:#9e97c4;
+  --r:22px;--rs:13px;--rx:8px;
+  --gb:rgba(168,85,247,.22);--gs:0 8px 32px rgba(124,58,237,.22);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;
+  min-height:100dvh;padding:1.25rem;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 5%,rgba(124,58,237,.32) 0%,transparent 65%),
+    radial-gradient(ellipse 55% 60% at 85% 95%,rgba(168,85,247,.24) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(236,72,153,.10) 0%,transparent 60%)}
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+
+/* HEADER */
+.hdr{text-align:center;margin-bottom:1.5rem}
+.hdr h1{font-family:'Fredoka One',cursive;font-size:2.1rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.3rem}
+.hdr p{color:var(--mt);font-size:.92rem;font-weight:600}
+
+/* CARD */
+.card{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.4rem;margin-bottom:1.1rem;box-shadow:var(--gs)}
+.sec{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ac2);margin-bottom:.9rem;
+  display:flex;align-items:center;gap:.45rem}
+
+/* UPLOAD ZONE */
+.up-zone{border:2px dashed rgba(168,85,247,.40);border-radius:var(--rs);
+  padding:1.8rem 1.2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.up-zone:hover,.up-zone.drag{border-color:var(--pk2);background:rgba(236,72,153,.06)}
+.up-zone .up-ico{font-size:2.4rem;display:block;margin-bottom:.5rem}
+.up-zone .up-txt{font-weight:800;font-size:.98rem;margin-bottom:.25rem}
+.up-zone .up-sub{color:var(--mt);font-size:.8rem}
+.up-name{color:var(--gd);font-weight:800;font-size:.85rem;margin-top:.6rem;display:none}
+input[type=file]{display:none}
+
+.empty-state{text-align:center;color:var(--mt);font-size:.88rem;padding:2.2rem 1rem;line-height:1.7}
+.empty-state .big{font-size:2.6rem;display:block;margin-bottom:.6rem}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem}
+.kpi-card{background:rgba(25,18,50,.92);backdrop-filter:blur(10px);
+  border:1px solid rgba(124,58,237,.22);border-radius:var(--rs);padding:1rem;text-align:center;
+  position:relative;overflow:hidden}
+.kpi-val{font-family:'Fredoka One',cursive;font-size:1.7rem;color:var(--gd);line-height:1.1;margin-bottom:.2rem;
+  word-break:break-word}
+.kpi-lbl{color:var(--mt);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.kpi-delta{font-size:.74rem;font-weight:800;margin-top:.35rem;display:inline-flex;align-items:center;gap:.2rem;
+  padding:.12rem .5rem;border-radius:100px}
+.kpi-delta.up{background:rgba(16,185,129,.16);color:#6ee7b7}
+.kpi-delta.down{background:rgba(239,68,68,.16);color:#fca5a5}
+.kpi-delta.flat{background:rgba(124,58,237,.16);color:var(--mt)}
+
+/* CHART WRAP */
+.chart-wrap{position:relative;width:100%}
+.chart-wrap.h-280{height:280px}
+.chart-wrap.h-320{height:320px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media (max-width:760px){.grid-2{grid-template-columns:1fr}}
+
+/* TOP10 LIST */
+.top-list{display:flex;flex-direction:column;gap:.55rem}
+.top-row{display:flex;align-items:center;gap:.6rem}
+.top-rank{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--ac2);
+  width:1.6rem;flex-shrink:0;text-align:center}
+.top-body{flex:1;min-width:0}
+.top-name{font-size:.85rem;font-weight:700;margin-bottom:.22rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-bar-bg{background:rgba(124,58,237,.14);border-radius:100px;height:8px;overflow:hidden}
+.top-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--ac),var(--pk2))}
+.top-count{font-weight:800;font-size:.85rem;color:var(--gd);flex-shrink:0;min-width:2.4rem;text-align:right}
+
+/* SUGGESTIONS */
+.sugg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem}
+.sugg-card{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.22);
+  border-radius:var(--rs);padding:.95rem;font-size:.83rem;line-height:1.55}
+.sugg-card .sugg-ico{font-size:1.3rem;display:block;margin-bottom:.4rem}
+.sugg-card b{color:var(--ac2)}
+
+/* PERIOD INPUTS */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.8rem}
+label{display:block;font-size:.7rem;font-weight:800;color:var(--mt);
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:.3rem}
+input[type=number],input[type=text]{width:100%;background:rgba(10,7,20,.75);
+  border:1.5px solid rgba(124,58,237,.28);border-radius:var(--rx);color:var(--tx);
+  font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;padding:.6rem .85rem;outline:none}
+input:focus{border-color:var(--ac2)}
+.l-hint{font-size:.74rem;color:var(--mt);margin-top:.3rem;line-height:1.5}
+
+.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:800;padding:.7rem 1.1rem;font-size:.88rem;transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn-gh{background:transparent;border:1.5px solid rgba(124,58,237,.40);color:var(--mt);width:100%}
+.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
+
+.foot{text-align:center;color:var(--mt);font-size:.74rem;padding:1rem 0;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hdr">
+    <h1>&#128202; Dashboard de Resultados</h1>
+    <p>Carga el CSV exportado desde tu panel AUMVEN Pro y ve el rendimiento de tu juego</p>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <div class="sec">&#128193; Cargar Reporte</div>
+    <div class="up-zone" id="up-zone" onclick="document.getElementById('file-in').click()">
+      <span class="up-ico">&#128229;</span>
+      <div class="up-txt">Arrastra tu archivo aqu&#xED; o haz clic para elegirlo</div>
+      <div class="up-sub">Archivo .csv exportado desde AUMVEN Pro &#8594; bot&#xF3;n "Exportar a Excel (.csv)"</div>
+      <div class="up-name" id="up-name"></div>
+    </div>
+    <input type="file" id="file-in" accept=".csv">
+
+    <div class="row2" style="margin-top:1.1rem">
+      <div>
+        <label>Ventas totales del per&#xED;odo ($) <span style="opacity:.6">(opcional)</span></label>
+        <input type="number" id="in-ventas" placeholder="Ej: 1250000" oninput="renderAll()">
+      </div>
+      <div>
+        <label>N&#xBA; total de pedidos/boletas <span style="opacity:.6">(opcional)</span></label>
+        <input type="number" id="in-pedidos" placeholder="Ej: 95" oninput="renderAll()">
+      </div>
+    </div>
+    <p class="l-hint">&#128161; Si completas estos dos campos, el dashboard calcula tu <strong>ticket promedio real</strong> y qu&#xE9; porcentaje de tus ventas representa el costo del programa de premios.</p>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="card" id="empty-card">
+    <div class="empty-state">
+      <span class="big">&#127881;</span>
+      Sube tu archivo CSV para ver tus m&#xE9;tricas: ticket promedio, ganancia del per&#xED;odo,
+      proyecciones de venta, top de premios entregados y m&#xE1;s.
+    </div>
+  </div>
+
+  <!-- RESULTS (hidden until file loaded) -->
+  <div id="results" style="display:none">
+
+    <!-- KPIs -->
+    <div class="card">
+      <div class="sec">&#9889; Resumen del Per&#xED;odo</div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+    </div>
+
+    <div class="grid-2">
+      <!-- TENDENCIA -->
+      <div class="card">
+        <div class="sec">&#128200; Juegos por D&#xED;a</div>
+        <div class="chart-wrap h-280"><canvas id="chart-tendencia"></canvas></div>
+      </div>
+      <!-- DISTRIBUCION -->
+      <div class="card">
+        <div class="sec">&#127919; Premio Mayor vs Consolaci&#xF3;n</div>
+        <div class="chart-wrap h-280"><canvas id="chart-dist"></canvas></div>
+      </div>
+    </div>
+
+    <!-- TOP 10 -->
+    <div class="card">
+      <div class="sec">&#127942; Top 10 Premios Entregados</div>
+      <div class="top-list" id="top-list"></div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="sec">&#128101; Alcance de Clientes</div>
+        <div class="kpi-grid" id="kpi-clientes"></div>
+      </div>
+      <div class="card">
+        <div class="sec">&#128197; Actividad por D&#xED;a de la Semana</div>
+        <div class="chart-wrap h-280"><canvas id="chart-dow"></canvas></div>
+      </div>
+    </div>
+
+    <!-- SUGERENCIAS -->
+    <div class="card">
+      <div class="sec">&#128161; Sugerencias para tu Negocio</div>
+      <div class="sugg-grid" id="sugg-grid"></div>
+    </div>
+
+    <button class="btn btn-gh" onclick="resetDash()">&#8634; Cargar otro archivo</button>
+  </div>
+
+  <div class="foot">AUMVEN Pro &#8226; Dashboard de Resultados &#8226; Tus datos se procesan localmente en tu navegador, no se env&#xEDan a ning&#xFA;n servidor</div>
+</div>
+
+<script>
+// ================================================================
+//  PARSER CSV -- compatible con el formato exportado por AUMVEN
+//  Formato: sep=; ... cabecera de metadatos ... linea
+//  "Fecha;Hora;Premio;Tipo;Código" + filas de detalle
+// ================================================================
+var registros = []; // [{fecha, hora, premio, tipo, codigo, ts}]
+var metaCfg = {};   // datos de cabecera (ticket, adicional, etc.)
+
+function parseCSV(text) {
+  registros = [];
+  metaCfg = {};
+
+  var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length; });
+  // quitar BOM y "sep=;"
+  if (lines.length && lines[0].indexOf('sep=') === 0) lines.shift();
+
+  var headerIdx = -1;
+  for (var i = 0; i < lines.length; i++) {
+    var cols = splitCsvLine(lines[i]);
+    if (cols.length >= 4 && /fecha/i.test(cols[0]) && /hora/i.test(cols[1])) {
+      headerIdx = i;
+      continue;
+    }
+    if (headerIdx === -1) {
+      // lineas de metadatos clave;valor
+      if (cols.length >= 2) {
+        metaCfg[cols[0].trim()] = cols[1].trim();
+      }
+    } else {
+      if (cols.length < 4) continue;
+      var fecha  = cols[0].trim();
+      var hora   = cols[1].trim();
+      var premio = cols[2].trim();
+      var tipo   = cols[3].trim();
+      var codigo = (cols[4] || '').trim();
+      if (!fecha && !premio) continue;
+      // Si la columna Hora viene vacía pero Fecha contiene fecha+hora juntas, separar
+      if (!hora && /\d{1,2}:\d{2}/.test(fecha)) {
+        var fm = fecha.match(/^(\S+)\s+(.*)$/);
+        if (fm) { hora = fm[2]; fecha = fm[1]; }
+      }
+      registros.push({
+        fecha: fecha, hora: hora, premio: premio || 'Premio entregado',
+        tipo: tipo, codigo: codigo, gano: /mayor/i.test(tipo),
+        ts: parseFechaCL(fecha, hora)
+      });
+    }
+  }
+  return registros.length > 0;
+}
+
+function splitCsvLine(line) {
+  // separador ; simple (el export no usa comillas complejas normalmente)
+  return line.split(';');
+}
+
+function parseFechaCL(fecha, hora) {
+  // fecha tipo DD-MM-YYYY o DD/MM/YYYY
+  if (!fecha) return null;
+  var sep = fecha.indexOf('/') !== -1 ? '/' : '-';
+  var parts = fecha.split(sep);
+  if (parts.length !== 3) return null;
+  var d = parseInt(parts[0],10), m = parseInt(parts[1],10), y = parseInt(parts[2],10);
+  if (y < 100) y += 2000;
+  var hh = 0, mm = 0;
+  if (hora) {
+    var hm = hora.replace(/[^0-9:apAP\.]/g,'').match(/(\d{1,2}):(\d{2})\s*([ap])?/i);
+    if (hm) {
+      hh = parseInt(hm[1],10);
+      mm = parseInt(hm[2],10);
+      if (hm[3] && hm[3].toLowerCase()==='p' && hh < 12) hh += 12;
+    }
+  }
+  return new Date(y, m-1, d, hh, mm).getTime();
+}
+
+// ================================================================
+//  UI: file handling
+// ================================================================
+var fileIn = document.getElementById('file-in');
+var upZone = document.getElementById('up-zone');
+
+fileIn.addEventListener('change', function(e){
+  var f = e.target.files[0];
+  if (f) leerArchivo(f);
+});
+upZone.addEventListener('dragover', function(e){ e.preventDefault(); upZone.classList.add('drag'); });
+upZone.addEventListener('dragleave', function(){ upZone.classList.remove('drag'); });
+upZone.addEventListener('drop', function(e){
+  e.preventDefault(); upZone.classList.remove('drag');
+  var f = e.dataTransfer.files[0];
+  if (f) leerArchivo(f);
+});
+
+function leerArchivo(f) {
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var ok = parseCSV(ev.target.result);
+    if (!ok) {
+      alert('No se pudo leer el archivo. Verifica que sea un CSV exportado desde AUMVEN Pro (bot\xF3n "Exportar a Excel").');
+      return;
+    }
+    document.getElementById('up-name').style.display = 'block';
+    document.getElementById('up-name').textContent = '\u2705 ' + f.name + ' \u2014 ' + registros.length + ' registros cargados';
+    document.getElementById('empty-card').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    renderAll();
+  };
+  reader.readAsText(f, 'UTF-8');
+}
+
+function resetDash() {
+  registros = []; metaCfg = {};
+  fileIn.value = '';
+  document.getElementById('up-name').style.display = 'none';
+  document.getElementById('empty-card').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  ['in-ventas','in-pedidos'].forEach(function(id){ document.getElementById(id).value=''; });
+  destroyCharts();
+}
+
+// ================================================================
+//  CALCULOS
+// ================================================================
+function $cl(n) {
+  return '$' + Math.round(n).toLocaleString('es-CL');
+}
+
+function calcularTodo() {
+  var total = registros.length;
+  var mayores = registros.filter(function(r){ return r.gano; });
+  var consolaciones = total - mayores.length;
+
+  // utilidad por juego: desde metaCfg si existe
+  var utilidadJuego = parseFloat((metaCfg['Utilidad por juego 80% del adicional (CLP)']||'').replace(/[^\d.-]/g,'')) || 0;
+  var ticketCfg = parseFloat((metaCfg['Ticket promedio real (CLP)']||'').replace(/[^\d.-]/g,'')) || 0;
+  var metaCfgVal = parseFloat((metaCfg['Meta calculada TK+Adicional (CLP)']||'').replace(/[^\d.-]/g,'')) || 0;
+  var adicional = parseFloat((metaCfg['Monto adicional por juego (CLP)']||'').replace(/[^\d.-]/g,'')) || 0;
+
+  var utilidadAcumulada = total * utilidadJuego;
+  var proyJuegos30 = 0, proyUtilidad30 = 0;
+
+  // Rango de fechas real cubierto por el CSV
+  var tsValidos = registros.map(function(r){return r.ts;}).filter(Boolean);
+  var diasRango = 7;
+  if (tsValidos.length >= 2) {
+    var min = Math.min.apply(null, tsValidos), max = Math.max.apply(null, tsValidos);
+    diasRango = Math.max(1, Math.round((max-min)/86400000) + 1);
+  }
+  var promedioJuegosDia = total / diasRango;
+  proyJuegos30 = Math.round(promedioJuegosDia * 30);
+  proyUtilidad30 = proyJuegos30 * utilidadJuego;
+
+  // Ventas/ticket reales si el usuario los ingreso
+  var ventas = parseFloat(document.getElementById('in-ventas').value) || 0;
+  var pedidos = parseFloat(document.getElementById('in-pedidos').value) || 0;
+  var ticketReal = (ventas > 0 && pedidos > 0) ? (ventas/pedidos) : ticketCfg;
+  var costoPrograma = utilidadAcumulada; // costo = lo que el negocio "regala" en valor (80% del adicional)
+  var pctCostoVsVentas = (ventas > 0) ? (costoPrograma/ventas*100) : null;
+
+  // Top 10 premios
+  var counts = {};
+  registros.forEach(function(r){ counts[r.premio] = (counts[r.premio]||0)+1; });
+  var top10 = Object.keys(counts).map(function(k){ return {premio:k, count:counts[k]}; })
+    .sort(function(a,b){ return b.count-a.count; }).slice(0,10);
+
+  // Tendencia por dia
+  var porDia = {};
+  registros.forEach(function(r){
+    var d = r.fecha || 'S/F';
+    porDia[d] = (porDia[d]||0)+1;
+  });
+  var diasOrdenados = Object.keys(porDia).sort(function(a,b){
+    var ta = registros.find(function(r){return r.fecha===a;});
+    var tb = registros.find(function(r){return r.fecha===b;});
+    return (ta&&ta.ts||0) - (tb&&tb.ts||0);
+  });
+
+  // Por dia de semana
+  var diasSemana = ['Dom','Lun','Mar','Mi\xE9','Jue','Vie','S\xE1b'];
+  var porDOW = [0,0,0,0,0,0,0];
+  registros.forEach(function(r){
+    if (r.ts) porDOW[new Date(r.ts).getDay()]++;
+  });
+
+  // Clientes unicos (por codigo)
+  var codigosUnicos = {};
+  registros.forEach(function(r){ if (r.codigo) codigosUnicos[r.codigo]=(codigosUnicos[r.codigo]||0)+1; });
+  var totalCodigos = Object.keys(codigosUnicos).length;
+  var recurrentes = Object.values(codigosUnicos).filter(function(c){return c>1;}).length;
+
+  return {
+    total: total, mayores: mayores.length, consolaciones: consolaciones,
+    utilidadJuego: utilidadJuego, utilidadAcumulada: utilidadAcumulada,
+    proyJuegos30: proyJuegos30, proyUtilidad30: proyUtilidad30,
+    diasRango: diasRango, promedioJuegosDia: promedioJuegosDia,
+    ticketReal: ticketReal, metaCfgVal: metaCfgVal, adicional: adicional,
+    pctCostoVsVentas: pctCostoVsVentas, ventas: ventas,
+    top10: top10, porDia: porDia, diasOrdenados: diasOrdenados,
+    diasSemana: diasSemana, porDOW: porDOW,
+    totalCodigos: totalCodigos, recurrentes: recurrentes
+  };
+}
+
+// ================================================================
+//  RENDER
+// ================================================================
+var charts = {};
+function destroyCharts() {
+  Object.keys(charts).forEach(function(k){ if(charts[k]) charts[k].destroy(); });
+  charts = {};
+}
+
+function renderAll() {
+  if (!registros.length) return;
+  var d = calcularTodo();
+  renderKpis(d);
+  renderTop10(d);
+  renderClientes(d);
+  renderTendencia(d);
+  renderDist(d);
+  renderDOW(d);
+  renderSugerencias(d);
+}
+
+function kpiCard(val, lbl, deltaHtml) {
+  return '<div class="kpi-card"><div class="kpi-val">' + val + '</div>'
+       + '<div class="kpi-lbl">' + lbl + '</div>'
+       + (deltaHtml || '') + '</div>';
+}
+
+function renderKpis(d) {
+  var html = '';
+  html += kpiCard(d.total, 'Juegos Totales');
+  html += kpiCard(d.mayores + ' / ' + d.consolaciones, 'Premios Mayores / Consolaci\xF3n');
+  html += kpiCard(d.ticketReal ? $cl(d.ticketReal) : '\u2014', 'Ticket Promedio');
+  html += kpiCard($cl(d.utilidadAcumulada), 'Ganancia del Per\xEDodo (costo premios)');
+  html += kpiCard(d.proyJuegos30 + ' juegos', 'Proyecci\xF3n 30 d\xEDas');
+  html += kpiCard($cl(d.proyUtilidad30), 'Proyecci\xF3n Utilidad 30 d\xEDas');
+  if (d.pctCostoVsVentas !== null) {
+    html += kpiCard(d.pctCostoVsVentas.toFixed(1) + '%', 'Costo Programa vs Ventas');
+  }
+  html += kpiCard(d.promedioJuegosDia.toFixed(1), 'Juegos / D\xEDa (promedio)');
+  document.getElementById('kpi-grid').innerHTML = html;
+}
+
+function renderClientes(d) {
+  var html = '';
+  html += kpiCard(d.totalCodigos, 'C\xF3digos \xDAnicos Usados');
+  html += kpiCard(d.recurrentes, 'Clientes Recurrentes');
+  var pctRecurr = d.totalCodigos > 0 ? (d.recurrentes/d.totalCodigos*100).toFixed(0) : 0;
+  html += kpiCard(pctRecurr + '%', '% Recurrencia');
+  document.getElementById('kpi-clientes').innerHTML = html;
+}
+
+function renderTop10(d) {
+  var max = d.top10.length ? d.top10[0].count : 1;
+  var html = '';
+  d.top10.forEach(function(item, i){
+    var pct = (item.count/max*100);
+    html += '<div class="top-row">'
+      + '<div class="top-rank">' + (i+1) + '</div>'
+      + '<div class="top-body">'
+        + '<div class="top-name">' + item.premio + '</div>'
+        + '<div class="top-bar-bg"><div class="top-bar-fill" style="width:' + pct + '%"></div></div>'
+      + '</div>'
+      + '<div class="top-count">' + item.count + '</div>'
+      + '</div>';
+  });
+  document.getElementById('top-list').innerHTML = html || '<p style="color:var(--mt);text-align:center">Sin datos</p>';
+}
+
+var CHART_COLORS = ['#a855f7','#ec4899','#f59e0b','#10b981','#60a5fa','#f43f5e','#14b8a6','#facc15','#7c3aed','#f472b6'];
+
+function chartDefaults() {
+  return {
+    plugins: { legend: { labels: { color: '#9e97c4', font: { family: 'Nunito' } } } },
+    scales: {
+      x: { ticks: { color: '#9e97c4' }, grid: { color: 'rgba(124,58,237,.10)' } },
+      y: { ticks: { color: '#9e97c4' }, grid: { color: 'rgba(124,58,237,.10)' } }
+    }
+  };
+}
+
+function renderTendencia(d) {
+  var ctx = document.getElementById('chart-tendencia');
+  if (charts.tendencia) charts.tendencia.destroy();
+  var labels = d.diasOrdenados;
+  var data = labels.map(function(l){ return d.porDia[l]; });
+  charts.tendencia = new Chart(ctx, {
+    type: 'line',
+    data: { labels: labels, datasets: [{
+      label: 'Juegos', data: data, borderColor: '#a855f7',
+      backgroundColor: 'rgba(168,85,247,.18)', fill: true, tension: .35, pointBackgroundColor:'#f472b6'
+    }]},
+    options: Object.assign({ responsive:true, maintainAspectRatio:false }, chartDefaults())
+  });
+}
+
+function renderDist(d) {
+  var ctx = document.getElementById('chart-dist');
+  if (charts.dist) charts.dist.destroy();
+  charts.dist = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Premio Mayor', 'Consolaci\xF3n'],
+      datasets: [{ data: [d.mayores, d.consolaciones], backgroundColor: ['#f59e0b','#7c3aed'], borderWidth:0 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins: { legend: { position:'bottom', labels:{ color:'#9e97c4', font:{family:'Nunito'} } } } }
+  });
+}
+
+function renderDOW(d) {
+  var ctx = document.getElementById('chart-dow');
+  if (charts.dow) charts.dow.destroy();
+  charts.dow = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: d.diasSemana, datasets: [{
+      label:'Juegos', data: d.porDOW, backgroundColor: CHART_COLORS, borderRadius:6
+    }]},
+    options: Object.assign({ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } } }, chartDefaults())
+  });
+}
+
+function renderSugerencias(d) {
+  var sugs = [];
+
+  // Recurrencia
+  if (d.totalCodigos > 0) {
+    var pctR = d.recurrentes/d.totalCodigos*100;
+    if (pctR < 15) {
+      sugs.push({ico:'\uD83D\uDD01', txt: '<b>Baja recurrencia (' + pctR.toFixed(0) + '%)</b>: la mayor\xEDa de tus clientes jug\xF3 solo una vez. Considera un premio especial para "segunda visita" que incentive volver.'});
+    } else {
+      sugs.push({ico:'\uD83D\uDC9C', txt: '<b>Buena recurrencia (' + pctR.toFixed(0) + '%)</b>: tienes una base de clientes que vuelve. Podr\xEDas crear un premio exclusivo para clientes frecuentes.'});
+    }
+  }
+
+  // Distribucion 80/20
+  if (d.total > 0) {
+    var pctConsol = d.consolaciones/d.total*100;
+    if (Math.abs(pctConsol-20) > 8) {
+      sugs.push({ico:'\u2696\uFE0F', txt: '<b>Revisa el motor de probabilidades</b>: tu distribuci\xF3n consolaci\xF3n/premio mayor es ' + pctConsol.toFixed(0) + '% / ' + (100-pctConsol).toFixed(0) + '%, distinta al 20/80 esperado. Si la muestra es peque\xF1a esto es normal.'});
+    }
+  }
+
+  // Dia pico
+  var maxDow = 0, idxDow = -1;
+  d.porDOW.forEach(function(v,i){ if(v>maxDow){maxDow=v;idxDow=i;} });
+  if (idxDow >= 0 && maxDow > 0) {
+    sugs.push({ico:'\uD83D\uDCC6', txt: '<b>D\xEDa m\xE1s activo: ' + d.diasSemana[idxDow] + '</b> (' + maxDow + ' juegos). Aprovecha ese d\xEDa para promociones extra o stock reforzado de premios.'});
+  }
+
+  // Top premio caro
+  if (d.top10.length) {
+    sugs.push({ico:'\uD83C\uDFC6', txt: '<b>Premio m\xE1s entregado: "' + d.top10[0].premio + '"</b> (' + d.top10[0].count + ' veces). Asegura buen stock de este premio para no quebrar.'});
+  }
+
+  // Costo vs ventas
+  if (d.pctCostoVsVentas !== null) {
+    if (d.pctCostoVsVentas > 5) {
+      sugs.push({ico:'\uD83D\uDCB0', txt: '<b>Costo del programa: ' + d.pctCostoVsVentas.toFixed(1) + '% de tus ventas</b>. Si esto supera tu margen, considera subir el "Monto Adicional" requerido para jugar.'});
+    } else {
+      sugs.push({ico:'\u2705', txt: '<b>Costo del programa controlado (' + d.pctCostoVsVentas.toFixed(1) + '% de ventas)</b>. Tienes margen para hacer premios m\xE1s atractivos si quieres aumentar la participaci\xF3n.'});
+    }
+  } else {
+    sugs.push({ico:'\u270F\uFE0F', txt: 'Completa <b>"Ventas totales"</b> y <b>"N\xBA de pedidos"</b> arriba para ver qu\xE9 porcentaje de tus ventas representa el costo del programa de premios.'});
+  }
+
+  // Proyeccion
+  sugs.push({ico:'\uD83D\uDD2E', txt: 'A este ritmo, en 30 d\xEDas tendr\xEDas <b>~' + d.proyJuegos30 + ' juegos</b> y un costo en premios de <b>' + $cl(d.proyUtilidad30) + '</b>. \xDAsalo para planificar tu stock de premios del pr\xF3ximo mes.'});
+
+  // Tasa de conversion (sugerencia de metrica adicional)
+  sugs.push({ico:'\uD83D\uDCE9', txt: '<b>M\xE9trica sugerida para el futuro</b>: registra cu\xE1ntos clientes hacen clic en "Canjear por WhatsApp" vs. cu\xE1ntos juegan. Eso mide tu <b>tasa de conversi\xF3n real</b> del premio a venta/contacto.'});
+
+  document.getElementById('sugg-grid').innerHTML = sugs.map(function(s){
+    return '<div class="sugg-card"><span class="sugg-ico">' + s.ico + '</span>' + s.txt + '</div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
