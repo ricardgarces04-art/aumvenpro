@@ -258,7 +258,7 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
                filter:drop-shadow(0 0 15px rgba(255,65,108,0.5))"
         onerror="this.style.display='none';document.getElementById('aumven-fb').style.display='block'">
       <div id="aumven-fb" class="aumven-brand" style="display:none">&#127880; AUMVEN &#127880;</div>
-      <p class="aumven-tag" id="nombre-sucursal">Sucursal Cari&#xF1;itos Box</p>
+      <p class="aumven-tag" id="store-title-display">Sucursal AUMVEN PRO</p>
     </div>
     <div class="login-card">
       <p class="login-sub">Ingresa tu c&#xF3;digo &#xFA;nico para jugar y ganar</p>
@@ -524,6 +524,7 @@ async function inicializarPlataformaAumven() {
         alerta('\u26A0\uFE0F Negocio "' + NEG_SLUG + '" no encontrado. Verifica el link.');
       }
       arrancarConDatosLocales();
+      actualizarTituloTienda();
       return;
     }
 
@@ -531,6 +532,7 @@ async function inicializarPlataformaAumven() {
       CFG0.nombre = sanitizeForJSON(data.nombre || CFG0.nombre);
       CFG0.juego  = data.juego  || 'globos';
       CFG0.consolacion = sanitizeForJSON(data.consolacion || CFG0.consolacion);
+      CFG0.prefijo = (data.prefijo || CFG0.prefijo || 'CARI').trim().toUpperCase();
 
       if (Array.isArray(data.premios)) {
         premiosReales = sanitizeForJSON(data.premios.map(function(p){ return String(p).trim(); }).filter(Boolean));
@@ -551,16 +553,27 @@ async function inicializarPlataformaAumven() {
       inq.premios = premiosReales;
       inq.consolacion = CFG0.consolacion;
       inq.wa = whatsappReal;
-
-      var nsEl = document.getElementById('nombre-sucursal');
-      if (nsEl) nsEl.innerText = "Sucursal " + CFG0.nombre;
     }
 
     arrancarConDatosLocales();
+    actualizarTituloTienda();
   } catch (e) {
     console.error("Error cr\xEDtico en inicializaci\xF3n:", e.message);
     arrancarConDatosLocales();
+    actualizarTituloTienda();
   }
+}
+
+// ================================================================
+//  TÍTULO DINÁMICO DE LA TIENDA (sin texto fijo "Cariñitos Box")
+//  Pinta "SUCURSAL " + nombre real en mayúsculas, o el branding
+//  por defecto "SUCURSAL AUMVEN PRO" si no hay negocio configurado.
+// ================================================================
+function actualizarTituloTienda() {
+  var el = document.getElementById('store-title-display');
+  if (!el) return;
+  var nombre = (CFG0 && CFG0.nombre && CFG0.nombre !== 'Cargando...') ? CFG0.nombre.trim() : '';
+  el.textContent = nombre ? ('SUCURSAL ' + nombre.toUpperCase()) : 'SUCURSAL AUMVEN PRO';
 }
 
 function arrancarConDatosLocales() {
@@ -1102,6 +1115,7 @@ async function guardarCfg() {
 
   // Sincronizar variables en memoria con la nueva configuracion
   CFG0.nombre = cfg.nombre;
+  actualizarTituloTienda();
   CFG0.wa = cfg.wa;
   CFG0.prefijo = cfg.prefijo;
   CFG0.logo = cfg.logo;
@@ -1130,7 +1144,8 @@ async function guardarCfg() {
       juego: cfg.juego,
       premios: cfg.premios,
       consolacion: cfg.consolacion,
-      telefono_whatsapp: cfg.wa
+      telefono_whatsapp: cfg.wa,
+      prefijo: cfg.prefijo
     };
     var q = supabaseClient.from('configuraciones').update(updatePayload);
     if (NEG_SLUG) {
