@@ -680,8 +680,6 @@ function entrar() {
     if (re.test(raw)) {
       cod = raw;
 
-      listaNegra.push(raw);
-      localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
       localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
 
       addUsd(raw);
@@ -695,8 +693,6 @@ function entrar() {
   if (typeof DEMO !== 'undefined' && !DEMO[raw]) { alerta('\u274C C\xF3digo inv\xE1lido. Verifica con tu vendedor.'); return; }
   cod = raw;
 
-  listaNegra.push(raw);
-  localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
   localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
 
   addUsd(raw);
@@ -779,6 +775,17 @@ function mostrarRes(premio) {
   used = true;
 
   const codActual = (localStorage.getItem('aumven_cod_actual' + SLUG_SUFFIX) || '').toUpperCase();
+
+  // Quemar el código aquí (juego completado), no al ingresar — evita que un
+  // fallo de carga del juego deje al cliente sin su única jugada.
+  if (codActual) {
+    var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
+    if (listaNegra.indexOf(codActual) === -1) {
+      listaNegra.push(codActual);
+      localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
+    }
+  }
+
   var ahora = new Date();
   var fechaChile = ahora.toLocaleDateString('es-CL');
   var horaChile = ahora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
@@ -1377,13 +1384,14 @@ function mostrarBases() {
 function devReset() {
   localStorage.removeItem(K_USD);
   localStorage.removeItem(K_HST);
+  localStorage.removeItem(K_BLK);
   inq={premios:[],consolacion:'',wa:''}; cod=null; used=false;
   document.getElementById('cod-in').value='';
   document.getElementById('game-zone').innerHTML='';
   document.getElementById('game-hdr').innerHTML='';
   document.getElementById('result-card').innerHTML='';
   goLogin();
-  alerta('\u2705 Reset: av_usd y av_hst limpiados. av_cfg intacto.','ok');
+  alerta('\u2705 Reset: c\xF3digos usados, av_usd y av_hst limpiados. av_cfg intacto.','ok');
 }
 
 // Bloqueo anti-inspección desactivado temporalmente para depuración
