@@ -512,10 +512,22 @@ async function inicializarPlataformaAumven() {
     var query = supabaseClient.from('configuraciones').select('*');
     if (NEG_SLUG) {
       query = query.eq('slug', NEG_SLUG);
+    } else {
+      // Sin slug: leer SIEMPRE la misma fila (id=1) que guardarCfg() actualiza,
+      // para evitar que .limit(1) devuelva una fila distinta/vacía si hay >1 filas.
+      query = query.eq('id', 1);
     }
-    query = query.limit(1);
-    const { data: rows, error } = await query;
-    const data = (rows && rows.length) ? rows[0] : null;
+    query = query.order('id', { ascending: true }).limit(1);
+    var { data: rows, error } = await query;
+    var data = (rows && rows.length) ? rows[0] : null;
+
+    // Respaldo: si no hay slug y la fila id=1 no existe, usar cualquier fila disponible
+    if (!NEG_SLUG && !error && !data) {
+      var fb = await supabaseClient.from('configuraciones').select('*').order('id', { ascending: true }).limit(1);
+      if (!fb.error && fb.data && fb.data.length) data = fb.data[0];
+    }
+
+    console.log("Supabase data cargada:", data, "error:", error);
 
     if (error) {
       console.error("Error de Supabase:", error.message);
@@ -557,7 +569,7 @@ async function inicializarPlataformaAumven() {
 
     arrancarConDatosLocales();
     actualizarTituloTienda();
-  } catch (e) {
+    console.log("CFG0 final tras inicializaci\xF3n:", CFG0);
     console.error("Error cr\xEDtico en inicializaci\xF3n:", e.message);
     arrancarConDatosLocales();
     actualizarTituloTienda();
