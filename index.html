@@ -513,17 +513,17 @@ async function inicializarPlataformaAumven() {
     if (NEG_SLUG) {
       query = query.eq('slug', NEG_SLUG);
     } else {
-      // Sin slug: leer SIEMPRE la misma fila (id=1) que guardarCfg() actualiza,
-      // para evitar que .limit(1) devuelva una fila distinta/vacía si hay >1 filas.
-      query = query.eq('id', 1);
+      // Sin slug: leer la fila semilla 'config_principal' (id es de tipo texto,
+      // no numérico). guardarCfg() actualiza esta misma fila cuando no hay slug.
+      query = query.eq('id', 'config_principal');
     }
-    query = query.order('id', { ascending: true }).limit(1);
+    query = query.limit(1);
     var { data: rows, error } = await query;
     var data = (rows && rows.length) ? rows[0] : null;
 
-    // Respaldo: si no hay slug y la fila id=1 no existe, usar cualquier fila disponible
+    // Respaldo: si no hay slug y 'config_principal' no existe, usar cualquier fila disponible
     if (!NEG_SLUG && !error && !data) {
-      var fb = await supabaseClient.from('configuraciones').select('*').order('id', { ascending: true }).limit(1);
+      var fb = await supabaseClient.from('configuraciones').select('*').limit(1);
       if (!fb.error && fb.data && fb.data.length) data = fb.data[0];
     }
 
@@ -555,7 +555,7 @@ async function inicializarPlataformaAumven() {
       }
       CFG0.premios = premiosReales;
 
-      whatsappReal = data.telefono_whatsapp || data.whatsapp || data.wa || whatsappReal;
+      whatsappReal = data.wa || data.telefono_whatsapp || data.whatsapp || whatsappReal;
       CFG0.wa = whatsappReal;
 
       window.whatsappReal = whatsappReal;
@@ -1157,14 +1157,14 @@ async function guardarCfg() {
       juego: cfg.juego,
       premios: cfg.premios,
       consolacion: cfg.consolacion,
-      telefono_whatsapp: cfg.wa,
+      wa: cfg.wa,
       prefijo: cfg.prefijo
     };
     var q = supabaseClient.from('configuraciones').update(updatePayload);
     if (NEG_SLUG) {
       q = q.eq('slug', NEG_SLUG);
     } else {
-      q = q.eq('id', 1);
+      q = q.eq('id', 'config_principal');
     }
     var { error: updErr } = await q;
     if (updErr) {
