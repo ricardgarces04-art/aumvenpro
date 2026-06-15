@@ -570,6 +570,7 @@ async function inicializarPlataformaAumven() {
     arrancarConDatosLocales();
     actualizarTituloTienda();
     console.log("CFG0 final tras inicializaci\xF3n:", CFG0);
+  } catch (e) {
     console.error("Error cr\xEDtico en inicializaci\xF3n:", e.message);
     arrancarConDatosLocales();
     actualizarTituloTienda();
