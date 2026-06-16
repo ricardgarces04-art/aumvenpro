@@ -513,15 +513,15 @@ async function inicializarPlataformaAumven() {
     if (NEG_SLUG) {
       query = query.eq('slug', NEG_SLUG);
     } else {
-      // Sin slug: leer la fila semilla 'config_principal' (id es de tipo texto,
+      // Sin slug: leer la fila semilla 'carinito' (id es de tipo texto,
       // no numérico). guardarCfg() actualiza esta misma fila cuando no hay slug.
-      query = query.eq('id', 'config_principal');
+      query = query.eq('id', 'carinito');
     }
     query = query.limit(1);
     var { data: rows, error } = await query;
     var data = (rows && rows.length) ? rows[0] : null;
 
-    // Respaldo: si no hay slug y 'config_principal' no existe, usar cualquier fila disponible
+    // Respaldo: si no hay slug y 'carinito' no existe, usar cualquier fila disponible
     if (!NEG_SLUG && !error && !data) {
       var fb = await supabaseClient.from('configuraciones').select('*').limit(1);
       if (!fb.error && fb.data && fb.data.length) data = fb.data[0];
@@ -1164,7 +1164,7 @@ async function guardarCfg() {
     if (NEG_SLUG) {
       q = q.eq('slug', NEG_SLUG);
     } else {
-      q = q.eq('id', 'config_principal');
+      q = q.eq('id', 'carinito');
     }
     var { error: updErr } = await q;
     if (updErr) {
