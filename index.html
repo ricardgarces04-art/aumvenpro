@@ -509,25 +509,17 @@ let premiosReales = ["Premio A", "Premio B", "Premio C"];
 // ================================================================
 async function inicializarPlataformaAumven() {
   try {
-    var query = supabaseClient.from('configuraciones').select('*');
-    if (NEG_SLUG) {
-      query = query.eq('slug', NEG_SLUG);
-    } else {
-      // Sin slug: leer la fila semilla 'carinito' (id es de tipo texto,
-      // no numérico). guardarCfg() actualiza esta misma fila cuando no hay slug.
-      query = query.eq('id', 'carinito');
-    }
-    query = query.limit(1);
-    var { data: rows, error } = await query;
-    var data = (rows && rows.length) ? rows[0] : null;
+    // Siempre busca por columna 'id' (PK de texto):
+    // - Con ?neg=carinito → busca id='carinito'
+    // - Sin parámetro    → busca id='carinito' (piloto por defecto)
+    var idBuscar = NEG_SLUG || 'carinito';
+    var { data, error } = await supabaseClient
+      .from('configuraciones')
+      .select('*')
+      .eq('id', idBuscar)
+      .maybeSingle();
 
-    // Respaldo: si no hay slug y 'carinito' no existe, usar cualquier fila disponible
-    if (!NEG_SLUG && !error && !data) {
-      var fb = await supabaseClient.from('configuraciones').select('*').limit(1);
-      if (!fb.error && fb.data && fb.data.length) data = fb.data[0];
-    }
-
-    console.log("Supabase data cargada:", data, "error:", error);
+    console.log("Supabase id buscado:", idBuscar, "data:", data, "error:", error);
 
     if (error) {
       console.error("Error de Supabase:", error.message);
@@ -1160,12 +1152,8 @@ async function guardarCfg() {
       wa: cfg.wa,
       prefijo: cfg.prefijo
     };
-    var q = supabaseClient.from('configuraciones').update(updatePayload);
-    if (NEG_SLUG) {
-      q = q.eq('slug', NEG_SLUG);
-    } else {
-      q = q.eq('id', 'carinito');
-    }
+    var idActualizar = NEG_SLUG || 'carinito';
+    var q = supabaseClient.from('configuraciones').update(updatePayload).eq('id', idActualizar);
     var { error: updErr } = await q;
     if (updErr) {
       console.error("Error al actualizar Supabase:", updErr.message);
