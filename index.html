@@ -481,7 +481,31 @@ function addHst(e) {
     lsW(K_HST, a);
     console.log("addHst guardado. Total registros av_hst:", a.length, "ultimo:", e);
   } catch(err) {
-    console.error("Error guardando historial:", err);
+    console.error("Error guardando historial local:", err);
+  }
+
+  // Guardar también en Supabase (historial centralizado por negocio)
+  // Si el internet es lento o falla, el juego ya quedó en localStorage — no bloquea nada
+  try {
+    var negocioId = NEG_SLUG || 'carinito';
+    supabaseClient.from('historial').insert({
+      negocio_id: negocioId,
+      codigo:  e.cod    || e.Codigo  || '',
+      premio:  e.txt    || e.Premio  || '',
+      tipo:    e.Tipo   || (e.gano ? 'Premio Mayor' : 'Consolación'),
+      gano:    e.gano   || false,
+      fecha:   e.Fecha  || e.fecha   || '',
+      hora:    e.Hora   || e.hora    || '',
+      ts:      e.ts     || Date.now()
+    }).then(function(res){
+      if (res.error) {
+        console.error("Error guardando en Supabase historial:", res.error.message);
+      } else {
+        console.log("Juego guardado en Supabase historial para negocio:", negocioId);
+      }
+    });
+  } catch(err) {
+    console.error("Error crítico Supabase historial:", err);
   }
 }
 
@@ -1205,12 +1229,38 @@ function calcDinamica() {
   return { TK: TK, adicional: adicional, meta: meta, utilidadJuego: utilidadJuego, cfg: cfg };
 }
 
-function renderKPIs() {
-  var hAll = lsR(K_HST, []);
+async function renderKPIs() {
   var per  = document.getElementById('kpi-fil').value;
-  var hF   = filtrHst(hAll, per);
+  var negocioId = NEG_SLUG || 'carinito';
+
+  // Leer historial desde Supabase (centralizado, todos los dispositivos)
+  var hAll = [];
+  try {
+    var { data: rows, error } = await supabaseClient
+      .from('historial')
+      .select('*')
+      .eq('negocio_id', negocioId)
+      .order('ts', { ascending: false });
+    if (!error && rows) {
+      hAll = rows.map(function(r){
+        return {
+          txt: r.premio, gano: r.gano, cod: r.codigo,
+          fecha: r.fecha + (r.hora ? ' ' + r.hora : ''),
+          ts: r.ts || new Date(r.created_at).getTime()
+        };
+      });
+    } else {
+      // Fallback a localStorage si Supabase falla
+      hAll = lsR(K_HST, []);
+    }
+  } catch(e) {
+    hAll = lsR(K_HST, []);
+  }
+
+  console.log("renderKPIs: Supabase historial total=", hAll.length, "negocio=", negocioId);
+
+  var hF = filtrHst(hAll, per);
   var totalJuegos = hF.length;
-  console.log("renderKPIs: av_hst total=", hAll.length, "filtrado(" + per + ")=", totalJuegos, "datos=", hAll);
 
   var d = calcDinamica();
   var utilidadAcumulada = totalJuegos * d.utilidadJuego;
@@ -1278,8 +1328,21 @@ function calcTicket() {
   if (fMetaEl) fMetaEl.value = d.meta.toLocaleString('es-CL');
 }
 
-function exportCSV() {
-  var hAll = lsR(K_HST, []);
+async function exportCSV() {
+  var negocioId = NEG_SLUG || 'carinito';
+  var hAll = [];
+  try {
+    var { data: rows, error } = await supabaseClient
+      .from('historial').select('*')
+      .eq('negocio_id', negocioId)
+      .order('ts', { ascending: true });
+    if (!error && rows) {
+      hAll = rows.map(function(r){
+        return { txt: r.premio, gano: r.gano, cod: r.codigo,
+          fecha: r.fecha, hora: r.hora, ts: r.ts || new Date(r.created_at).getTime() };
+      });
+    } else { hAll = lsR(K_HST, []); }
+  } catch(e) { hAll = lsR(K_HST, []); }
   var per  = document.getElementById('kpi-fil').value;
   var hF   = filtrHst(hAll, per);
   var may  = hF.filter(function(e){ return e.gano; }).length;
