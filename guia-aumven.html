@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUMVEN Pro — Guía de Implementación</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0714;
+  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
+  --gd:#f59e0b;--gr:#10b981;
+  --tx:#f1f0ff;--mt:#9e97c4;
+  --sf:rgba(26,21,48,.85);
+  --gb:rgba(168,85,247,.22);
+  --gs:0 8px 32px rgba(124,58,237,.22);
+  --r:20px;--rs:13px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:'Nunito',sans-serif;
+  min-height:100dvh;padding:1.5rem 1rem 3rem;
+  overflow-x:hidden;
+}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 0%,rgba(124,58,237,.30) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 55% at 90% 100%,rgba(168,85,247,.22) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 35% at 50% 50%,rgba(236,72,153,.08) 0%,transparent 55%)}
+
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto}
+
+/* HEADER */
+.hdr{text-align:center;padding:2rem 1rem 1.5rem}
+.logo-txt{font-family:'Fredoka One',cursive;font-size:2.6rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:.3rem}
+.hdr-sub{color:var(--mt);font-size:.88rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.hdr-title{font-family:'Fredoka One',cursive;font-size:1.55rem;margin:1rem 0 .4rem;
+  background:linear-gradient(135deg,#f1f0ff,#c4b5fd);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-desc{color:var(--mt);font-size:.92rem;line-height:1.65;max-width:520px;margin:0 auto}
+
+/* CARD */
+.card{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.5rem 1.4rem;
+  margin-bottom:1.1rem;box-shadow:var(--gs)}
+
+/* SECTION TITLE */
+.sec{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac2);
+  margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+
+/* CANAL TABS */
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.3rem}
+.tab{border:1.5px solid rgba(124,58,237,.30);border-radius:var(--rs);
+  padding:.65rem .9rem;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:800;font-size:.85rem;background:transparent;color:var(--mt);
+  transition:all .2s;text-align:center}
+.tab.active,.tab:hover{border-color:var(--pk2);background:rgba(236,72,153,.10);color:var(--tx)}
+.tab.active{border-color:var(--pk);box-shadow:0 0 0 2px rgba(236,72,153,.18)}
+.panel{display:none}.panel.active{display:block}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:.75rem}
+.step{display:flex;gap:.9rem;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ac),var(--pk));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:.95rem;color:#fff;
+  box-shadow:0 2px 10px rgba(124,58,237,.40)}
+.step-body{flex:1;padding-top:.22rem}
+.step-title{font-weight:800;font-size:.92rem;margin-bottom:.18rem}
+.step-desc{color:var(--mt);font-size:.83rem;line-height:1.6}
+.step-desc strong{color:var(--tx)}
+.step-tag{display:inline-block;background:rgba(16,185,129,.12);
+  border:1px solid rgba(16,185,129,.28);border-radius:100px;
+  color:#6ee7b7;font-size:.72rem;font-weight:800;
+  padding:.12rem .55rem;margin-top:.35rem}
+
+/* HIGHLIGHT BOX */
+.hl{background:rgba(124,58,237,.10);border:1px solid rgba(124,58,237,.22);
+  border-radius:var(--rs);padding:.85rem 1rem;margin-top:.85rem;
+  font-size:.84rem;line-height:1.65;color:var(--mt)}
+.hl strong{color:var(--ac2)}
+
+/* EJEMPLO DE MENSAJE */
+.msg-box{background:rgba(10,7,20,.70);border:1px solid rgba(168,85,247,.20);
+  border-radius:var(--rs);padding:.9rem 1rem;margin-top:.75rem;
+  font-size:.84rem;line-height:1.7;font-weight:600;
+  border-left:3px solid var(--pk)}
+.msg-label{font-size:.7rem;font-weight:800;color:var(--mt);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:.4rem}
+
+/* TOOLS GRID */
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-top:.75rem}
+.tool{background:rgba(25,18,50,.90);border:1px solid rgba(124,58,237,.20);
+  border-radius:var(--rs);padding:.75rem .85rem;text-align:center}
+.tool-ico{font-size:1.4rem;display:block;margin-bottom:.3rem}
+.tool-name{font-weight:800;font-size:.82rem;color:var(--tx);margin-bottom:.1rem}
+.tool-desc{font-size:.72rem;color:var(--mt)}
+
+/* TIPS */
+.tip-list{display:flex;flex-direction:column;gap:.6rem}
+.tip{display:flex;gap:.65rem;align-items:flex-start;
+  background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);
+  border-radius:var(--rx,10px);padding:.7rem .85rem;font-size:.83rem}
+.tip-ico{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.tip-txt{color:var(--mt);line-height:1.6}
+.tip-txt strong{color:var(--gd)}
+
+/* CTA */
+.cta-card{background:linear-gradient(135deg,rgba(124,58,237,.20),rgba(236,72,153,.14));
+  border:1px solid rgba(168,85,247,.30);border-radius:var(--r);
+  padding:1.8rem 1.4rem;text-align:center;margin-bottom:1.1rem}
+.cta-title{font-family:'Fredoka One',cursive;font-size:1.4rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.5rem}
+.cta-desc{color:var(--mt);font-size:.88rem;line-height:1.65;margin-bottom:1.1rem}
+.cta-link{display:inline-block;background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);
+  color:#fff;font-family:'Nunito',sans-serif;font-weight:800;
+  padding:.75rem 1.6rem;border-radius:var(--rs);text-decoration:none;
+  font-size:.92rem;box-shadow:0 4px 20px rgba(236,72,153,.40);
+  transition:transform .15s,filter .15s}
+.cta-link:hover{transform:translateY(-2px);filter:brightness(1.08)}
+
+.foot{text-align:center;color:rgba(158,151,196,.45);font-size:.72rem;padding-top:.5rem;line-height:1.8}
+
+@media(max-width:480px){
+  .tabs{grid-template-columns:1fr 1fr}
+  .logo-txt{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="logo-txt">AUMVEN Pro</div>
+    <div class="hdr-sub">Guía de Implementación</div>
+    <div class="hdr-title">¡Tu tienda ya está activa! 🎉</div>
+    <p class="hdr-desc">Esta guía te explica exactamente cómo entregar los códigos a tus clientes según tu canal de venta — sin cambiar nada de tu operación actual.</p>
+  </div>
+
+  <!-- PASO 0: TU LINK -->
+  <div class="card">
+    <div class="sec">🔗 Tu link de juego</div>
+    <p style="font-size:.88rem;color:var(--mt);margin-bottom:.75rem;line-height:1.65">Este es el link que tus clientes abrirán en su celular para jugar. Guárdalo, compártelo y úsalo en todo tu material de comunicación:</p>
+    <div style="background:rgba(10,7,20,.75);border:1.5px solid rgba(168,85,247,.30);border-radius:var(--rs);padding:.85rem 1rem;font-weight:800;font-size:.9rem;word-break:break-all;color:var(--ac2)">
+      https://ricardgarces04-art.github.io/aumvenpro/?neg=<span style="color:var(--pk2)">tu-negocio</span>
+    </div>
+    <div class="hl">
+      💡 Reemplaza <strong>tu-negocio</strong> con el identificador que te asignó AUMVEN Pro (ej: <strong>carinito</strong>, <strong>pizzeria-juan</strong>). Ese link es exclusivo de tu tienda.
+    </div>
+  </div>
+
+  <!-- TABS DE CANAL -->
+  <div class="card">
+    <div class="sec">📱 ¿Cómo vendes tú?</div>
+    <div class="tabs">
+      <button class="tab active" onclick="cambiarTab('fisico',this)">🏪 Local Físico</button>
+      <button class="tab" onclick="cambiarTab('online',this)">💻 Venta en Línea</button>
+    </div>
+
+    <!-- PANEL: LOCAL FÍSICO -->
+    <div class="panel active" id="panel-fisico">
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Genera un QR con tu link</div>
+            <div class="step-desc">Ve a <strong>qrcode-monkey.com</strong> o <strong>qr.io</strong>, pega tu link de juego y descarga el QR. Es gratis y tarda 1 minuto.</div>
+            <span class="step-tag">✅ Una sola vez</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Imprime y pega el QR en tu mesón/caja</div>
+            <div class="step-desc">Un cartel simple en la caja, con el texto: <strong>"Por compras sobre $[monto], ¡juega y gana un premio!"</strong>. El QR lleva directo a tu juego.</div>
+            <span class="step-tag">✅ Sin cambiar tu operación</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Entrega el código al cliente</div>
+            <div class="step-desc">Cuando el cliente compra sobre el monto mínimo, el cajero dice el código en voz alta o lo escribe en la boleta. El código es correlativo: <strong>CARI001, CARI002, CARI003...</strong></div>
+            <div class="msg-box">
+              <div class="msg-label">💬 Qué dice el cajero</div>
+              "Por tu compra, escanea el QR y juega con el código <strong>CARI047</strong> — ¡podrías ganar un premio al instante!"
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">El cliente juega desde su celular</div>
+            <div class="step-desc">Escanea el QR, ingresa su código, juega y gana. Si ganó un premio mayor, te llega un mensaje de WhatsApp para que lo canjees. <strong>Cero filas adicionales en caja.</strong></div>
+            <span class="step-tag">🎁 Premio instantáneo</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="hl" style="margin-top:1rem">
+        <strong>💡 Tip pro:</strong> Anota los códigos entregados en una libreta o hoja simple (CARI001 al CARI050 = 50 clientes de hoy). Cuando se acaben, sigues desde donde dejaste (CARI051). Tu panel Admin registra automáticamente cada juego.
+      </div>
+    </div>
+
+    <!-- PANEL: ONLINE -->
+    <div class="panel" id="panel-online">
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Genera el código al confirmar el pedido</div>
+            <div class="step-desc">Cuando confirmas un pedido por WhatsApp o Instagram, simplemente agrega el código al final de tu mensaje de confirmación. Es correlativo: <strong>NONY001, NONY002...</strong></div>
+            <div class="msg-box">
+              <div class="msg-label">💬 Mensaje de confirmación WhatsApp</div>
+              "✅ ¡Pedido confirmado, [nombre]! Tu pedido llega el [fecha].<br><br>🎁 Por tu compra tienes un <strong>regalo</strong> — juega aquí:<br>https://.../?neg=tu-negocio<br><br>Tu código único: <strong>NONY023</strong><br>¡Ingresa y descubre qué ganaste! 🎉"
+            </div>
+            <span class="step-tag">✅ Solo agregas 3 líneas a tu mensaje</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">El cliente juega desde el link</div>
+            <div class="step-desc">Toca el link en el chat, ingresa su código y juega al instante. Si gana un premio mayor, <strong>te llega un WhatsApp automático</strong> con su nombre de premio y código — así sabes exactamente qué entregar con su pedido.</div>
+            <span class="step-tag">📲 Notificación automática</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Historias de Instagram (opcional)</div>
+            <div class="step-desc">Publica una historia semanal invitando a tus compradores a jugar. Genera conversación y ventas adicionales al mismo tiempo.</div>
+            <div class="msg-box">
+              <div class="msg-label">📸 Texto para historia de Instagram</div>
+              "¿Compraste esta semana? 🎉<br>Escríbeme <strong>'QUIERO JUGAR'</strong> y te mando tu código de regalo 🎁"
+            </div>
+            <span class="step-tag">🔥 Engagement gratuito</span>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Mercado Pago / Flow (avanzado)</div>
+            <div class="step-desc">Si usas pasarela de pago, configura el mensaje de confirmación post-pago para que incluya el código y el link automáticamente. <strong>Cero trabajo manual.</strong></div>
+            <span class="step-tag">⚡ 100% automático</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- HERRAMIENTAS -->
+  <div class="card">
+    <div class="sec">🛠️ Herramientas que necesitas</div>
+    <p style="font-size:.84rem;color:var(--mt);margin-bottom:.1rem">Todas gratuitas, sin instalar nada:</p>
+    <div class="tools">
+      <div class="tool">
+        <span class="tool-ico">📱</span>
+        <div class="tool-name">QR Code Monkey</div>
+        <div class="tool-desc">qrcode-monkey.com — genera tu QR gratis</div>
+      </div>
+      <div class="tool">
+        <span class="tool-ico">✂️</span>
+        <div class="tool-name">Bit.ly</div>
+        <div class="tool-desc">Acorta tu link para compartirlo fácil</div>
+      </div>
+      <div class="tool">
+        <span class="tool-ico">🖨️</span>
+        <div class="tool-name">Canva</div>
+        <div class="tool-desc">Diseña tu cartel con el QR gratis</div>
+      </div>
+      <div class="tool">
+        <span class="tool-ico">📊</span>
+        <div class="tool-name">Dashboard AUMVEN</div>
+        <div class="tool-desc">Exporta tu CSV y ve tus métricas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <div class="sec">💡 Tips para que funcione bien</div>
+    <div class="tip-list">
+      <div class="tip">
+        <div class="tip-ico">🎯</div>
+        <div class="tip-txt"><strong>El monto mínimo lo decides tú</strong> — debe ser entre tu ticket promedio actual y un 20-30% más. Así el cliente "estira" su compra para participar.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-ico">🎁</div>
+        <div class="tip-txt"><strong>El premio importa más que su valor</strong> — un cupón de 10% se siente como un regalo especial si se entrega con emoción. La experiencia del juego es parte del regalo.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-ico">📋</div>
+        <div class="tip-txt"><strong>Lleva un registro simple</strong> — anota qué códigos entregaste cada día. Así sabes cuántos clientes participaron y puedes ver la evolución semana a semana.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-ico">🔄</div>
+        <div class="tip-txt"><strong>Cada código es de un solo uso</strong> — si un cliente intenta usar el mismo código dos veces, el sistema lo bloquea automáticamente.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-ico">📈</div>
+        <div class="tip-txt"><strong>Exporta tu reporte cada semana</strong> — usa el botón "Exportar a Excel" en tu panel y cárgalo en el Dashboard de métricas para ver tu progreso.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <div class="cta-title">¿Tienes dudas? Estamos aquí 🚀</div>
+    <p class="cta-desc">Tu equipo de AUMVEN Pro te acompaña en cada paso. Escríbenos por WhatsApp y te respondemos al tiro.</p>
+    <a class="cta-link" href="https://wa.me/56926221935?text=Hola%20AUMVEN%20Pro%2C%20tengo%20una%20consulta%20sobre%20mi%20tienda" target="_blank">
+      💬 Escribir a soporte WhatsApp
+    </a>
+  </div>
+
+  <div class="foot">
+    AUMVEN Pro © 2026 · Gamificación para el comercio local · Hecho con ❤️ en Chile
+  </div>
+
+</div>
+
+<script>
+function cambiarTab(panel, btn) {
+  // desactivar todos
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  // activar el seleccionado
+  btn.classList.add('active');
+  document.getElementById('panel-' + panel).classList.add('active');
+}
+</script>
+</body>
+</html>
