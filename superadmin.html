@@ -94,6 +94,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:1rem}
 .kpi{background:rgba(18,12,38,.95);border:1px solid rgba(124,58,237,.20);
   border-radius:var(--rs);padding:.85rem;text-align:center}
+.kpi-click{cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
+.kpi-click:hover{transform:translateY(-2px);border-color:rgba(168,85,247,.45);background:rgba(124,58,237,.10)}
+.buscar-in{width:100%;background:rgba(6,4,17,.75);border:1.5px solid rgba(124,58,237,.25);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:600;padding:.6rem .9rem;outline:none;margin-bottom:.9rem}
+.buscar-in:focus{border-color:var(--ac2)}
+.highlight-flash{animation:flashBorder 1.2s ease-out}
+@keyframes flashBorder{
+  0%{box-shadow:0 0 0 3px rgba(236,72,153,.55)}
+  100%{box-shadow:0 0 0 0 rgba(236,72,153,0)}
+}
 .kpi-v{font-family:'Fredoka One',cursive;font-size:1.75rem;color:var(--gd);line-height:1.1;margin-bottom:.15rem}
 .kpi-l{color:var(--mt);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 
@@ -183,24 +194,33 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="card">
       <div class="sec">📊 Resumen Global de la Plataforma</div>
       <div class="kpi-row">
-        <div class="kpi"><div class="kpi-v" id="g-negocios">—</div><div class="kpi-l">Negocios activos</div></div>
-        <div class="kpi"><div class="kpi-v" id="g-juegos">—</div><div class="kpi-l">Juegos totales</div></div>
-        <div class="kpi"><div class="kpi-v" id="g-hoy">—</div><div class="kpi-l">Juegos hoy</div></div>
-        <div class="kpi"><div class="kpi-v" id="g-semana">—</div><div class="kpi-l">Juegos esta semana</div></div>
+        <div class="kpi kpi-click" onclick="irANegociosYBuscar()" title="Ver lista de negocios">
+          <div class="kpi-v" id="g-negocios">—</div><div class="kpi-l">Negocios activos</div>
+        </div>
+        <div class="kpi kpi-click" onclick="irAHistorial('todo')" title="Ver historial completo">
+          <div class="kpi-v" id="g-juegos">—</div><div class="kpi-l">Juegos totales</div>
+        </div>
+        <div class="kpi kpi-click" onclick="irAHistorial('hoy')" title="Ver juegos de hoy">
+          <div class="kpi-v" id="g-hoy">—</div><div class="kpi-l">Juegos hoy</div>
+        </div>
+        <div class="kpi kpi-click" onclick="irAHistorial('semana')" title="Ver juegos de la semana">
+          <div class="kpi-v" id="g-semana">—</div><div class="kpi-l">Juegos esta semana</div>
+        </div>
         <div class="kpi"><div class="kpi-v" id="g-utilidad">—</div><div class="kpi-l">Utilidad global estimada</div></div>
       </div>
     </div>
 
     <!-- NEGOCIOS -->
-    <div class="card">
+    <div class="card" id="card-negocios">
       <div class="sec">🏪 Negocios en la Plataforma</div>
+      <input type="text" id="buscar-neg" class="buscar-in" placeholder="🔎 Buscar negocio por nombre o id..." oninput="renderNegocios()">
       <div class="neg-list" id="neg-list">
         <div class="empty">Cargando negocios...</div>
       </div>
     </div>
 
     <!-- HISTORIAL GLOBAL -->
-    <div class="card">
+    <div class="card" id="card-historial">
       <div class="sec">🎮 Actividad Reciente (todos los negocios)</div>
       <div class="refresh-bar">
         <select id="fil-per" onchange="renderHistorialGlobal()">
@@ -231,6 +251,11 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 //  CLAVE SUPER ADMIN — cámbiala por la tuya
 // ================================================================
 var SUPER_KEY = 'SUPERRIC2026';
+
+// ================================================================
+//  DOMINIO BASE — cambia esto cuando aumvenpro.cl esté conectado
+// ================================================================
+window.AUMVEN_BASE_URL = 'https://ricardgarces04-art.github.io/aumvenpro/';
 
 // ================================================================
 //  LOGIN
@@ -279,6 +304,8 @@ var todoHistorial = [];
 
 async function cargarTodo() {
   await Promise.all([cargarNegocios(), cargarHistorialGlobal()]);
+  await revisarVencimientos();
+  await cargarNegocios(); // recargar por si algún negocio fue desactivado por vencimiento
   renderKPIsGlobales();
   renderHistorialGlobal();
   document.getElementById('last-upd').textContent =
@@ -328,6 +355,26 @@ function renderKPIsGlobales() {
 }
 
 // ================================================================
+//  INTERACTIVIDAD: scroll suave desde las tarjetas KPI
+// ================================================================
+function irANegociosYBuscar() {
+  var card = document.getElementById('card-negocios');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  card.classList.add('highlight-flash');
+  setTimeout(function(){ card.classList.remove('highlight-flash'); }, 1200);
+  setTimeout(function(){ document.getElementById('buscar-neg').focus(); }, 500);
+}
+
+function irAHistorial(periodo) {
+  var card = document.getElementById('card-historial');
+  document.getElementById('fil-per').value = periodo === 'todo' ? 'mes' : periodo;
+  renderHistorialGlobal();
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  card.classList.add('highlight-flash');
+  setTimeout(function(){ card.classList.remove('highlight-flash'); }, 1200);
+}
+
+// ================================================================
 //  RENDER NEGOCIOS
 // ================================================================
 function renderNegocios() {
@@ -337,13 +384,34 @@ function renderNegocios() {
     return;
   }
 
+  var q = (document.getElementById('buscar-neg').value || '').trim().toLowerCase();
+  var lista = todosNegocios.filter(function(n){
+    if (!q) return true;
+    return (n.id||'').toLowerCase().indexOf(q) !== -1
+        || (n.nombre||'').toLowerCase().indexOf(q) !== -1;
+  });
+
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty">Ningún negocio coincide con "' + q + '"</div>';
+    return;
+  }
+
   var html = '';
-  todosNegocios.forEach(function(n){
+  lista.forEach(function(n){
     var activo = n.activo !== false;
     var juegosNeg = todoHistorial.filter(function(h){ return h.negocio_id === n.id; }).length;
     var add = parseFloat(n.adicional) || 2500;
     var utilNeg = (Math.round(add * 0.8) * juegosNeg).toLocaleString('es-CL');
-    var link = 'https://aumvenpro.cl/?neg=' + n.id;
+    // Dominio base: usa aumvenpro.cl cuando esté conectado, mientras tanto GitHub Pages real
+    var BASE_URL = window.AUMVEN_BASE_URL || 'https://ricardgarces04-art.github.io/aumvenpro/';
+    var link = BASE_URL + '?neg=' + n.id;
+
+    // Estado de suscripción
+    var venceTs = n.suscripcion_vence ? new Date(n.suscripcion_vence).getTime() : null;
+    var vencido = venceTs ? (venceTs < Date.now()) : false;
+    var estadoPago = !venceTs ? '⚪ Sin registro de pago'
+                    : (vencido ? '🔴 Suscripción vencida (' + n.suscripcion_vence + ')'
+                               : '🟢 Al día hasta ' + n.suscripcion_vence);
 
     html += '<div class="neg-row' + (activo ? '' : ' inactivo') + '">'
       + '<div class="neg-info">'
@@ -359,9 +427,13 @@ function renderNegocios() {
           + '<div class="neg-stat">Utilidad: <span>$' + utilNeg + '</span></div>'
           + '<div class="neg-stat">WA: <span>' + (n.wa||'—') + '</span></div>'
         + '</div>'
+        + '<div class="neg-stats" style="margin-top:.2rem">'
+          + '<div class="neg-stat" style="color:' + (vencido ? '#fca5a5' : '#6ee7b7') + '">' + estadoPago + '</div>'
+        + '</div>'
       + '</div>'
       + '<div class="neg-actions">'
         + '<a class="btn btn-gh btn-sm" href="' + link + '" target="_blank">🔗 Ver tienda</a>'
+        + '<button class="btn btn-gr btn-sm" onclick="marcarPagado(\'' + n.id + '\')">💰 Marcar pagado (+30d)</button>'
         + (activo
           ? '<button class="btn btn-rd btn-sm" onclick="toggleNegocio(\'' + n.id + '\', false)">Desactivar</button>'
           : '<button class="btn btn-gr btn-sm" onclick="toggleNegocio(\'' + n.id + '\', true)">Activar</button>')
@@ -387,6 +459,48 @@ async function toggleNegocio(id, activar) {
   } else {
     await cargarTodo();
   }
+}
+
+// ================================================================
+//  REGISTRAR PAGO DE SUSCRIPCIÓN (+30 días, base para automatizar luego)
+// ================================================================
+async function marcarPagado(id) {
+  var confirmar = confirm('¿Marcar "' + id + '" como pagado? Esto extiende su suscripción 30 días y reactiva la tienda si estaba desactivada.');
+  if (!confirmar) return;
+
+  var nuevaFecha = new Date();
+  nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+  var fechaStr = nuevaFecha.toISOString().split('T')[0];
+
+  var { error } = await sb.from('configuraciones')
+    .update({ suscripcion_vence: fechaStr, activo: true })
+    .eq('id', id);
+
+  if (error) {
+    alert('Error: ' + error.message + '\n\nNota: Si la columna "suscripcion_vence" no existe, ejecuta en Supabase SQL Editor:\nALTER TABLE configuraciones ADD COLUMN IF NOT EXISTS suscripcion_vence date;');
+  } else {
+    alert('✅ Pago registrado. "' + id + '" queda al día hasta ' + fechaStr + '.');
+    await cargarTodo();
+  }
+}
+
+// ================================================================
+//  AUTO-DESACTIVAR NEGOCIOS VENCIDOS
+//  Base para el flujo automático: cuando se conecte el webhook de pago
+//  real (Mercado Pago / Flow), esta misma función puede llamarse desde
+//  una Supabase Edge Function en lugar de ejecutarse aquí.
+// ================================================================
+async function revisarVencimientos() {
+  var hoy = new Date().toISOString().split('T')[0];
+  var vencidos = todosNegocios.filter(function(n){
+    return n.suscripcion_vence && n.suscripcion_vence < hoy && n.activo !== false;
+  });
+  if (!vencidos.length) return;
+
+  for (var i = 0; i < vencidos.length; i++) {
+    await sb.from('configuraciones').update({ activo: false }).eq('id', vencidos[i].id);
+  }
+  console.log('Negocios desactivados por vencimiento de suscripción:', vencidos.map(function(n){return n.id;}));
 }
 
 // ================================================================
