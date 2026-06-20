@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUMVEN Pro — Super Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060411;--sf:rgba(18,12,38,.88);--sf2:rgba(28,20,52,.95);
+  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
+  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;
+  --tx:#f1f0ff;--mt:#9e97c4;
+  --r:18px;--rs:12px;
+  --gb:rgba(168,85,247,.20);--gs:0 8px 32px rgba(124,58,237,.20);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;
+  min-height:100dvh;padding:0;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 45% at 5% 0%,rgba(124,58,237,.28) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 50% at 95% 100%,rgba(168,85,247,.20) 0%,transparent 60%)}
+
+/* ── LOGIN ── */
+#sc-login{position:relative;z-index:1;min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.login-wrap{width:100%;max-width:360px;text-align:center}
+.sa-brand{font-family:'Fredoka One',cursive;font-size:2.4rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.2rem}
+.sa-sub{color:var(--mt);font-size:.78rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:2rem}
+.login-card{background:var(--sf);backdrop-filter:blur(20px);
+  border:1px solid rgba(168,85,247,.28);border-radius:var(--r);
+  padding:2rem 1.75rem;box-shadow:0 0 60px rgba(124,58,237,.22)}
+.login-card p{color:var(--mt);font-size:.85rem;margin-bottom:1.2rem}
+.pin-in{width:100%;background:rgba(6,4,17,.80);border:1.5px solid rgba(124,58,237,.32);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
+  font-size:1.2rem;font-weight:800;letter-spacing:.18em;padding:1rem 1.1rem;
+  text-align:center;text-transform:uppercase;outline:none;
+  transition:border-color .2s,box-shadow .2s;margin-bottom:1rem}
+.pin-in:focus{border-color:var(--pk2);box-shadow:0 0 0 3px rgba(244,114,182,.20)}
+.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:800;padding:.78rem 1.1rem;font-size:.93rem;
+  display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  transition:transform .15s,filter .15s,box-shadow .15s;width:100%}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:active{transform:scale(.97)}
+.btn-pk{background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
+  box-shadow:0 4px 20px rgba(236,72,153,.45)}
+.btn-gr{background:linear-gradient(135deg,#059669,#10b981);color:#fff;
+  box-shadow:0 4px 16px rgba(16,185,129,.35)}
+.btn-rd{background:rgba(239,68,68,.14);border:1.5px solid rgba(239,68,68,.30);color:#fca5a5}
+.btn-gh{background:transparent;border:1.5px solid rgba(124,58,237,.35);color:var(--mt)}
+.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
+.btn-sm{width:auto;padding:.45rem .85rem;font-size:.78rem}
+.err{background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.28);
+  border-radius:var(--rs);color:#fca5a5;font-size:.83rem;font-weight:600;
+  padding:.6rem .9rem;margin-bottom:.75rem;display:none}
+.err.show{display:block}
+
+/* ── MAIN APP ── */
+#sc-app{display:none;position:relative;z-index:1;padding:1rem}
+.app-wrap{max-width:1100px;margin:0 auto}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.25rem;gap:.75rem;flex-wrap:wrap}
+.topbar-brand{font-family:'Fredoka One',cursive;font-size:1.4rem;
+  background:linear-gradient(135deg,var(--ac2),var(--pk2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.topbar-badge{background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.30);
+  border-radius:100px;color:#fca5a5;font-size:.68rem;font-weight:800;
+  letter-spacing:.08em;padding:.18rem .55rem;text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:.6rem}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--gr);
+  animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.4)}
+  50%{opacity:.85;box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.live-lbl{font-size:.75rem;font-weight:700;color:var(--gr)}
+
+/* CARDS */
+.card{background:var(--sf);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.2rem 1.3rem;
+  margin-bottom:1rem;box-shadow:var(--gs)}
+.sec{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ac2);
+  margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+
+/* GLOBAL KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:1rem}
+.kpi{background:rgba(18,12,38,.95);border:1px solid rgba(124,58,237,.20);
+  border-radius:var(--rs);padding:.85rem;text-align:center}
+.kpi-v{font-family:'Fredoka One',cursive;font-size:1.75rem;color:var(--gd);line-height:1.1;margin-bottom:.15rem}
+.kpi-l{color:var(--mt);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+
+/* NEGOCIOS TABLE */
+.neg-list{display:flex;flex-direction:column;gap:.55rem}
+.neg-row{background:rgba(18,12,38,.90);border:1px solid rgba(124,58,237,.18);
+  border-radius:var(--rs);padding:.85rem 1rem;
+  display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:center}
+.neg-row.inactivo{opacity:.5;border-color:rgba(239,68,68,.18)}
+.neg-info{min-width:0}
+.neg-name{font-weight:800;font-size:.92rem;margin-bottom:.2rem;
+  display:flex;align-items:center;gap:.5rem}
+.neg-slug{color:var(--mt);font-size:.72rem;font-weight:600;font-family:monospace}
+.neg-stats{display:flex;gap:.85rem;flex-wrap:wrap;margin-top:.3rem}
+.neg-stat{font-size:.75rem;color:var(--mt);font-weight:700}
+.neg-stat span{color:var(--tx);font-weight:800}
+.neg-actions{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.badge-activo{background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);
+  border-radius:100px;color:#6ee7b7;font-size:.66rem;font-weight:800;padding:.12rem .5rem}
+.badge-inactivo{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.24);
+  border-radius:100px;color:#fca5a5;font-size:.66rem;font-weight:800;padding:.12rem .5rem}
+
+/* HISTORIAL GLOBAL */
+.h-list{list-style:none;display:flex;flex-direction:column;gap:.28rem;
+  max-height:260px;overflow-y:auto;padding-right:.2rem}
+.h-list::-webkit-scrollbar{width:4px}
+.h-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.35);border-radius:2px}
+.h-item{background:rgba(18,12,38,.85);border-radius:8px;
+  display:grid;grid-template-columns:auto 1fr auto auto;
+  gap:.4rem;align-items:center;font-size:.77rem;font-weight:600;padding:.38rem .65rem}
+.h-neg{color:var(--ac2);font-size:.68rem;font-weight:800;white-space:nowrap}
+.h-premio{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-date{color:var(--mt);font-size:.66rem;white-space:nowrap}
+.empty{color:var(--mt);font-size:.82rem;text-align:center;padding:.85rem}
+
+/* REFRESH */
+.refresh-bar{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+.refresh-bar select{background:rgba(6,4,17,.75);border:1.5px solid rgba(124,58,237,.25);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
+  font-size:.82rem;font-weight:700;padding:.48rem .75rem;outline:none}
+.last-upd{color:var(--mt);font-size:.72rem;font-weight:600;margin-left:auto}
+
+@media(max-width:600px){
+  .neg-row{grid-template-columns:1fr}
+  .neg-actions{justify-content:flex-start}
+  .h-item{grid-template-columns:auto 1fr auto}
+  .h-date{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div id="sc-login">
+  <div class="login-wrap">
+    <div class="sa-brand">⚡ AUMVEN</div>
+    <div class="sa-sub">Super Admin · Acceso restringido</div>
+    <div class="login-card">
+      <p>Solo el administrador de la plataforma puede acceder aquí.</p>
+      <div class="err" id="err-login">Clave incorrecta. Intenta de nuevo.</div>
+      <input class="pin-in" type="password" id="pin-in"
+        placeholder="Clave de acceso" autocomplete="off" maxlength="20">
+      <button class="btn btn-pk" onclick="loginSuperAdmin()">🔐 Entrar al Panel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div id="sc-app">
+  <div class="app-wrap">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-brand">⚡ Super Admin</div>
+        <span class="topbar-badge">AUMVEN PRO</span>
+      </div>
+      <div class="topbar-right">
+        <div class="live-dot"></div>
+        <div class="live-lbl">En vivo</div>
+        <button class="btn btn-gh btn-sm" onclick="cargarTodo()">↺ Actualizar</button>
+        <button class="btn btn-rd btn-sm" onclick="cerrarSesion()">Salir</button>
+      </div>
+    </div>
+
+    <!-- GLOBAL KPIs -->
+    <div class="card">
+      <div class="sec">📊 Resumen Global de la Plataforma</div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-v" id="g-negocios">—</div><div class="kpi-l">Negocios activos</div></div>
+        <div class="kpi"><div class="kpi-v" id="g-juegos">—</div><div class="kpi-l">Juegos totales</div></div>
+        <div class="kpi"><div class="kpi-v" id="g-hoy">—</div><div class="kpi-l">Juegos hoy</div></div>
+        <div class="kpi"><div class="kpi-v" id="g-semana">—</div><div class="kpi-l">Juegos esta semana</div></div>
+        <div class="kpi"><div class="kpi-v" id="g-utilidad">—</div><div class="kpi-l">Utilidad global estimada</div></div>
+      </div>
+    </div>
+
+    <!-- NEGOCIOS -->
+    <div class="card">
+      <div class="sec">🏪 Negocios en la Plataforma</div>
+      <div class="neg-list" id="neg-list">
+        <div class="empty">Cargando negocios...</div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL GLOBAL -->
+    <div class="card">
+      <div class="sec">🎮 Actividad Reciente (todos los negocios)</div>
+      <div class="refresh-bar">
+        <select id="fil-per" onchange="renderHistorialGlobal()">
+          <option value="hoy">Hoy</option>
+          <option value="semana">Esta semana</option>
+          <option value="mes" selected>Este mes</option>
+          <option value="todo">Todo el historial</option>
+        </select>
+        <span class="last-upd" id="last-upd">—</span>
+      </div>
+      <ul class="h-list" id="h-list-global">
+        <li class="empty">Cargando actividad...</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  SUPABASE
+// ================================================================
+const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ================================================================
+//  CLAVE SUPER ADMIN — cámbiala por la tuya
+// ================================================================
+var SUPER_KEY = 'SUPERRIC2026';
+
+// ================================================================
+//  LOGIN
+// ================================================================
+document.getElementById('pin-in').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') loginSuperAdmin();
+});
+
+function loginSuperAdmin() {
+  var val = document.getElementById('pin-in').value.trim().toUpperCase();
+  if (val === SUPER_KEY) {
+    document.getElementById('sc-login').style.display = 'none';
+    document.getElementById('sc-app').style.display = 'block';
+    sessionStorage.setItem('sa_auth', '1');
+    cargarTodo();
+    // Auto-refresh cada 60 segundos
+    setInterval(cargarTodo, 60000);
+  } else {
+    var err = document.getElementById('err-login');
+    err.classList.add('show');
+    setTimeout(function(){ err.classList.remove('show'); }, 3000);
+    document.getElementById('pin-in').value = '';
+  }
+}
+
+function cerrarSesion() {
+  sessionStorage.removeItem('sa_auth');
+  document.getElementById('sc-app').style.display = 'none';
+  document.getElementById('sc-login').style.display = 'flex';
+  document.getElementById('pin-in').value = '';
+}
+
+// Restaurar sesión si ya estaba autenticado
+if (sessionStorage.getItem('sa_auth') === '1') {
+  document.getElementById('sc-login').style.display = 'none';
+  document.getElementById('sc-app').style.display = 'block';
+  cargarTodo();
+  setInterval(cargarTodo, 60000);
+}
+
+// ================================================================
+//  DATOS GLOBALES
+// ================================================================
+var todosNegocios = [];
+var todoHistorial = [];
+
+async function cargarTodo() {
+  await Promise.all([cargarNegocios(), cargarHistorialGlobal()]);
+  renderKPIsGlobales();
+  renderHistorialGlobal();
+  document.getElementById('last-upd').textContent =
+    'Actualizado: ' + new Date().toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+async function cargarNegocios() {
+  var { data, error } = await sb.from('configuraciones').select('*');
+  if (!error && data) {
+    todosNegocios = data;
+    renderNegocios();
+  }
+}
+
+async function cargarHistorialGlobal() {
+  var { data, error } = await sb.from('historial')
+    .select('*').order('ts', { ascending: false }).limit(500);
+  if (!error && data) todoHistorial = data;
+}
+
+// ================================================================
+//  RENDER KPIs GLOBALES
+// ================================================================
+function renderKPIsGlobales() {
+  var activos = todosNegocios.filter(function(n){ return n.activo !== false; });
+  document.getElementById('g-negocios').textContent = activos.length;
+  document.getElementById('g-juegos').textContent = todoHistorial.length;
+
+  var ahora = Date.now();
+  var hoyMs = new Date(new Date().setHours(0,0,0,0)).getTime();
+  var semMs = hoyMs - 6*86400000;
+
+  var hoy = todoHistorial.filter(function(h){ return (h.ts||0) >= hoyMs; }).length;
+  var sem = todoHistorial.filter(function(h){ return (h.ts||0) >= semMs; }).length;
+  document.getElementById('g-hoy').textContent = hoy;
+  document.getElementById('g-semana').textContent = sem;
+
+  // Utilidad estimada: suma adicional*0.8 de cada negocio × sus juegos
+  var utilTotal = 0;
+  todosNegocios.forEach(function(n){
+    var add = parseFloat(n.adicional) || 2500;
+    var util = Math.round(add * 0.8);
+    var juegosNeg = todoHistorial.filter(function(h){ return h.negocio_id === n.id; }).length;
+    utilTotal += juegosNeg * util;
+  });
+  document.getElementById('g-utilidad').textContent = '$' + utilTotal.toLocaleString('es-CL');
+}
+
+// ================================================================
+//  RENDER NEGOCIOS
+// ================================================================
+function renderNegocios() {
+  var el = document.getElementById('neg-list');
+  if (!todosNegocios.length) {
+    el.innerHTML = '<div class="empty">No hay negocios registrados aún.</div>';
+    return;
+  }
+
+  var html = '';
+  todosNegocios.forEach(function(n){
+    var activo = n.activo !== false;
+    var juegosNeg = todoHistorial.filter(function(h){ return h.negocio_id === n.id; }).length;
+    var add = parseFloat(n.adicional) || 2500;
+    var utilNeg = (Math.round(add * 0.8) * juegosNeg).toLocaleString('es-CL');
+    var link = 'https://aumvenpro.cl/?neg=' + n.id;
+
+    html += '<div class="neg-row' + (activo ? '' : ' inactivo') + '">'
+      + '<div class="neg-info">'
+        + '<div class="neg-name">'
+          + (activo ? '🟢' : '🔴') + ' '
+          + (n.nombre || n.id)
+          + ' <span class="' + (activo ? 'badge-activo' : 'badge-inactivo') + '">'
+          + (activo ? 'Activo' : 'Inactivo') + '</span>'
+        + '</div>'
+        + '<div class="neg-slug">?neg=' + n.id + ' · prefijo: ' + (n.prefijo||'—') + ' · juego: ' + (n.juego||'—') + '</div>'
+        + '<div class="neg-stats">'
+          + '<div class="neg-stat">Juegos: <span>' + juegosNeg + '</span></div>'
+          + '<div class="neg-stat">Utilidad: <span>$' + utilNeg + '</span></div>'
+          + '<div class="neg-stat">WA: <span>' + (n.wa||'—') + '</span></div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="neg-actions">'
+        + '<a class="btn btn-gh btn-sm" href="' + link + '" target="_blank">🔗 Ver tienda</a>'
+        + (activo
+          ? '<button class="btn btn-rd btn-sm" onclick="toggleNegocio(\'' + n.id + '\', false)">Desactivar</button>'
+          : '<button class="btn btn-gr btn-sm" onclick="toggleNegocio(\'' + n.id + '\', true)">Activar</button>')
+      + '</div>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+}
+
+// ================================================================
+//  ACTIVAR / DESACTIVAR NEGOCIO
+// ================================================================
+async function toggleNegocio(id, activar) {
+  var confirmar = confirm((activar ? '¿Activar' : '¿Desactivar') + ' el negocio "' + id + '"?');
+  if (!confirmar) return;
+
+  var { error } = await sb.from('configuraciones')
+    .update({ activo: activar })
+    .eq('id', id);
+
+  if (error) {
+    alert('Error: ' + error.message + '\n\nNota: Si la columna "activo" no existe, ejecuta en Supabase SQL Editor:\nALTER TABLE configuraciones ADD COLUMN IF NOT EXISTS activo boolean DEFAULT true;');
+  } else {
+    await cargarTodo();
+  }
+}
+
+// ================================================================
+//  HISTORIAL GLOBAL
+// ================================================================
+function renderHistorialGlobal() {
+  var per = document.getElementById('fil-per').value;
+  var ahora = Date.now();
+  var hoyMs = new Date(new Date().setHours(0,0,0,0)).getTime();
+
+  var filtrado = todoHistorial.filter(function(h){
+    var ts = h.ts || new Date(h.created_at).getTime();
+    if (per === 'hoy')    return ts >= hoyMs;
+    if (per === 'semana') return ts >= hoyMs - 6*86400000;
+    if (per === 'mes')    return ts >= hoyMs - 29*86400000;
+    return true;
+  });
+
+  var lista = document.getElementById('h-list-global');
+  if (!filtrado.length) {
+    lista.innerHTML = '<li class="empty">Sin actividad en el período seleccionado</li>';
+    return;
+  }
+
+  var html = '';
+  filtrado.slice(0, 100).forEach(function(h){
+    html += '<li class="h-item">'
+      + '<span style="font-size:.95rem">' + (h.gano ? '🏆' : '🎟️') + '</span>'
+      + '<span class="h-premio">'
+        + '<span class="h-neg">' + (h.negocio_id||'?') + '</span> '
+        + (h.premio || 'Premio') + ' · ' + (h.codigo||'—')
+      + '</span>'
+      + '<span class="h-date">' + (h.fecha||'') + '</span>'
+    + '</li>';
+  });
+  lista.innerHTML = html;
+}
+</script>
+</body>
+</html>
