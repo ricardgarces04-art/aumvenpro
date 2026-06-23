@@ -339,6 +339,8 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
     </ul>
     <div style="height:.75rem"></div>
     <button class="btn btn-tl" onclick="exportCSV()">&#128202; Exportar a Excel (.csv)</button>
+    <div style="height:.5rem"></div>
+    <button class="btn btn-gd" onclick="imprimirLote()">&#128424;&#65039; Imprimir Lote de 500 C&#xF3;digos</button>
   </div>
 
   <div class="card">
@@ -1085,26 +1087,67 @@ function renderRaspe(zone) {
 // ================================================================
 //  ADMIN
 // ================================================================
-function abrirAdmin() {
-  loadForm();
-  renderKPIs();
+async function abrirAdmin() {
   goScreen('sc-admin');
+  await loadForm();
+  renderKPIs();
 }
 
-function loadForm() {
+async function loadForm() {
+  // Primero carga desde localStorage como base inmediata
   var c = getCfg() || CFG0;
-  document.getElementById('f-nom').value   = c.nombre      || '';
-  document.getElementById('f-wa').value    = c.wa          || '';
-  document.getElementById('f-pre').value   = c.prefijo     || '';
-  document.getElementById('f-logo').value  = c.logo        || '';
-  document.getElementById('f-emo').value   = c.emoji       || '';
-  document.getElementById('f-juego').value = c.juego       || 'globos';
-  document.getElementById('f-prem').value  = (c.premios||[]).join(', ');
+  _llenarFormulario(c);
+
+  // Luego sobreescribe con datos frescos de Supabase (fuente de verdad)
+  try {
+    var idBuscar = NEG_SLUG || 'carinito';
+    var { data, error } = await supabaseClient
+      .from('configuraciones')
+      .select('*')
+      .eq('id', idBuscar)
+      .maybeSingle();
+
+    if (!error && data) {
+      // Mapear columnas de Supabase al formato del formulario
+      var remoto = {
+        nombre:      data.nombre      || c.nombre      || '',
+        wa:          data.wa          || c.wa          || '',
+        prefijo:     data.prefijo     || c.prefijo     || '',
+        logo:        data.logo        || c.logo        || '',
+        logoData:    data.logoData    || c.logoData    || '',
+        emoji:       data.emoji       || c.emoji       || '',
+        juego:       data.juego       || c.juego       || 'globos',
+        premios:     Array.isArray(data.premios) ? data.premios : (c.premios || []),
+        consolacion: data.consolacion || c.consolacion || '',
+        adicional:   data.adicional   || c.adicional   || 2500,
+        meta:        data.meta        || c.meta        || 0,
+        ventasGuard: data.ventasGuard || c.ventasGuard || 0,
+        pedidosGuard:data.pedidosGuard|| c.pedidosGuard|| 0,
+        ticket:      data.ticket      || c.ticket      || 0
+      };
+      _llenarFormulario(remoto);
+      // Sincronizar CFG0 con datos reales de Supabase
+      Object.assign(CFG0, remoto);
+      console.log("Panel Admin pre-llenado desde Supabase:", idBuscar);
+    }
+  } catch(e) {
+    console.error("Error cargando datos admin desde Supabase:", e);
+  }
+}
+
+function _llenarFormulario(c) {
+  document.getElementById('f-nom').value         = c.nombre      || '';
+  document.getElementById('f-wa').value          = c.wa          || '';
+  document.getElementById('f-pre').value         = c.prefijo     || '';
+  document.getElementById('f-logo').value        = c.logo        || '';
+  document.getElementById('f-emo').value         = c.emoji       || '';
+  document.getElementById('f-juego').value       = c.juego       || 'globos';
+  document.getElementById('f-prem').value        = (c.premios||[]).join(', ');
   document.getElementById('f-con').value         = c.consolacion || '';
-  document.getElementById('cfg-adicional').value = c.adicional    || '';
+  document.getElementById('cfg-adicional').value = c.adicional   || '';
   document.getElementById('f-meta').value        = '';
-  document.getElementById('c-ventas').value = c.ventasGuard  || '';
-  document.getElementById('c-ped').value    = c.pedidosGuard || '';
+  document.getElementById('c-ventas').value      = c.ventasGuard || '';
+  document.getElementById('c-ped').value         = c.pedidosGuard|| '';
   document.getElementById('calc-r').classList.remove('show');
   if (c.ventasGuard || c.meta) { calcTicket(); }
   c.logoData ? prevLogo(c.logoData) : (c.logo ? prevLogo(c.logo) : hideLogo());
@@ -1459,6 +1502,64 @@ function mostrarBases() {
     + '5. Ante quiebre de stock de cualquier premio mayor, el local se reserva el derecho de sustituir el premio sorteado por el premio de consolaci\xF3n vigente sin previo aviso.'
   );
 }
+
+// ================================================================
+//  IMPRIMIR LOTE DE 500 CÓDIGOS
+// ================================================================
+function imprimirLote() {
+  var pfx = (CFG0.prefijo || 'CARI').toUpperCase();
+  var negocio = CFG0.nombre || 'Mi Negocio';
+  var codigos = [];
+  for (var i = 1; i <= 500; i++) {
+    codigos.push(pfx + String(i).padStart(3, '0'));
+  }
+
+  var filas = '';
+  for (var j = 0; j < codigos.length; j += 4) {
+    filas += '<tr>';
+    for (var k = 0; k < 4; k++) {
+      var idx = j + k;
+      filas += '<td>' + (codigos[idx] || '') + '</td>';
+    }
+    filas += '</tr>';
+  }
+
+  var ventana = window.open('', '_blank');
+  ventana.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'
+    + '<title>C\xF3digos ' + negocio + '</title>'
+    + '<style>'
+    + 'body{font-family:Arial,sans-serif;margin:10mm;}'
+    + 'h2{text-align:center;font-size:14px;margin-bottom:4px;}'
+    + 'p.sub{text-align:center;font-size:10px;color:#666;margin-bottom:8px;}'
+    + 'table{width:100%;border-collapse:collapse;}'
+    + 'td{border:1px dashed #aaa;padding:6px 4px;text-align:center;'
+    +    'font-size:11px;font-weight:bold;letter-spacing:.08em;width:25%;}'
+    + '@media print{'
+    +   'body{margin:5mm;}'
+    +   'h2,p.sub{margin-bottom:3px;}'
+    +   'td{padding:4px 2px;font-size:10px;}'
+    +   '.no-print{display:none;}'
+    + '}'
+    + '</style></head><body>'
+    + '<h2>&#127873; ' + negocio + ' \u2014 C\xF3digos de Participaci\xF3n</h2>'
+    + '<p class="sub">Recorta cada c\xF3digo y entr\xE9gaselo al cliente al momento de la compra. Un uso por c\xF3digo.</p>'
+    + '<p class="sub no-print" style="margin-bottom:8px">'
+    +   '<button onclick="window.print()" style="padding:6px 18px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">&#128424;&#65039; Imprimir ahora</button>'
+    + '</p>'
+    + '<table>' + filas + '</table>'
+    + '</body></html>');
+  ventana.document.close();
+}
+
+// ================================================================
+//  ANTI-INSPECCIÓN
+// ================================================================
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'F12') { e.preventDefault(); return false; }
+  if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].indexOf(e.key) !== -1) { e.preventDefault(); return false; }
+  if (e.ctrlKey && ['U','u'].indexOf(e.key) !== -1) { e.preventDefault(); return false; }
+});
 
 function devReset() {
   localStorage.removeItem(K_USD);
