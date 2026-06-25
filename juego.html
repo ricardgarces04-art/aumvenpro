@@ -698,9 +698,9 @@ function toast(msg) {
 }
 
 // ================================================================
-//  ENTRAR
+//  ENTRAR — validación centralizada en Supabase (anti-fraude real)
 // ================================================================
-function entrar() {
+async function entrar() {
   var raw = document.getElementById('cod-in').value.trim().toUpperCase();
   if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
 
@@ -710,37 +710,82 @@ function entrar() {
     return;
   }
 
+  var cfg = getCfg() || CFG0;
+  var pfx = (cfg.prefijo || CFG0.prefijo || 'CARI').trim().toUpperCase();
+
+  if (pfx) {
+    var re = new RegExp('^' + pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d+$');
+    if (!re.test(raw)) {
+      alerta('\u274C C\xF3digo inv\xE1lido. Formato: ' + pfx + '001');
+      return;
+    }
+  } else {
+    if (typeof DEMO !== 'undefined' && !DEMO[raw]) {
+      alerta('\u274C C\xF3digo inv\xE1lido. Verifica con tu vendedor.');
+      return;
+    }
+  }
+
+  // 1. Verificar en localStorage primero (rápido, sin internet)
   var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
   if (listaNegra.indexOf(raw) !== -1) {
     alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
     return;
   }
 
-  var cfg = getCfg() || CFG0;
-  var pfx = (cfg.prefijo || '').trim().toUpperCase();
+  // 2. Verificar en Supabase (anti-fraude real, entre dispositivos)
+  var btnEntrar = document.querySelector('.btn-pk');
+  if (btnEntrar) { btnEntrar.textContent = '⏳ Verificando...'; btnEntrar.disabled = true; }
 
-  if (pfx) {
-    var re = new RegExp('^' + pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d+$');
-    if (re.test(raw)) {
-      cod = raw;
+  try {
+    var negocioId = NEG_SLUG || 'carinito';
+    var { data: codUsado, error: errCheck } = await supabaseClient
+      .from('codigos_usados')
+      .select('id')
+      .eq('negocio_id', negocioId)
+      .eq('codigo', raw)
+      .maybeSingle();
 
-      localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
-
-      addUsd(raw);
-      launchGame();
+    if (!errCheck && codUsado) {
+      // Código ya usado en Supabase — quemar también en localStorage
+      listaNegra.push(raw);
+      localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
+      alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
+      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
       return;
     }
-    alerta('\u274C C\xF3digo inv\xE1lido. Formato: ' + pfx + '001');
-    return;
+
+    // 3. Código válido — quemar en Supabase ANTES de lanzar el juego
+    var { error: errInsert } = await supabaseClient
+      .from('codigos_usados')
+      .insert({ negocio_id: negocioId, codigo: raw });
+
+    if (errInsert) {
+      console.warn('No se pudo quemar en Supabase, continuando con localStorage:', errInsert.message);
+    }
+
+    // 4. Quemar también en localStorage como respaldo
+    listaNegra.push(raw);
+    localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
+    localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
+
+    cod = raw;
+    addUsd(raw);
+
+    if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
+    launchGame();
+
+  } catch(e) {
+    // Si Supabase falla (sin internet), usar solo localStorage como respaldo
+    console.warn('Supabase no disponible, validando solo localmente:', e);
+    listaNegra.push(raw);
+    localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
+    localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
+    cod = raw;
+    addUsd(raw);
+    if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
+    launchGame();
   }
-
-  if (typeof DEMO !== 'undefined' && !DEMO[raw]) { alerta('\u274C C\xF3digo inv\xE1lido. Verifica con tu vendedor.'); return; }
-  cod = raw;
-
-  localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
-
-  addUsd(raw);
-  launchGame();
 }
 
 document.getElementById('cod-in').addEventListener('keydown', function(e) {
@@ -874,7 +919,7 @@ function mostrarRes(premio) {
       + '<div class="r-title">¡Felicitaciones!</div>'
       + '<div class="r-prize">' + premio.txt + '</div>'
       + '<p class="r-sub">Muestra este mensaje al vendedor 🎉</p>'
-      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener">' + ico + ' Canjear por WhatsApp</a>';
+      + '<a class="btn btn-wa" id="btn-wa-canjear" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Canjear por WhatsApp</a>';
   } else {
     if (typeof sndPop === 'function') sndPop();
     card.innerHTML = '<span class="r-trophy">🎁</span>'
@@ -882,7 +927,7 @@ function mostrarRes(premio) {
       + '<div class="r-title" style="color:var(--ac2)">¡Casi!</div>'
       + '<div class="r-prize">' + premio.txt + '</div>'
       + '<p class="r-sub">Válido en tu próxima compra.</p>'
-      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener">' + ico + ' Mostrar al vendedor</a>';
+      + '<a class="btn btn-wa" id="btn-wa-canjear" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Mostrar al vendedor</a>';
   }
   setTimeout(function(){ goScreen('sc-result'); }, premio.gano ? 600 : 300);
 }
