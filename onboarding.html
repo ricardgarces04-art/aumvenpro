@@ -282,8 +282,8 @@ function generarSlug() {
   slugActivo = s;
   var el = document.getElementById('slug-prev');
   el.style.display = 'block';
-  el.innerHTML = '🔗 Tu link: <strong>' + BASE_URL + '/?neg=' + s + '</strong>';
-}
+  el.innerHTML = '🔗 Tu link: <strong>' + BASE_URL + '?neg=' + s + '</strong>';
+
 
 // JUEGO SELECTOR
 function selJuego(val, el) {
