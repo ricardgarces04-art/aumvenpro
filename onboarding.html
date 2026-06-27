@@ -297,7 +297,7 @@ function irPaso2() {
   var tipo = document.getElementById('f-tipo').value;
 
   if (!nombre) { mostrarError('Ingresa el nombre de tu negocio.'); return; }
-  if (!wa || wa.length < 10) { mostrarError('Ingresa un WhatsApp v\xE1lido (con c\xF3digo de pa\xEDs, ej: 56912345678).'); return; }
+  var waLimpio = wa.replace(/[^0-9]/g, ''); if (!waLimpio || waLimpio.length < 8) { mostrarError('Ingresa un WhatsApp v\xE1lido (ej: 56912345678).'); return; }
   if (!tipo) { mostrarError('Selecciona el tipo de negocio.'); return; }
 
   document.getElementById('card-1').style.display = 'none';
