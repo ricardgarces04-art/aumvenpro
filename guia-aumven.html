@@ -129,6 +129,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 .foot{text-align:center;color:rgba(158,151,196,.45);font-size:.72rem;padding-top:.5rem;line-height:1.8}
 
+/* FAQ ACCORDION */
+.faq-item{border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);
+  margin-bottom:.6rem;overflow:hidden;background:rgba(25,18,50,.55)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.85rem 1rem;cursor:pointer;font-weight:800;font-size:.86rem;
+  transition:background .2s;user-select:none}
+.faq-q:hover{background:rgba(124,58,237,.08)}
+.faq-q .faq-arrow{flex-shrink:0;transition:transform .25s;color:var(--ac2);font-size:.8rem}
+.faq-item.open .faq-q .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 1rem .9rem;color:var(--mt);font-size:.83rem;line-height:1.65}
+.faq-a-inner strong{color:var(--tx)}
+.faq-cat{font-size:.7rem;font-weight:800;color:var(--ac2);letter-spacing:.07em;
+  text-transform:uppercase;margin:1.1rem 0 .5rem;display:flex;align-items:center;gap:.4rem}
+.faq-cat:first-child{margin-top:0}
+
 @media(max-width:480px){
   .tabs{grid-template-columns:1fr 1fr}
   .logo-txt{font-size:2rem}
@@ -315,6 +332,77 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="tip-ico">📈</div>
         <div class="tip-txt"><strong>Exporta tu reporte cada semana</strong> — usa el botón "Exportar a Excel" en tu panel y cárgalo en el Dashboard de métricas para ver tu progreso.</div>
       </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTAS FRECUENTES -->
+  <div class="card">
+    <div class="sec">❓ Preguntas Frecuentes</div>
+
+    <div class="faq-cat">💳 Pagos y suscripción</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cuánto cuesta después del piloto gratuito? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Después de tus primeros 30 días gratis, el Plan Comercio cuesta <strong>$9.990/mes</strong> (cancela cuando quieras, sin contrato forzoso). Si tienes más de un local, el Plan Cadena cubre hasta 5 sucursales por <strong>$24.990/mes</strong>.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo cancelo mi suscripción? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Escríbenos por WhatsApp pidiendo la baja. No hay letra chica ni penalidades — tu tienda se desactiva al finalizar el período ya pagado.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si no pago a tiempo? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Tu tienda se desactiva automáticamente al vencer tu suscripción. Tus clientes no podrán jugar hasta que renueves el pago — tus datos y configuración se mantienen guardados.</div></div>
+    </div>
+
+    <div class="faq-cat">🎮 El juego y los códigos</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si un cliente pierde o no usa su código? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">No hay problema — el código queda disponible hasta que alguien lo use. Simplemente entrégale otro código la próxima vez que compre.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Un cliente puede jugar dos veces con el mismo código? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">No. Cada código se bloquea automáticamente apenas se usa, validado en la nube — funciona aunque el cliente use distintos celulares o borre su navegador.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Se me pueden acabar los códigos impresos? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Entra a tu Panel Admin (ADMIN123) y presiona <strong>"🖨️ Imprimir Lote de 500 Códigos"</strong> — genera e imprime un lote nuevo en segundos, las veces que quieras.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar el tipo de juego (globos, cofres, raspe)? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sí, en cualquier momento desde tu Panel Admin → Dinámica del Juego → selecciona el tipo y presiona "Guardar Configuración".</div></div>
+    </div>
+
+    <div class="faq-cat">🎁 Premios</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si se me acaba el stock de un premio? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Entra a tu panel y edita la lista de "Premios Mayores", quitando el que se agotó. El cambio aplica de inmediato para los próximos juegos. Si un cliente ya ganó ese premio antes del ajuste, igual debes entregarlo — es tu compromiso con el cliente.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Quién entrega el premio al cliente? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Tú, como dueño del negocio. AUMVEN solo gestiona el juego y te avisa por WhatsApp qué ganó cada cliente — la entrega física es responsabilidad del comercio.</div></div>
+    </div>
+
+    <div class="faq-cat">📊 Panel y métricas</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Me equivoqué al escribir un premio, ¿cómo lo corrijo? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Entra a tu Panel Admin (mismo link + código ADMIN123), edita el campo "Premios Mayores" y presiona "Guardar Configuración". Se actualiza al instante, sin perder tu historial de juegos.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Dónde veo cuánto está vendiendo mi negocio con AUMVEN? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">En tu Panel Admin (ADMIN123) tienes juegos totales, premios entregados y utilidad acumulada en tiempo real. Para un análisis más detallado, exporta tu CSV y súbelo al <a href="https://aumven.cl/dashboard.html" target="_blank" style="color:var(--ac2)">Dashboard de métricas</a>.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Otra persona de mi local puede ver el panel? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sí — comparte el link de tu tienda y el código ADMIN123 con quien necesite acceso. Recomendamos solo compartirlo con personal de confianza, ya que desde ahí se pueden modificar premios y configuración.</div></div>
+    </div>
+
+    <div class="faq-cat">🔧 Problemas técnicos</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">El juego no carga o se ve raro en el celular del cliente <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Pide al cliente que recargue la página o pruebe en modo incógnito. Si persiste, verifica que el link tenga tu identificador correcto (después de <strong>?neg=</strong>).</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">No me llegó el WhatsApp con el premio ganado <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">El cliente debe presionar el botón "Canjear por WhatsApp" en su pantalla de resultado — eso abre WhatsApp con el mensaje ya listo. Verifica que tu número esté bien configurado en el panel (con código de país, sin espacios ni símbolos).</div></div>
     </div>
   </div>
 
