@@ -6,7 +6,7 @@
 <title>Protege tu agenda · Software para manicuristas en Chile</title>
 <link rel="stylesheet" href="https://googleapis.com">
 <style>
-  /* ESTILOS INTERNOS BLINDADOS - NO DEPENDEN DE INTERNET */
+  /* ESTILOS INTERNOS BLINDADOS CONTRA BLOQUEOS DE RED */
   html { scroll-behavior: smooth; }
   body { 
     font-family: 'DM Sans', sans-serif; 
@@ -17,56 +17,49 @@
     -webkit-font-smoothing: antialiased; 
   }
   h1, h2, h3 { font-family: 'Fraunces', serif; }
-  .hero { max-w: 600px; margin: 0 auto; text-align: center; padding: 60px 24px; box-sizing: border-box; }
-  .badge { display: inline-block; background: #FFFFFF; color: #8F4F45; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 8px 16px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px; }
-  .title { font-size: 32px; line-height: 1.2; font-weight: 600; margin: 0 0 20px 0; }
+  
+  .hero-bloque { max-w: 600px; margin: 0 auto; text-align: center; padding: 60px 24px; box-sizing: border-box; }
+  .tag-bello { display: inline-block; background: #FFFFFF; color: #8F4F45; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 8px 16px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px; }
+  .titulo-principal { font-size: 32px; line-height: 1.2; font-weight: 600; margin: 0 0 20px 0; }
   .brush-underline { position: relative; display: inline-block; color: #AD6B5F; }
   .brush-underline svg { position: absolute; left: 0; bottom: -6px; width: 100%; height: 10px; }
-  .description { color: #6B5049; font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
-  .btn-hero { display: inline-block; background-color: #AD6B5F; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 16px 32px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 12px rgba(173,107,95,0.25); transition: all 0.2s ease; }
-  .btn-hero:hover { background-color: #8F4F45; transform: translateY(-2px); }
+  .bajada-texto { color: #6B5049; font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
+  .btn-principal-hero { display: inline-block; background-color: #AD6B5F; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 16px 32px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 12px rgba(173,107,95,0.25); transition: all 0.2s ease; }
+  .btn-principal-hero:hover { background-color: #8F4F45; transform: translateY(-2px); }
   
-  .precios { background-color: rgba(255,255,255,0.5); padding: 60px 24px; }
-  .precios-title { text-align: center; font-size: 28px; margin: 0 0 8px 0; }
-  .precios-subtitle { text-align: center; color: #6B5049; font-size: 15px; margin-bottom: 40px; }
-  .grid-planes { display: grid; grid-template-columns: 1fr; gap: 24px; max-w: 800px; margin: 0 auto; box-sizing: border-box; }
-  @media(min-width: 640px) { .grid-plans { grid-template-columns: 1fr 1fr; } }
+  .zona-precios { background-color: rgba(255,255,255,0.5); padding: 60px 24px; }
+  .precios-titulo { text-align: center; font-size: 28px; margin: 0 0 8px 0; }
+  .precios-sub { text-align: center; color: #6B5049; font-size: 15px; margin-bottom: 40px; }
   
-  .card { background: #FFFFFF; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; border: 1px solid #F5DFD9; position: relative; box-sizing: border-box; }
-  .card-featured { border: 2px solid #AD6B5F; box-shadow: 0 16px 40px rgba(173,107,95,0.2); }
-  .featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #AD6B5F; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 16px; border-radius: 9999px; }
-  .card-tag { font-size: 12px; font-weight: 700; color: #8F4F45; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0; }
-  .card-title { font-size: 20px; margin: 0 0 4px 0; }
-  .card-price { font-size: 30px; font-weight: 600; margin: 0 0 20px 0; }
-  .card-currency { font-size: 14px; color: #6B5049; font-weight: 400; }
-  .linea-divisora { height: 1px; background: #F5DFD9; margin-bottom: 20px; }
-  .lista { list-style: none; padding: 0; margin: 0 0 32px 0; flex: 1; }
-  .lista-item { font-size: 14px; color: #6B5049; margin-bottom: 12px; display: flex; gap: 8px; }
-  .check { color: #AD6B5F; font-weight: bold; }
+  .contenedor-tablas { display: flex; flex-direction: column; gap: 24px; max-w: 780px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+  @media(min-width: 640px) { .contenedor-tablas { flex-direction: row; justify-content: center; align-items: stretch; } }
   
-  .btn-p1 { background: #4A342E; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; }
-  .btn-p1:hover { background: #362521; transform: translateY(-1px); }
-  .btn-p2 { background: #AD6B5F; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; }
-  .btn-p2:hover { background: #8F4F45; transform: translateY(-1px); }
+  .tabla-box { background: #FFFFFF; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; border: 1px solid #F5DFD9; width: 100%; max-width: 360px; box-sizing: border-box; position: relative; }
+  .tabla-destacada { border: 2px solid #AD6B5F; box-shadow: 0 16px 40px rgba(173,107,95,0.18); }
+  .badge-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #AD6B5F; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 16px; border-radius: 9999px; white-space: nowrap; }
   
-  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
-  .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
-  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer; }
-  .form-group { text-align: left; margin-bottom: 16px; }
-  .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
-  .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4; background: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px; }
-  .form-input:focus { outline: none; border-color: #AD6B5F; }
-  .btn-submit { width: 100%; background: #1C1917; color: #FFFFFF; border: none; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px; }
-  .btn-submit:hover { background: #44403C; }
-  .hidden { display: none !important; }
+  .txt-categoria { font-size: 12px; font-weight: 700; color: #8F4F45; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0; }
+  .txt-nombre-plan { font-size: 20px; margin: 0 0 4px 0; }
+  .txt-precio { font-size: 30px; font-weight: 600; margin: 0 0 20px 0; }
+  .txt-moneda { font-size: 14px; color: #6B5049; font-weight: 400; }
+  .separador-linea { height: 1px; background: #F5DFD9; margin-bottom: 20px; }
+  
+  .lista-items { list-style: none; padding: 0; margin: 0 0 32px 0; flex: 1; }
+  .item-fila { font-size: 14px; color: #6B5049; margin-bottom: 12px; display: flex; gap: 8px; align-items: start; text-align: left; }
+  .tilde-check { color: #AD6B5F; font-weight: bold; }
+  
+  .btn-contratar-1 { background: #4A342E; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; margin-top: auto; }
+  .btn-contratar-1:hover { background: #362521; transform: translateY(-1px); }
+  .btn-contratar-2 { background: #AD6B5F; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; margin-top: auto; }
+  .btn-contratar-2:hover { background: #8F4F45; transform: translateY(-1px); }
 </style>
 </head>
 <body>
 
   <!-- HERO -->
-  <section class="hero">
-    <span class="badge">Software para belleza</span>
-    <h1 class="title">
+  <section class="hero-bloque">
+    <span class="tag-bello">Software para belleza</span>
+    <h1 class="titulo-principal">
       Protege tu tiempo y asegura tus ganancias. 
       <span class="brush-underline">
         Dile adiós
@@ -74,52 +67,69 @@
       </span> 
       a las clientas que te dejan plantada.
     </h1>
-    <p class="description">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
-    <a href="#precios" class="btn-hero">Asegurar mi agenda gratis</a>
+    <p class="bajada-texto">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
+    <a href="#precios" class="btn-principal-hero">Asegurar mi agenda gratis</a>
   </section>
   <!-- PRECIOS -->
-  <section id="precios" class="precios">
-    <h2 class="precios-title">Elige tu plan</h2>
-    <p class="precios-subtitle">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
+  <section id="precios" class="zona-precios">
+    <h2 class="precios-titulo">Elige tu plan</h2>
+    <p class="precios-sub">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
     
-    <div class="grid-planes">
+    <div class="contenedor-tablas">
+      
       <!-- Plan 1 -->
-      <div class="card">
-        <p class="card-tag">Home Studio</p>
-        <h3 class="card-title">Plan Emprendedora</h3>
-        <p class="card-price">$7.990 <span class="card-currency">CLP / mes</span></p>
-        <div class="linea-divisora"></div>
-        <ul class="lista">
-          <li class="lista-item"><span class="check">✓</span> Agenda digital móvil</li>
-          <li class="lista-item"><span class="check">✓</span> Confirmaciones manuales por WhatsApp</li>
-          <li class="lista-item"><span class="check">✓</span> Validación visual de comprobantes</li>
+      <div class="tabla-box">
+        <p class="txt-categoria">Home Studio</p>
+        <h3 class="txt-nombre-plan">Plan Emprendedora</h3>
+        <p class="txt-precio">$7.990 <span class="txt-moneda">CLP / mes</span></p>
+        <div class="separador-linea"></div>
+        <ul class="lista-items">
+          <li class="item-fila"><span class="tilde-check">✓</span> Agenda digital móvil</li>
+          <li class="item-fila"><span class="tilde-check">✓</span> Confirmaciones manuales por WhatsApp</li>
+          <li class="item-fila"><span class="tilde-check">✓</span> Validación visual de comprobantes</li>
         </ul>
-        <button type="button" onclick="openModal()" class="btn-p1">Contratar Plan</button>
+        <button type="button" onclick="openModal()" class="btn-contratar-1">Contratar Plan</button>
       </div>
 
       <!-- Plan 2 -->
-      <div class="card card-featured">
-        <span class="featured-badge">MÁS ELEGIDO</span>
-        <p class="card-tag">A domicilio</p>
-        <h3 class="card-title">Plan Pro</h3>
-        <p class="card-price">$11.990 <span class="card-currency">CLP / mes</span></p>
-        <div class="linea-divisora"></div>
-        <ul class="lista">
-          <li class="lista-item"><span class="check">✓</span> Todo lo anterior</li>
-          <li class="lista-item"><span class="check">✓</span> Calculadora automática de viáticos</li>
-          <li class="lista-item"><span class="check">✓</span> Recordatorios automáticos 24 hrs antes</li>
+      <div class="tabla-box tabla-destacada">
+        <span class="badge-popular">MÁS ELEGIDO</span>
+        <p class="txt-categoria">A domicilio</p>
+        <h3 class="txt-nombre-plan">Plan Pro</h3>
+        <p class="txt-precio">$11.990 <span class="txt-moneda">CLP / mes</span></p>
+        <div class="separador-linea"></div>
+        <ul class="lista-items">
+          <li class="item-fila"><span class="tilde-check">✓</span> Todo lo anterior</li>
+          <li class="item-fila"><span class="tilde-check">✓</span> Calculadora automática de viáticos</li>
+          <li class="item-fila"><span class="tilde-check">✓</span> Recordatorios automáticos 24 hrs antes</li>
         </ul>
-        <button type="button" onclick="openModal()" class="btn-p2">Contratar Plan Pro</button>
+        <button type="button" onclick="openModal()" class="btn-contratar-2">Contratar Plan Pro</button>
       </div>
+
     </div>
   </section>
 
-  <!-- MODAL -->
+  <!-- VENTANA EMERGENTE (MODAL REANIMADO) -->
+  <style>
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+    .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer; }
+    .modal-close:hover { color: #57534E; }
+    .form-group { text-align: left; margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4; background: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px; }
+    .form-input:focus { outline: none; border-color: #AD6B5F; }
+    .btn-submit { width: 100%; background: #1C1917; color: #FFFFFF; border: none; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px; }
+    .btn-submit:hover { background: #44403C; }
+    .hidden { display: none !important; }
+  </style>
+
   <div id="waitlistModal" class="modal-bg hidden">
     <div class="modal-box">
-      <button onclick="closeModal()" class="modal-close">&times;</button>
-      <h3 style="margin-top:0; font-size:22px;">¡Últimos detalles! 🚀</h3>
+      <button type="button" onclick="closeModal()" class="modal-close">&times;</button>
+      <h3 style="margin-top:0; font-size:22px; color:#1C1917;">¡Últimos detalles! 🚀</h3>
       <p style="color:#57534E; font-size:14px; margin-bottom:24px;">Deja tus datos para reservar tu lugar con 50% de descuento de por vida.</p>
+      
       <form id="waitlistForm" onsubmit="handleSubmit(event)">
         <div class="form-group">
           <label class="form-label">Correo</label>
@@ -134,11 +144,18 @@
     </div>
   </div>
 
-  <!-- CONEXIÓN REAL A SUPABASE -->
+  <!-- CONEXIÓN REAL Y MECANISMO DE ACCIÓN -->
   <script src="https://jsdelivr.net"></script>
   <script>
-    function openModal() { document.getElementById('waitlistModal').classList.remove('hidden'); }
-    function closeModal() { document.getElementById('waitlistModal').classList.add('hidden'); }
+    function openModal() { 
+      document.getElementById('waitlistModal').classList.remove('hidden'); 
+    }
+    document.openModal = openModal;
+
+    function closeModal() { 
+      document.getElementById('waitlistModal').classList.add('hidden'); 
+    }
+    document.closeModal = closeModal;
     
     const SUPABASE_URL = "https://supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
