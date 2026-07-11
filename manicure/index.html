@@ -4,244 +4,93 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protege tu agenda · Software para manicuristas en Chile</title>
+<link rel="stylesheet" href="https://cloudflare.com">
 <link href="https://googleapis.com" rel="stylesheet">
 <style>
-  /* ESTILOS PREMIUM INTERNOS BLINDADOS CONTRA BLOQUEOS */
   html { scroll-behavior: smooth; }
-  body { 
-    font-family: 'DM Sans', sans-serif; 
-    background-color: #FBF3EE; 
-    color: #4A342E;
-    margin: 0;
-    padding: 0;
-    -webkit-font-smoothing: antialiased;
-  }
+  body { font-family: 'DM Sans', sans-serif; background-color: #FBF3EE; color: #4A342E; }
   h1, h2, h3, .font-display { font-family: 'Fraunces', serif; }
-  
-  .hero-section {
-    position: relative;
-    overflow: hidden;
-    padding: 56px 24px 64px 24px;
-    text-align: center;
-    max-w: 500px;
-    margin: 0 auto;
-  }
-  .badge {
-    display: inline-block;
-    background-color: #FFFFFF;
-    color: #8F4F45;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    padding: 8px 16px;
-    border-radius: 9999px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    margin-bottom: 24px;
-  }
-  .main-title {
-    font-size: 32px;
-    line-height: 1.2;
-    font-weight: 600;
-    color: #4A342E;
-    margin-bottom: 20px;
-  }
-  .text-highlight {
-    color: #AD6B5F;
-    position: relative;
-    display: inline-block;
-  }
-  .main-description {
-    color: #6B5049;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 32px;
-  }
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #AD6B5F;
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 15px;
-    padding: 16px 32px;
-    border-radius: 9999px;
-    text-decoration: none;
-    box-shadow: 0 4px 6px rgba(173, 107, 95, 0.2);
-    transition: all 0.2s ease;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .btn-primary:hover {
-    background-color: #8F4F45;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(143, 79, 69, 0.4);
-  }
-  .prices-section {
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 56px 24px;
-  }
-  .prices-container {
-    max-w: 800px;
-    margin: 0 auto;
-  }
-  .section-title {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-  .section-subtitle {
-    text-align: center;
-    color: #6B5049;
-    margin-bottom: 40px;
-    font-size: 15px;
-  }
-  .grid-plans {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  @media(min-width: 640px) {
-    .grid-plans { grid-template-columns: 1fr 1fr; }
-  }
-  .card-plan {
-    background-color: #FFFFFF;
-    border-radius: 24px;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-    border: 1px solid #F5DFD9;
-    position: relative;
-    box-sizing: border-box;
-  }
-  .card-featured {
-    border: 2px solid #AD6B5F;
-    box-shadow: 0 16px 40px rgba(173, 107, 95, 0.25);
-  }
-  .plan-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #AD6B5F;
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 16px;
-    border-radius: 9999px;
-  }
-  .plan-tag {
-    font-size: 12px;
-    font-weight: 700;
-    color: #8F4F45;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-  .plan-name {
-    font-size: 20px;
-    margin: 0 0 4px 0;
-  }
-  .plan-price {
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  .plan-currency {
-    font-size: 16px;
-    color: #6B5049;
-    font-weight: 400;
-  }
-  .divider {
-    height: 1px;
-    background-color: #F5DFD9;
-    margin-bottom: 20px;
-  }
-  .features-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 32px 0;
-    flex: 1;
-  }
-  .feature-item {
-    font-size: 14px;
-    color: #6B5049;
-    margin-bottom: 12px;
-    display: flex;
-    gap: 8px;
-  }
-  .feature-check { color: #AD6B5F; font-weight: bold; }
-  .btn-plan-1 {
-    background-color: #4A342E;
-    color: #FFFFFF;
-    border: none;
-    padding: 14px;
-    border-radius: 9999px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    transition: all 0.2s ease;
-  }
-  .btn-plan-1:hover { background-color: rgba(74, 52, 46, 0.9); transform: translateY(-2px); }
-  .btn-plan-2 {
-    background-color: #AD6B5F;
-    color: #FFFFFF;
-    border: none;
-    padding: 14px;
-    border-radius: 9999px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    transition: all 0.2s ease;
-  }
-  .btn-plan-2:hover { background-color: #8F4F45; transform: translateY(-2px); }
+  .brush-underline { position: relative; display: inline-block; }
+  .brush-underline svg { position: absolute; left: 0; bottom: -0.35rem; width: 100%; height: 10px; }
+  .cta-btn { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(143, 79, 69, 0.45); }
+  .price-highlight { box-shadow: 0 16px 40px -14px rgba(173, 107, 95, 0.35); }
 </style>
 </head>
-<body>
+<body class="antialiased">
 
-  <section class="hero-section">
-    <span class="badge">Software para belleza</span>
-    <h1 class="main-title">Protege tu tiempo y asegura tus ganancias. Dile adiós a las clientas que te dejan plantada.</h1>
-    <p class="main-description">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
-    <a href="#precios" class="btn-primary">Asegurar mi agenda gratis</a>
+  <!-- HERO CENTRADO PREMIUM -->
+  <section class="relative overflow-hidden px-6 pt-14 pb-16 sm:pt-20 sm:pb-24">
+    <div class="pointer-events-none absolute -top-24 -right-20 h-72 w-72 rounded-full bg-[#F5DFD9] opacity-70 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#AD6B5F]/10 blur-3xl"></div>
+    <div class="relative max-w-md mx-auto sm:max-w-xl text-center">
+      <span class="inline-block bg-white text-[#8F4F45] text-[11px] font-bold tracking-widest px-4 py-2 rounded-full shadow-sm mb-6 uppercase">
+        Software para belleza
+      </span>
+
+      <h1 class="text-3xl leading-tight sm:text-4xl font-semibold mb-5">
+        Protege tu tiempo y asegura tus ganancias.
+        <span class="brush-underline block mt-1">
+          Dile adiós
+          <svg viewBox="0 0 200 12" preserveAspectRatio="none" fill="none">
+            <path d="M2 8 C 40 2, 80 10, 100 6 C 130 1, 160 9, 198 4" stroke="#AD6B5F" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        a las clientas que te dejan plantada.
+      </h1>
+
+      <p class="text-[#6B5049] text-[15px] sm:text-base leading-relaxed mb-8 max-w-sm mx-auto sm:max-w-md">
+        La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.
+      </p>
+
+      <a href="#precios" class="cta-btn inline-flex items-center justify-center bg-[#AD6B5F] hover:bg-[#8F4F45] text-white font-semibold text-[15px] px-8 py-4 rounded-full shadow-sm w-full sm:w-auto">
+        Asegurar mi agenda gratis
+      </a>
+    </div>
   </section>
-  <!-- SECCIÓN DE PRECIOS -->
-  <section id="precios" class="prices-section">
-    <div class="prices-container">
-      <h2 class="section-title">Elige tu plan</h2>
-      <p class="section-subtitle">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
-      
-      <div class="grid-plans">
-        
+  <!-- SECCIÓN DE PRECIOS INTEGRAL -->
+  <section id="precios" class="px-6 py-14 sm:py-20 bg-white bg-opacity-60">
+    <div class="max-w-md mx-auto sm:max-w-3xl">
+      <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-3">Elige tu plan</h2>
+      <p class="text-center text-[#6B5049] text-sm sm:text-base mb-10">
+        Precios simples, sin letra chica, pensados para tu tipo de trabajo.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
         <!-- Plan 1 -->
-        <div class="card-plan">
-          <p class="plan-tag">Home Studio</p>
-          <h3 class="plan-name">Plan Emprendedora</h3>
-          <p class="plan-price">$7.990 <span class="plan-currency">CLP / mes</span></p>
-          <div class="divider"></div>
-          <ul class="features-list">
-            <li class="feature-item"><span class="feature-check">✓</span> Agenda digital móvil</li>
-            <li class="feature-item"><span class="feature-check">✓</span> Confirmaciones manuales por WhatsApp</li>
-            <li class="feature-item"><span class="feature-check">✓</span> Validación de comprobantes CuentaRUT</li>
+        <div class="bg-white rounded-3xl shadow-sm p-8 flex flex-col border border-stone-100">
+          <p class="text-xs font-bold tracking-widest text-[#8F4F45] uppercase mb-2">Home Studio</p>
+          <h3 class="font-display text-xl font-semibold mb-1">Plan Emprendedora</h3>
+          <p class="text-3xl font-display font-semibold mb-1">$7.990 <span class="text-base font-body font-normal text-[#6B5049]">CLP / mes</span></p>
+          <div class="h-px bg-[#F5DFD9] my-5"></div>
+          <ul class="space-y-3 text-sm text-[#6B5049] mb-8 flex-1">
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Agenda digital móvil</li>
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Confirmaciones manuales por WhatsApp</li>
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Validación visual de comprobantes</li>
           </ul>
-          <button type="button" onclick="openModal()" class="btn-plan-1">Contratar Plan</button>
+          <button type="button" onclick="openModal()" class="text-center bg-[#4A342E] hover:bg-opacity-90 text-white font-semibold text-sm px-6 py-3.5 rounded-full w-full block mt-auto transition duration-150">
+            Contratar Plan
+          </button>
         </div>
 
-        <!-- Plan 2 -->
-        <div class="card-plan card-featured">
-          <span class="plan-badge">MÁS ELEGIDO</span>
-          <p class="plan-tag">A domicilio</p>
-          <h3 class="plan-name">Plan Pro</h3>
-          <p class="plan-price">$11.990 <span class="plan-currency">CLP / mes</span></p>
-          <div class="divider"></div>
-          <ul class="features-list">
-            <li class="feature-item"><span class="feature-check">✓</span> Todo lo anterior</li>
-            <li class="feature-item"><span class="feature-check">✓</span> Calculadora automática de viáticos</li>
-            <li class="feature-item"><span class="feature-check">✓</span> Recordatorios automáticos 24 hrs antes</li>
+        <!-- Plan 2 destacado -->
+        <div class="price-highlight relative bg-white rounded-3xl border-2 border-[#AD6B5F] p-8 flex flex-col">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#AD6B5F] text-white text-[11px] font-bold tracking-wide px-4 py-1 rounded-full">
+            MÁS ELEGIDO
+          </span>
+          <p class="text-xs font-bold tracking-widest text-[#8F4F45] uppercase mb-2">A domicilio</p>
+          <h3 class="font-display text-xl font-semibold mb-1">Plan Pro</h3>
+          <p class="text-3xl font-display font-semibold mb-1">$11.990 <span class="text-base font-body font-normal text-[#6B5049]">CLP / mes</span></p>
+          <div class="h-px bg-[#F5DFD9] my-5"></div>
+          <ul class="space-y-3 text-sm text-[#6B5049] mb-8 flex-1">
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Todo lo anterior</li>
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Calculadora automática de viáticos</li>
+            <li class="flex gap-2 items-start"><span class="text-[#AD6B5F] mt-0.5">✓</span> Recordatorios automáticos 24 hrs antes</li>
           </ul>
-          <button type="button" onclick="openModal()" class="btn-plan-2">Contratar Plan Pro</button>
+          <button type="button" onclick="openModal()" class="text-center bg-[#AD6B5F] hover:bg-[#8F4F45] text-white font-semibold text-sm px-6 py-3.5 rounded-full w-full block mt-auto transition duration-150">
+            Contratar Plan Pro
+          </button>
         </div>
 
       </div>
@@ -249,52 +98,26 @@
   </section>
 
   <!-- VENTANA EMERGENTE (MODAL) -->
-  <style>
-    .modal-backdrop {
-      position: fixed; inset: 0; background-color: rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center; p: 16px; z-index: 50;
-    }
-    .modal-content {
-      background-color: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%;
-      padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      position: relative; box-sizing: border-box; border: 1px solid #EEDCDA;
-    }
-    .modal-close {
-      position: absolute; top: 16px; right: 16px; background: none; border: none;
-      color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer;
-    }
-    .modal-close:hover { color: #57534E; }
-    .form-group { text-align: left; margin-bottom: 16px; }
-    .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
-    .form-input {
-      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4;
-      background-color: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px;
-    }
-    .form-input:focus { outline: none; border-color: #AD6B5F; }
-    .btn-submit {
-      width: 100%; background-color: #1C1917; color: #FFFFFF; border: none;
-      font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px;
-    }
-    .btn-submit:hover { background-color: #44403C; }
-    .hidden { display: none !important; }
-  </style>
-
-  <div id="waitlistModal" class="modal-backdrop hidden">
-    <div class="modal-content">
-      <button onclick="closeModal()" class="modal-close">&times;</button>
-      <h3 style="margin-top: 0; font-size: 22px;">¡Estamos afinando los últimos detalles! 🚀</h3>
-      <p style="color: #57534E; font-size: 14px; margin-bottom: 24px;">Deja tus datos para el lanzamiento con 50% de descuento de por vida.</p>
+  <div id="waitlistModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-stone-50 rounded-2xl max-w-md w-full p-6 text-center shadow-xl border border-stone-100 relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600 text-xl font-bold">&times;</button>
+      <h3 class="text-2xl font-bold text-stone-900 mb-3">¡Estamos afinando los últimos detalles! 🚀</h3>
+      <p class="text-stone-600 text-sm mb-6 leading-relaxed">
+        Deja tu correo y WhatsApp para reservar tu lugar en la lista de espera prioritaria con el <span class="font-bold text-stone-900">50% de descuento de por vida</span>.
+      </p>
       
-      <form id="waitlistForm" onsubmit="handleSubmit(event)">
-        <div class="form-group">
-          <label class="form-label">Correo</label>
-          <input type="email" id="email" required class="form-input" placeholder="tu@email.com">
+      <form id="waitlistForm" onsubmit="handleSubmit(event)" class="text-left space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1">Correo</label>
+          <input type="email" id="email" required placeholder="tu@email.com" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#AD6B5F] text-sm">
         </div>
-        <div class="form-group">
-          <label class="form-label">WhatsApp</label>
-          <input type="tel" id="whatsapp" required class="form-input" placeholder="+56 9 1234 5678">
+        <div>
+          <label class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1">WhatsApp</label>
+          <input type="tel" id="whatsapp" required placeholder="+56 9 1234 5678" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#AD6B5F] text-sm">
         </div>
-        <button type="submit" class="btn-submit">Reservar mi lugar</button>
+        <button type="submit" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md text-sm mt-2">
+          Reservar mi lugar
+        </button>
       </form>
     </div>
   </div>
@@ -302,33 +125,44 @@
   <!-- CONEXIÓN REAL A SUPABASE -->
   <script src="https://jsdelivr.net"></script>
   <script>
-    function openModal() { document.getElementById('waitlistModal').classList.remove('hidden'); }
-    function closeModal() { document.getElementById('waitlistModal').classList.add('hidden'); }
-    
+    function openModal() {
+      document.getElementById('waitlistModal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('waitlistModal').classList.add('hidden');
+    }
+
     const SUPABASE_URL = "https://supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
-    
+
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
+
     async function handleSubmit(event) {
       event.preventDefault();
-      const submitBtn = event.target.querySelector('.btn-submit');
+      const submitBtn = event.target.querySelector('button[type="submit"]');
       submitBtn.textContent = "Guardando...";
       submitBtn.disabled = true;
-      
-      const { error } = await _supabase.from('manicure_lista_espera').insert([
-        { correo: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value }
-      ]);
-      
-      if (error) { 
-        alert('Error: ' + error.message); 
-      } else { 
-        alert('¡Registro exitoso! Tu cupo quedó asegurado.'); 
-        closeModal(); 
-        event.target.reset(); 
+
+      const emailValue = document.getElementById('email').value;
+      const whatsappValue = document.getElementById('whatsapp').value;
+
+      try {
+        const { error } = await _supabase
+          .from('manicure_lista_espera')
+          .insert([{ correo: emailValue, whatsapp: whatsappValue }]);
+
+        if (error) throw error;
+
+        alert('¡Registro exitoso! Guardamos tu lugar en la lista de espera con el 50% de descuento de por vida.');
+        closeModal();
+        event.target.reset();
+
+      } catch (error) {
+        alert('Error: ' + error.message);
+      } finally {
+        submitBtn.textContent = "Reservar mi lugar";
+        submitBtn.disabled = false;
       }
-      submitBtn.textContent = "Reservar mi lugar"; 
-      submitBtn.disabled = false;
     }
   </script>
 </body>
