@@ -4,50 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protege tu agenda · Software para manicuristas en Chile</title>
+<script src="https://jsdelivr.net"></script>
 <link rel="stylesheet" href="https://googleapis.com">
 <style>
-  /* ESTILOS INTERNOS BLINDADOS CONTRA BLOQUEOS DE RED */
   html { scroll-behavior: smooth; }
-  body { 
-    font-family: 'DM Sans', sans-serif; 
-    background-color: #FBF3EE; 
-    color: #4A342E; 
-    margin: 0; 
-    padding: 0; 
-    -webkit-font-smoothing: antialiased; 
-  }
+  body { font-family: 'DM Sans', sans-serif; background-color: #FBF3EE; color: #4A342E; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
   h1, h2, h3 { font-family: 'Fraunces', serif; }
-  
-  .hero-bloque { max-w: 600px; margin: 0 auto; text-align: center; padding: 60px 24px; box-sizing: border-box; }
-  .tag-bello { display: inline-block; background: #FFFFFF; color: #8F4F45; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 8px 16px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px; }
-  .titulo-principal { font-size: 32px; line-height: 1.2; font-weight: 600; margin: 0 0 20px 0; }
+  .hero { max-w: 600px; margin: 0 auto; text-align: center; padding: 60px 24px 30px 24px; box-sizing: border-box; }
+  .badge { display: inline-block; background: #FFFFFF; color: #8F4F45; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 8px 16px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px; }
+  .title { font-size: 32px; line-height: 1.2; font-weight: 600; margin: 0 0 20px 0; }
   .brush-underline { position: relative; display: inline-block; color: #AD6B5F; }
   .brush-underline svg { position: absolute; left: 0; bottom: -6px; width: 100%; height: 10px; }
-  .bajada-texto { color: #6B5049; font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
-  .btn-principal-hero { display: inline-block; background-color: #AD6B5F; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 16px 32px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 12px rgba(173,107,95,0.25); transition: all 0.2s ease; }
-  .btn-principal-hero:hover { background-color: #8F4F45; transform: translateY(-2px); }
-  
-  .zona-precios { background-color: rgba(255,255,255,0.5); padding: 60px 24px; }
+  .description { color: #6B5049; font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
+  .btn-hero { display: inline-block; background-color: #AD6B5F; color: #FFFFFF; font-weight: 600; font-size: 15px; padding: 16px 32px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 12px rgba(173,107,95,0.25); transition: all 0.2s ease; }
+  .btn-hero:hover { background-color: #8F4F45; transform: translateY(-2px); }
+  .caracteristicas { max-w: 850px; margin: 0 auto; padding: 20px 24px 50px 24px; box-sizing: border-box; }
+  .grid-bloques { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media(min-width: 640px) { .grid-bloques { grid-template-columns: 1fr 1fr 1fr; } }
+  .bloque-item { background: #FFFFFF; padding: 24px; border-radius: 20px; border: 1px solid #F5DFD9; text-align: left; box-shadow: 0 4px 12px rgba(74, 52, 46, 0.02); }
+  .bloque-item .icono { font-size: 26px; margin-bottom: 10px; display: block; }
+  .bloque-item h4 { font-size: 17px; margin: 0 0 8px 0; color: #4A342E; font-weight: 600; }
+  .bloque-item p { font-size: 13.5px; color: #6B5049; margin: 0; line-height: 1.5; }
+  .zona-precios { background-color: rgba(255,255,255,0.5); padding: 50px 24px; }
   .precios-titulo { text-align: center; font-size: 28px; margin: 0 0 8px 0; }
-  .precios-sub { text-align: center; color: #6B5049; font-size: 15px; margin-bottom: 40px; }
-  
+  .precios-sub { text-align: center; color: #6B5049; font-size: 15px; margin-bottom: 35px; }
   .contenedor-tablas { display: flex; flex-direction: column; gap: 24px; max-w: 780px; margin: 0 auto; width: 100%; box-sizing: border-box; }
   @media(min-width: 640px) { .contenedor-tablas { flex-direction: row; justify-content: center; align-items: stretch; } }
-  
-  .tabla-box { background: #FFFFFF; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; border: 1px solid #F5DFD9; width: 100%; max-width: 360px; box-sizing: border-box; position: relative; }
-  .tabla-destacada { border: 2px solid #AD6B5F; box-shadow: 0 16px 40px rgba(173,107,95,0.18); }
+  .tabla-box { background: #FFFFFF; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; border: 1px solid #F5DFD9; width: 100%; max-width: 350px; box-sizing: border-box; position: relative; }
+  .tabla-destacada { border: 2px solid #AD6B5F; box-shadow: 0 16px 40px rgba(173,107,95,0.14); }
   .badge-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #AD6B5F; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 16px; border-radius: 9999px; white-space: nowrap; }
-  
   .txt-categoria { font-size: 12px; font-weight: 700; color: #8F4F45; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0; }
   .txt-nombre-plan { font-size: 20px; margin: 0 0 4px 0; }
   .txt-precio { font-size: 30px; font-weight: 600; margin: 0 0 20px 0; }
   .txt-moneda { font-size: 14px; color: #6B5049; font-weight: 400; }
   .separador-linea { height: 1px; background: #F5DFD9; margin-bottom: 20px; }
-  
   .lista-items { list-style: none; padding: 0; margin: 0 0 32px 0; flex: 1; }
   .item-fila { font-size: 14px; color: #6B5049; margin-bottom: 12px; display: flex; gap: 8px; align-items: start; text-align: left; }
   .tilde-check { color: #AD6B5F; font-weight: bold; }
-  
   .btn-contratar-1 { background: #4A342E; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; margin-top: auto; }
   .btn-contratar-1:hover { background: #362521; transform: translateY(-1px); }
   .btn-contratar-2 { background: #AD6B5F; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; margin-top: auto; }
@@ -55,28 +48,24 @@
 </style>
 </head>
 <body>
-
-  <!-- HERO -->
-  <section class="hero-bloque">
-    <span class="tag-bello">Software para belleza</span>
-    <h1 class="titulo-principal">
-      Protege tu tiempo y asegura tus ganancias. 
-      <span class="brush-underline">
-        Dile adiós
-        <svg viewBox="0 0 200 12" preserveAspectRatio="none" fill="none"><path d="M2 8 C 40 2, 80 10, 100 6 C 130 1, 160 9, 198 4" stroke="#AD6B5F" stroke-width="5" stroke-linecap="round"/></svg>
-      </span> 
-      a las clientas que te dejan plantada.
-    </h1>
-    <p class="bajada-texto">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
-    <a href="#precios" class="btn-principal-hero">Asegurar mi agenda gratis</a>
+  <section class="hero">
+    <span class="badge">Software para belleza</span>
+    <h1 class="title">Protege tu tiempo y asegura tus ganancias. <span class="brush-underline">Dile adiós<svg viewBox="0 0 200 12" preserveAspectRatio="none" fill="none"><path d="M2 8 C 40 2, 80 10, 100 6 C 130 1, 160 9, 198 4" stroke="#AD6B5F" stroke-width="5" stroke-linecap="round"/></svg></span> a las clientas que te dejan plantada.</h1>
+    <p class="description">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
+    <a href="#precios" class="btn-hero">Ver planes disponibles</a>
+  </section>
+  <section class="caracteristicas">
+    <div class="grid-bloques">
+      <div class="bloque-item"><span class="icono">🏦</span><h4>Abonos CuentaRUT</h4><p>Tus clientas transfieren una seña directa a tu cuenta para congelar la hora. El sistema valida el monto para evitar engaños.</p></div>
+      <div class="bloque-item"><span class="icono">🗂️</span><h4>Historial de Clientas</h4><p>Mantén un registro detallado de las citas de cada clienta, sus diseños favoritos, alergias y puntualidad en un solo panel móvil.</p></div>
+      <div class="bloque-item"><span class="icono">🚗</span><h4>Calculadora de Viáticos</h4><p>Calcula el costo real de traslado a domicilio de forma automática según la distancia. Cobras lo justo sin sacar cuentas manuales.</p></div>
+    </div>
   </section>
   <!-- PRECIOS -->
   <section id="precios" class="zona-precios">
     <h2 class="precios-titulo">Elige tu plan</h2>
     <p class="precios-sub">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
-    
     <div class="contenedor-tablas">
-      
       <!-- Plan 1 -->
       <div class="tabla-box">
         <p class="txt-categoria">Home Studio</p>
@@ -90,7 +79,6 @@
         </ul>
         <button type="button" onclick="openModal()" class="btn-contratar-1">Contratar Plan</button>
       </div>
-
       <!-- Plan 2 -->
       <div class="tabla-box tabla-destacada">
         <span class="badge-popular">MÁS ELEGIDO</span>
@@ -105,7 +93,6 @@
         </ul>
         <button type="button" onclick="openModal()" class="btn-contratar-2">Contratar Plan Pro</button>
       </div>
-
     </div>
   </section>
 
@@ -129,7 +116,6 @@
       <button type="button" onclick="closeModal()" class="modal-close">&times;</button>
       <h3 style="margin-top:0; font-size:22px; color:#1C1917;">¡Últimos detalles! 🚀</h3>
       <p style="color:#57534E; font-size:14px; margin-bottom:24px;">Deja tus datos para reservar tu lugar con 50% de descuento de por vida.</p>
-      
       <form id="waitlistForm" onsubmit="handleSubmit(event)">
         <div class="form-group">
           <label class="form-label">Correo</label>
@@ -144,28 +130,38 @@
     </div>
   </div>
 
-  <!-- CONEXIÓN REAL Y MECANISMO DE ACCIÓN -->
-  <script src="https://jsdelivr.net"></script>
+  <!-- INITIALIZATION FIX & SUPABASE WIRE -->
   <script>
-    function openModal() { 
-      document.getElementById('waitlistModal').classList.remove('hidden'); 
-    }
-    document.openModal = openModal;
-
-    function closeModal() { 
-      document.getElementById('waitlistModal').classList.add('hidden'); 
-    }
-    document.closeModal = closeModal;
+    function openModal() { document.getElementById('waitlistModal').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('waitlistModal').classList.add('hidden'); }
     
-    const SUPABASE_URL = "https://supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Declaramos las variables globales para asegurar el orden de ejecución correcto
+    let _supabase;
+    
+    // Esperamos a que la librería de Supabase cargue completamente en el navegador
+    window.addEventListener('load', () => {
+      const SUPABASE_URL = "https://supabase.co";
+      const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
+      if (typeof supabase !== 'undefined') {
+        _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } else {
+        console.error("Librería Supabase no detectada.");
+      }
+    });
     
     async function handleSubmit(event) {
       event.preventDefault();
       const submitBtn = event.target.querySelector('.btn-submit');
       submitBtn.textContent = "Guardando...";
       submitBtn.disabled = true;
+      
+      if (!_supabase) {
+        alert("Error de conexión: El sistema se está inicializando. Por favor intenta de nuevo en 3 segundos.");
+        submitBtn.textContent = "Reservar mi lugar";
+        submitBtn.disabled = false;
+        return;
+      }
+      
       try {
         const { error } = await _supabase.from('manicure_lista_espera').insert([
           { correo: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value }
