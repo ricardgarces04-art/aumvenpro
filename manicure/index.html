@@ -207,3 +207,129 @@
     <p class="main-description">La primera herramienta de agendamiento y confirmación por WhatsApp diseñada exclusivamente para manicuristas y esteticistas a domicilio o Home Studio en Chile. Recibe abonos directo a tu CuentaRUT.</p>
     <a href="#precios" class="btn-primary">Asegurar mi agenda gratis</a>
   </section>
+  <!-- SECCIÓN DE PRECIOS -->
+  <section id="precios" class="prices-section">
+    <div class="prices-container">
+      <h2 class="section-title">Elige tu plan</h2>
+      <p class="section-subtitle">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
+      
+      <div class="grid-plans">
+        
+        <!-- Plan 1 -->
+        <div class="card-plan">
+          <p class="plan-tag">Home Studio</p>
+          <h3 class="plan-name">Plan Emprendedora</h3>
+          <p class="plan-price">$7.990 <span class="plan-currency">CLP / mes</span></p>
+          <div class="divider"></div>
+          <ul class="features-list">
+            <li class="feature-item"><span class="feature-check">✓</span> Agenda digital móvil</li>
+            <li class="feature-item"><span class="feature-check">✓</span> Confirmaciones manuales por WhatsApp</li>
+            <li class="feature-item"><span class="feature-check">✓</span> Validación de comprobantes CuentaRUT</li>
+          </ul>
+          <button type="button" onclick="openModal()" class="btn-plan-1">Contratar Plan</button>
+        </div>
+
+        <!-- Plan 2 -->
+        <div class="card-plan card-featured">
+          <span class="plan-badge">MÁS ELEGIDO</span>
+          <p class="plan-tag">A domicilio</p>
+          <h3 class="plan-name">Plan Pro</h3>
+          <p class="plan-price">$11.990 <span class="plan-currency">CLP / mes</span></p>
+          <div class="divider"></div>
+          <ul class="features-list">
+            <li class="feature-item"><span class="feature-check">✓</span> Todo lo anterior</li>
+            <li class="feature-item"><span class="feature-check">✓</span> Calculadora automática de viáticos</li>
+            <li class="feature-item"><span class="feature-check">✓</span> Recordatorios automáticos 24 hrs antes</li>
+          </ul>
+          <button type="button" onclick="openModal()" class="btn-plan-2">Contratar Plan Pro</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- VENTANA EMERGENTE (MODAL) -->
+  <style>
+    .modal-backdrop {
+      position: fixed; inset: 0; background-color: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center; p: 16px; z-index: 50;
+    }
+    .modal-content {
+      background-color: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%;
+      padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      position: relative; box-sizing: border-box; border: 1px solid #EEDCDA;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px; background: none; border: none;
+      color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer;
+    }
+    .modal-close:hover { color: #57534E; }
+    .form-group { text-align: left; margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
+    .form-input {
+      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4;
+      background-color: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px;
+    }
+    .form-input:focus { outline: none; border-color: #AD6B5F; }
+    .btn-submit {
+      width: 100%; background-color: #1C1917; color: #FFFFFF; border: none;
+      font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px;
+    }
+    .btn-submit:hover { background-color: #44403C; }
+    .hidden { display: none !important; }
+  </style>
+
+  <div id="waitlistModal" class="modal-backdrop hidden">
+    <div class="modal-content">
+      <button onclick="closeModal()" class="modal-close">&times;</button>
+      <h3 style="margin-top: 0; font-size: 22px;">¡Estamos afinando los últimos detalles! 🚀</h3>
+      <p style="color: #57534E; font-size: 14px; margin-bottom: 24px;">Deja tus datos para el lanzamiento con 50% de descuento de por vida.</p>
+      
+      <form id="waitlistForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Correo</label>
+          <input type="email" id="email" required class="form-input" placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" id="whatsapp" required class="form-input" placeholder="+56 9 1234 5678">
+        </div>
+        <button type="submit" class="btn-submit">Reservar mi lugar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONEXIÓN REAL A SUPABASE -->
+  <script src="https://jsdelivr.net"></script>
+  <script>
+    function openModal() { document.getElementById('waitlistModal').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('waitlistModal').classList.add('hidden'); }
+    
+    const SUPABASE_URL = "https://supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
+    
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const submitBtn = event.target.querySelector('.btn-submit');
+      submitBtn.textContent = "Guardando...";
+      submitBtn.disabled = true;
+      
+      const { error } = await _supabase.from('manicure_lista_espera').insert([
+        { correo: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value }
+      ]);
+      
+      if (error) { 
+        alert('Error: ' + error.message); 
+      } else { 
+        alert('¡Registro exitoso! Tu cupo quedó asegurado.'); 
+        closeModal(); 
+        event.target.reset(); 
+      }
+      submitBtn.textContent = "Reservar mi lugar"; 
+      submitBtn.disabled = false;
+    }
+  </script>
+</body>
+</html>
