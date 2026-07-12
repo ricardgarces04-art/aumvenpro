@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protege tu agenda · Software para manicuristas en Chile</title>
-<script src="https://jsdelivr.net"></script>
 <link rel="stylesheet" href="https://googleapis.com">
 <style>
   html { scroll-behavior: smooth; }
@@ -61,6 +60,7 @@
       <div class="bloque-item"><span class="icono">🚗</span><h4>Calculadora de Viáticos</h4><p>Calcula el costo real de traslado a domicilio de forma automática según la distancia. Cobras lo justo sin sacar cuentas manuales.</p></div>
     </div>
   </section>
+  <!-- PRECIOS -->
   <section id="precios" class="zona-precios">
     <h2 class="precios-titulo">Elige tu plan</h2>
     <p class="precios-sub">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
@@ -92,6 +92,8 @@
       </div>
     </div>
   </section>
+
+  <!-- VENTANA EMERGENTE (MODAL REANIMADO) -->
   <style>
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
     .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
@@ -101,6 +103,7 @@
     .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4; background: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px; }
     .btn-submit { width: 100%; background: #1C1917; color: #FFFFFF; border: none; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px; }
   </style>
+
   <div id="waitlistModal" class="modal-bg">
     <div class="modal-box">
       <button type="button" onclick="closeModal()" class="modal-close">&times;</button>
@@ -119,28 +122,47 @@
       </form>
     </div>
   </div>
+
+  <!-- SISTEMA DE ENVÍO DIRECTO INMUNE A BLOQUEOS DE LIBRERÍA -->
   <script>
     function openModal() { document.getElementById('waitlistModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('waitlistModal').style.display = 'none'; }
-    const SUPABASE_URL = "https://supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+    
     async function handleSubmit(event) {
       event.preventDefault();
       const submitBtn = event.target.querySelector('.btn-submit');
       submitBtn.textContent = "Guardando...";
       submitBtn.disabled = true;
+
+      const correoInput = document.getElementById('email').value;
+      const whatsappInput = document.getElementById('whatsapp').value;
+
+      // Usamos una llamada directa por protocolo HTTP (REST API) que no requiere inicializar la librería
+      const url = "https://supabase.co";
+      const key = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+
       try {
-        if (typeof window.supabase === 'undefined') { alert("Conectando... Intenta un clic más en 3 segundos."); return; }
-        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { error } = await db.from('manicure_lista_espera').insert([
-          { correo: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value }
-        ]);
-        if (error) throw error;
-        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real.');
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'apikey': key,
+            'Authorization': 'Bearer ' + key,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ correo: correoInput, whatsapp: whatsappInput })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al conectar con la base de datos');
+        }
+
+        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real en Supabase.');
         closeModal();
         event.target.reset();
+
       } catch (error) {
-        alert('Error: ' + error.message);
+        alert('Hubo un problema temporal. Por favor, vuelve a intentar en unos segundos: ' + error.message);
       } finally {
         submitBtn.textContent = "Reservar mi lugar";
         submitBtn.disabled = false;
