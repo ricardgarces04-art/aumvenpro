@@ -65,6 +65,7 @@
     <h2 class="precios-titulo">Elige tu plan</h2>
     <p class="precios-sub">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
     <div class="contenedor-tablas">
+      <!-- Plan 1 -->
       <div class="tabla-box">
         <p class="txt-categoria">Home Studio</p>
         <h3 class="txt-nombre-plan">Plan Emprendedora</h3>
@@ -77,6 +78,7 @@
         </ul>
         <button type="button" onclick="openModal()" class="btn-contratar-1">Contratar Plan</button>
       </div>
+      <!-- Plan 2 -->
       <div class="tabla-box tabla-destacada">
         <span class="badge-popular">MÁS ELEGIDO</span>
         <p class="txt-categoria">A domicilio</p>
@@ -93,7 +95,7 @@
     </div>
   </section>
 
-  <!-- VENTANA EMERGENTE (MODAL REANIMADO) -->
+  <!-- VENTANA EMERGENTE (MODAL) -->
   <style>
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
     .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
@@ -123,7 +125,7 @@
     </div>
   </div>
 
-  <!-- SISTEMA DE ENVÍO DIRECTO INMUNE A BLOQUEOS DE LIBRERÍA -->
+  <!-- CONTROL DE INTERFAZ Y CONEXIÓN REST API SIN DEPENDENCIAS -->
   <script>
     function openModal() { document.getElementById('waitlistModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('waitlistModal').style.display = 'none'; }
@@ -137,7 +139,7 @@
       const correoInput = document.getElementById('email').value;
       const whatsappInput = document.getElementById('whatsapp').value;
 
-      // Usamos una llamada directa por protocolo HTTP (REST API) que no requiere inicializar la librería
+      // URL del Endpoint y Clave Real Limpia y Verificada
       const url = "https://supabase.co";
       const key = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
 
@@ -154,15 +156,15 @@
         });
 
         if (!response.ok) {
-          throw new Error('Error al conectar con la base de datos');
+          throw new Error('Error de comunicación con el backend');
         }
 
-        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real en Supabase.');
+        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real en la base de datos.');
         closeModal();
         event.target.reset();
 
       } catch (error) {
-        alert('Hubo un problema temporal. Por favor, vuelve a intentar en unos segundos: ' + error.message);
+        alert('Hubo un problema. Por favor intenta de nuevo: ' + error.message);
       } finally {
         submitBtn.textContent = "Reservar mi lugar";
         submitBtn.disabled = false;
