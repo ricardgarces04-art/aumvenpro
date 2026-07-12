@@ -4,7 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protege tu agenda · Software para manicuristas en Chile</title>
-<script src="https://jsdelivr.net" crossorigin="anonymous"></script>
+
+<!-- SE CARGAN E INICIALIZAN LAS LIBRERÍAS AL INICIO PARA SOLUCIONAR EL ERROR DE INICIALIZACIÓN -->
+<script src="https://jsdelivr.net"></script>
+<script>
+  // Inicialización global e inmediata de Supabase
+  const SUPABASE_URL = "https://supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
+  
+  // Variable global disponible para todo el documento
+  var _supabase;
+  try {
+    _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch(e) {
+    console.error("Error al inicializar Supabase:", e);
+  }
+</script>
+
 <link rel="stylesheet" href="https://googleapis.com">
 <style>
   html { scroll-behavior: smooth; }
@@ -45,6 +61,14 @@
   .btn-contratar-1:hover { background: #362521; transform: translateY(-1px); }
   .btn-contratar-2 { background: #AD6B5F; color: #FFFFFF; border: none; padding: 14px; border-radius: 9999px; font-weight: 600; cursor: pointer; transition: all 0.15s; width: 100%; box-sizing: border-box; margin-top: auto; }
   .btn-contratar-2:hover { background: #8F4F45; transform: translateY(-1px); }
+  
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+  .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer; }
+  .form-group { text-align: left; margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
+  .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4; background: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px; }
+  .btn-submit { width: 100%; background: #1C1917; color: #FFFFFF; border: none; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -61,10 +85,12 @@
       <div class="bloque-item"><span class="icono">🚗</span><h4>Calculadora de Viáticos</h4><p>Calcula el costo real de traslado a domicilio de forma automática según la distancia. Cobras lo justo sin sacar cuentas manuales.</p></div>
     </div>
   </section>
+  <!-- PRECIOS -->
   <section id="precios" class="zona-precios">
     <h2 class="precios-titulo">Elige tu plan</h2>
     <p class="precios-sub">Precios simples, sin letra chica, pensados para tu tipo de trabajo.</p>
     <div class="contenedor-tablas">
+      <!-- Plan 1 -->
       <div class="tabla-box">
         <p class="txt-categoria">Home Studio</p>
         <h3 class="txt-nombre-plan">Plan Emprendedora</h3>
@@ -77,6 +103,7 @@
         </ul>
         <button type="button" onclick="openModal()" class="btn-contratar-1">Contratar Plan</button>
       </div>
+      <!-- Plan 2 -->
       <div class="tabla-box tabla-destacada">
         <span class="badge-popular">MÁS ELEGIDO</span>
         <p class="txt-categoria">A domicilio</p>
@@ -93,17 +120,7 @@
     </div>
   </section>
 
-  <style>
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-    .modal-box { background: #FAFAFA; border-radius: 16px; max-w: 400px; w: 100%; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; box-sizing: border-box; border: 1px solid #EEDCDA; }
-    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #A8A29E; font-size: 24px; font-weight: bold; cursor: pointer; }
-    .form-group { text-align: left; margin-bottom: 16px; }
-    .form-label { display: block; font-size: 12px; font-weight: 600; color: #44403C; text-transform: uppercase; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #E7E5E4; background: #FFFFFF; color: #292524; box-sizing: border-box; font-size: 14px; }
-    .btn-submit { width: 100%; background: #1C1917; color: #FFFFFF; border: none; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; margin-top: 8px; }
-    .hidden { display: none !important; }
-  </style>
-
+  <!-- VENTANA EMERGENTE (MODAL) -->
   <div id="waitlistModal" class="modal-bg">
     <div class="modal-box">
       <button type="button" onclick="closeModal()" class="modal-close">&times;</button>
@@ -123,29 +140,40 @@
     </div>
   </div>
 
+  <!-- CONTROL DE INTERFAZ Y ENVÍO SEGURO -->
   <script>
     function openModal() { document.getElementById('waitlistModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('waitlistModal').style.display = 'none'; }
-    
-    const SUPABASE_URL = "https://supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6"; 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     async function handleSubmit(event) {
       event.preventDefault();
       const submitBtn = event.target.querySelector('.btn-submit');
       submitBtn.textContent = "Guardando...";
       submitBtn.disabled = true;
+      
+      // Verificación estricta de la variable inicializada en el HEAD
+      if (typeof _supabase === 'undefined' || !_supabase) {
+        alert("El motor de la base de datos se está conectando. Por favor, espera 2 segundos y vuelve a presionar el botón.");
+        submitBtn.textContent = "Reservar mi lugar";
+        submitBtn.disabled = false;
+        return;
+      }
+      
       try {
+        const correoInput = document.getElementById('email').value;
+        const whatsappInput = document.getElementById('whatsapp').value;
+
         const { error } = await _supabase.from('manicure_lista_espera').insert([
-          { correo: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value }
+          { correo: correoInput, whatsapp: whatsappInput }
         ]);
+
         if (error) throw error;
-        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real en la base de datos.');
+        
+        alert('¡Registro exitoso! Tu cupo quedó asegurado de forma real.');
         closeModal();
         event.target.reset();
       } catch (error) {
-        alert('Error de conexión: ' + error.message);
+        alert('Error de conexión con Supabase: ' + error.message);
       } finally {
         submitBtn.textContent = "Reservar mi lugar";
         submitBtn.disabled = false;
