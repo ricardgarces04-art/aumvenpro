@@ -151,10 +151,8 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Guardando lugar...';
 
-      // DIRECCIONES VERDADERAS SIN PLACEHOLDERS CORREGIDAS POR CLAUDE
-      const CONFIG_URL = "https://wfosczhszouuikypsvsx.supabase.co";
-      const CONFIG_KEY = 
-"sb_publishable__eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+      const CONFIG_URL = "https://supabase.co";
+      const CONFIG_KEY = "sb_publishable__eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3NjemhszouuikypsvsxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
 
       try {
         const response = await fetch(CONFIG_URL + '/rest/v1/manicure_lista_espera', {
@@ -188,3 +186,4 @@
   </script>
 </body>
 </html>
+
