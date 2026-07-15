@@ -598,7 +598,24 @@
     // ==========================================================
     const CONFIG_URL = "https://wfosczhszouukypsvasx.supabase.co";
     const CONFIG_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
+// ==========================================================
+    // TELEGRAM: avisa a Ric cada vez que alguien se registra
+    // ==========================================================
+    const TELEGRAM_TOKEN = "8831948564:AAE_XL1e3j8bF3w_guXwRfvm3tU7WFpGh1c";
+    const TELEGRAM_CHAT_ID = "6000459217";
 
+    async function avisarPorTelegram(email, phone) {
+      const texto = `🚀 Nuevo interesado en AUMVEN Manicure\n\n📧 Correo: ${email}\n📱 WhatsApp: ${phone}`;
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: texto })
+        });
+      } catch (err) {
+        console.error('No se pudo avisar por Telegram:', err);
+      }
+    }
     // Abrir modal
     function openModal() {
       document.getElementById('waitlistModal').style.display = 'flex';
@@ -656,7 +673,7 @@
           const errorBody = await response.text();
           throw new Error('Supabase respondió ' + response.status + ': ' + errorBody);
         }
-
+        avisarPorTelegram(email, phone);
         alert('¡Registro exitoso! Te contactaremos muy pronto por WhatsApp.');
         closeModal();
         document.getElementById('waitlistForm').reset();
