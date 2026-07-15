@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de aprobación · Agenda</title>
+
+<style>
+  :root {
+    --cream: #FBF3EE;
+    --blush: #F5DFD9;
+    --coffee: #4A342E;
+    --coffeesoft: #6B5049;
+    --siena: #AD6B5F;
+    --sienadark: #8F4F45;
+    --white: #FFFFFF;
+    --green: #3A7D44;
+    --red: #B3261E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--coffee);
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
+  .container { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
+
+  /* ---- LOGIN ---- */
+  #loginScreen {
+    max-width: 360px;
+    margin: 60px auto;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 28px;
+  }
+  #loginScreen h1 { font-size: 22px; margin-bottom: 6px; text-align: center; }
+  #loginScreen p.hint { color: var(--coffeesoft); font-size: 13px; text-align: center; margin-bottom: 20px; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #E5D9D3;
+    background: var(--white);
+    color: var(--coffee);
+    font-size: 14px;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--siena);
+    box-shadow: 0 0 0 3px rgba(173,107,95,0.15);
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--white);
+    background: var(--siena);
+  }
+  .btn:hover { background: var(--sienadark); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .msg {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .msg.error { background: #FDECEC; color: var(--red); }
+  .msg.success { background: #E6F4E8; color: var(--green); }
+
+  /* ---- PANEL ---- */
+  #panelScreen { display: none; }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .panel-header h1 { font-size: 20px; }
+  .logout-link {
+    font-size: 12px;
+    color: var(--coffeesoft);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .tab-btn {
+    flex: 1;
+    background: var(--blush);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--coffee);
+  }
+  .tab-btn.active { border-color: var(--siena); background: var(--white); }
+
+  .empty-state {
+    text-align: center;
+    color: var(--coffeesoft);
+    font-size: 14px;
+    padding: 40px 10px;
+  }
+
+  .cita-card {
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .cita-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .cita-fecha {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .cita-monto {
+    font-size: 13px;
+    color: var(--sienadark);
+    font-weight: 700;
+  }
+  .cita-info { font-size: 13px; color: var(--coffeesoft); margin-bottom: 4px; }
+  .cita-info strong { color: var(--coffee); }
+
+  .estado-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .estado-pendiente { background: #FCEFD8; color: #93650B; }
+  .estado-aprobada { background: #E6F4E8; color: var(--green); }
+  .estado-rechazada { background: #FDECEC; color: var(--red); }
+
+  .comprobante-thumb {
+    width: 100%;
+    max-width: 220px;
+    border-radius: 12px;
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    border: 1px solid #E5D9D3;
+  }
+
+  .cita-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .btn-approve, .btn-reject {
+    flex: 1;
+    padding: 10px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--white);
+  }
+  .btn-approve { background: var(--green); }
+  .btn-reject { background: var(--red); }
+  .btn-approve:disabled, .btn-reject:disabled { opacity: 0.6; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginScreen">
+    <h1>Panel de aprobación</h1>
+    <p class="hint">Entra con tu cuenta para revisar tus reservas.</p>
+
+    <p id="loginMsg" class="msg"></p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Correo</label>
+        <input id="loginEmail" type="email" required placeholder="tu@correo.com">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input id="loginPassword" type="password" required placeholder="••••••••">
+      </div>
+      <button id="loginBtn" type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panelScreen">
+    <div class="panel-header">
+      <h1 id="negocioNombre">Mi negocio</h1>
+      <button class="logout-link" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <p id="panelMsg" class="msg"></p>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
+      <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
+      <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
+    </div>
+
+    <div id="citasList"></div>
+  </div>
+
+</div>
+
+<script>
+  // ==========================================================
+  // CONFIGURACIÓN DE SUPABASE
+  // ==========================================================
+  const CONFIG_URL = "https://jcbqksnnuacfuryztqop.supabase.co";
+  const CONFIG_KEY = "sb_publishable_1kVwQ6XA470AC4P0mNYNKA_MI4ZyIQL";
+
+  let accessToken = null;
+  let negocio = null;
+  let tabActual = 'pendiente';
+
+  // ---------- LOGIN ----------
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    hideMsg('loginMsg');
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        throw new Error(data.error_description || data.msg || 'Credenciales inválidas');
+      }
+
+      accessToken = data.access_token;
+      const userId = data.user.id;
+
+      sessionStorage.setItem('accessToken', accessToken);
+
+      await cargarNegocioDelUsuario(userId);
+
+    } catch (err) {
+      console.error(err);
+      showMsg('loginMsg', 'No pudimos iniciar sesión: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  });
+
+  async function cargarNegocioDelUsuario(userId) {
+    const resp = await fetch(
+      `${CONFIG_URL}/rest/v1/negocios?owner_user_id=eq.${userId}&select=*`,
+      { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
+    );
+    const data = await resp.json();
+
+    if (!resp.ok || !data.length) {
+      showMsg('loginMsg', 'Tu usuario no tiene un negocio asociado todavía. Pide que te lo configuren.', 'error');
+      return;
+    }
+
+    negocio = data[0];
+    document.getElementById('negocioNombre').textContent = negocio.nombre;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('panelScreen').style.display = 'block';
+
+    await cargarCitas();
+  }
+
+  function logout() {
+    accessToken = null;
+    negocio = null;
+    sessionStorage.removeItem('accessToken');
+    document.getElementById('panelScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('loginForm').reset();
+  }
+
+  // ---------- TABS ----------
+  function cambiarTab(estado) {
+    tabActual = estado;
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.estado === estado);
+    });
+    cargarCitas();
+  }
+
+  // ---------- CARGAR CITAS ----------
+  async function cargarCitas() {
+    const list = document.getElementById('citasList');
+    list.innerHTML = '<p class="empty-state">Cargando...</p>';
+
+    try {
+      const resp = await fetch(
+        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=eq.${tabActual}&order=fecha.asc,hora.asc&select=*`,
+        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
+      );
+
+      if (!resp.ok) throw new Error('Error consultando citas');
+      const citas = await resp.json();
+
+      renderCitas(citas);
+
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = '<p class="empty-state">No pudimos cargar las citas. Intenta refrescar.</p>';
+    }
+  }
+
+  function renderCitas(citas) {
+    const list = document.getElementById('citasList');
+    list.innerHTML = '';
+
+    if (!citas.length) {
+      list.innerHTML = `<p class="empty-state">No hay citas ${tabActual === 'pendiente' ? 'pendientes' : tabActual + 's'} por ahora.</p>`;
+      return;
+    }
+
+    citas.forEach(cita => {
+      const card = document.createElement('div');
+      card.className = 'cita-card';
+
+      const estadoClase = 'estado-' + cita.estado;
+      const fechaFormateada = new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-CL', {
+        weekday: 'long', day: 'numeric', month: 'long'
+      });
+
+      card.innerHTML = `
+        <span class="estado-tag ${estadoClase}">${cita.estado}</span>
+        <div class="cita-top">
+          <span class="cita-fecha">${fechaFormateada}, ${cita.hora.substring(0,5)}</span>
+          <span class="cita-monto">$${Number(cita.monto_abono).toLocaleString('es-CL')}</span>
+        </div>
+        <p class="cita-info"><strong>Clienta:</strong> ${escapeHtml(cita.nombre_clienta)}</p>
+        <p class="cita-info"><strong>WhatsApp:</strong> ${escapeHtml(cita.telefono)}</p>
+        ${cita.servicio ? `<p class="cita-info"><strong>Servicio:</strong> ${escapeHtml(cita.servicio)}</p>` : ''}
+        ${cita.comprobante_url ? `<img class="comprobante-thumb" src="${cita.comprobante_url}" onclick="window.open('${cita.comprobante_url}', '_blank')" alt="Comprobante">` : ''}
+        ${cita.estado === 'pendiente' ? `
+          <div class="cita-actions">
+            <button class="btn-approve" onclick="actualizarEstado('${cita.id}', 'aprobada', this)">Aprobar</button>
+            <button class="btn-reject" onclick="actualizarEstado('${cita.id}', 'rechazada', this)">Rechazar</button>
+          </div>
+        ` : ''}
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  async function actualizarEstado(citaId, nuevoEstado, btnEl) {
+    const card = btnEl.closest('.cita-card');
+    const buttons = card.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true);
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/rest/v1/citas?id=eq.${citaId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText);
+      }
+
+      showMsg('panelMsg', nuevoEstado === 'aprobada' ? 'Cita aprobada.' : 'Cita rechazada.', 'success');
+      await cargarCitas();
+
+    } catch (err) {
+      console.error(err);
+      showMsg('panelMsg', 'No pudimos actualizar la cita. Intenta de nuevo.', 'error');
+      buttons.forEach(b => b.disabled = false);
+    }
+  }
+
+  // ---------- HELPERS ----------
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg ' + type;
+    el.style.display = 'block';
+  }
+  function hideMsg(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- RECUPERAR SESIÓN SI YA HABÍA LOGIN ----------
+  (async function init() {
+    const savedToken = sessionStorage.getItem('accessToken');
+    if (!savedToken) return;
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/auth/v1/user`, {
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + savedToken }
+      });
+      if (!resp.ok) { sessionStorage.removeItem('accessToken'); return; }
+
+      const user = await resp.json();
+      accessToken = savedToken;
+      await cargarNegocioDelUsuario(user.id);
+
+    } catch (err) {
+      console.error(err);
+      sessionStorage.removeItem('accessToken');
+    }
+  })();
+</script>
+
+</body>
+</html>
