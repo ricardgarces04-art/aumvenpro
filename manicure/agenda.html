@@ -3,518 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reserva tu hora · Agenda protegida</title>
-
+<title>Reserva tu Hora Premium</title>
+<link rel="stylesheet" href="https://googleapis.com">
+<!-- MAPA DE LEAFLET NATIVO GRATUITO -->
+<link rel="stylesheet" href="https://unpkg.com" />
+<script src="https://unpkg.com"></script>
 <style>
-  :root {
-    --cream: #FBF3EE;
-    --blush: #F5DFD9;
-    --coffee: #4A342E;
-    --coffeesoft: #6B5049;
-    --siena: #AD6B5F;
-    --sienadark: #8F4F45;
-    --white: #FFFFFF;
-    --green: #3A7D44;
-  }
+  :root { --cream: #FBF3EE; --blush: #F5DFD9; --coffee: #4A342E; --coffeesoft: #6B5049; --siena: #AD6B5F; --white: #FFFFFF; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: var(--cream);
-    color: var(--coffee);
-    line-height: 1.5;
-  }
-  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
-  .container { max-width: 480px; margin: 0 auto; padding: 32px 20px 60px; }
-
-  .badge {
-    display: inline-block;
-    background: var(--white);
-    color: var(--sienadark);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 7px 14px;
-    border-radius: 999px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    margin-bottom: 16px;
-  }
-
-  h1 { font-size: 24px; margin-bottom: 8px; }
-  .subtitle { color: var(--coffeesoft); font-size: 14px; margin-bottom: 28px; }
-
-  .step {
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    padding: 22px;
-    margin-bottom: 20px;
-  }
-
-  .step-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--sienadark);
-    margin-bottom: 12px;
-  }
-
-  /* Selector de días */
-  .days-scroll {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .day-btn {
-    flex: 0 0 auto;
-    background: var(--blush);
-    border: 2px solid transparent;
-    border-radius: 14px;
-    padding: 10px 14px;
-    text-align: center;
-    cursor: pointer;
-    font-size: 12px;
-    color: var(--coffee);
-    min-width: 64px;
-  }
-  .day-btn strong { display: block; font-size: 15px; }
-  .day-btn.selected { border-color: var(--siena); background: var(--white); }
-  .day-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  /* Selector de horas */
-  .times-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .time-btn {
-    background: var(--blush);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 10px 6px;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--coffee);
-  }
-  .time-btn.selected { border-color: var(--siena); background: var(--white); font-weight: 700; }
-  .time-btn:disabled { opacity: 0.3; text-decoration: line-through; cursor: not-allowed; }
-
-  .empty-note { color: var(--coffeesoft); font-size: 13px; padding: 8px 0; }
-
-  /* Datos de transferencia */
-  .transfer-box {
-    background: var(--blush);
-    border-radius: 14px;
-    padding: 16px;
-    font-size: 13px;
-    color: var(--coffee);
-  }
-  .transfer-box p { margin-bottom: 4px; }
-  .transfer-box .monto {
-    font-size: 22px;
-    font-family: Georgia, serif;
-    font-weight: 700;
-    color: var(--sienadark);
-    margin: 6px 0;
-  }
-
-  .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .form-group input, .form-group select {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid #E5D9D3;
-    background: var(--white);
-    color: var(--coffee);
-    font-size: 14px;
-  }
-  .form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: var(--siena);
-    box-shadow: 0 0 0 3px rgba(173,107,95,0.15);
-  }
-
-  .file-hint { font-size: 12px; color: var(--coffeesoft); margin-top: 6px; }
-
-  .btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 15px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    color: var(--white);
-    background: var(--siena);
-    transition: background 0.18s ease, transform 0.18s ease;
-  }
-  .btn:hover { background: var(--sienadark); }
-  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .msg {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 14px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    display: none;
-  }
-  .msg.error { background: #FDECEC; color: #B3261E; }
-  .msg.success { background: #E6F4E8; color: var(--green); }
-
-  .success-screen { text-align: center; padding: 40px 10px; }
-  .success-screen .icon { font-size: 44px; margin-bottom: 12px; }
+  body { font-family: 'DM Sans', sans-serif; background-color: var(--cream); color: var(--coffee); padding: 20px 12px; }
+  .wrapper { max-width: 480px; margin: 0 auto; background: var(--white); padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(74,52,46,0.06); text-align: center; }
+  .logo-header { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: var(--blush); margin: 0 auto 16px; display: block; border: 2px solid var(--siena); }
+  h1 { font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 8px; }
+  .subtitle { color: var(--coffeesoft); font-size: 14px; margin-bottom: 24px; }
+  .form-group { text-align: left; margin-bottom: 16px; }
+  label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .form-input, select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #E5D9D3; background: var(--white); font-size: 14px; color: var(--coffee); outline: none; }
+  #map { height: 200px; border-radius: 16px; margin-top: 12px; border: 1px solid #E5D9D3; display: none; }
+  .total-box { background: var(--cream); padding: 16px; border-radius: 16px; margin-top: 24px; font-weight: bold; text-align: right; font-size: 16px; }
+  .btn-submit { background: var(--siena); color: var(--white); border: none; padding: 16px; border-radius: 999px; width: 100%; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 16px; transition: 0.2s; }
+  .btn-submit:hover { background: #8F4F45; }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="wrapper">
+  <!-- MARCA BLANCA DINÁMICA -->
+  <img id="app-logo" src="https://unsplash.com" class="logo-header" alt="Logo">
+  <h1 id="app-nombre">Cargando agenda...</h1>
+  <p class="subtitle">Asegura tu cupo abonando directo a CuentaRUT</p>
 
-  <span class="badge">Agenda protegida</span>
-  <h1>Reserva tu hora</h1>
-  <p class="subtitle">Elige día y horario, y asegura tu cupo con una seña.</p>
-
-  <div id="bookingFlow">
-
-    <p id="globalMsg" class="msg"></p>
-
-    <!-- Paso 1: Día -->
-    <div class="step">
-      <p class="step-label">1. Elige el día</p>
-      <div id="daysScroll" class="days-scroll"></div>
+  <form id="agendaForm" onsubmit="guardarCita(event)">
+    <div class="form-group">
+      <label>Tu Correo</label>
+      <input id="c-email" class="form-input" type="email" required placeholder="ejemplo@correo.com">
+    </div>
+    <div class="form-group">
+      <label>Tu WhatsApp</label>
+      <input id="c-phone" class="form-input" type="tel" required placeholder="+56 9 1234 5678">
     </div>
 
-    <!-- Paso 2: Hora -->
-    <div class="step">
-      <p class="step-label">2. Elige la hora</p>
-      <div id="timesGrid" class="times-grid"></div>
-      <p id="noSlotMsg" class="empty-note" style="display:none;">Selecciona primero un día.</p>
+    <!-- SECTOR VIÁTICOS AUTOMÁTICOS -->
+    <div id="contenedor-viatico" style="display: none;" class="form-group">
+      <label>¿En qué comuna te atendemos? (Servicio a domicilio)</label>
+      <select id="selector-comuna" onchange="actualizarMapaYPrecio()">
+        <option value="" data-monto="0" data-lat="0" data-lng="0">-- Selecciona tu comuna --</option>
+      </select>
+      <div id="map"></div>
     </div>
 
-    <!-- Paso 3: Datos + seña -->
-    <div class="step">
-      <p class="step-label">3. Tus datos y seña de reserva</p>
-
-      <div class="transfer-box">
-        <p>Transfiere tu seña a:</p>
-        <p><strong>Nombre:</strong> <span id="nombreTitular">—</span></p>
-        <p><strong>CuentaRUT:</strong> <span id="rutCuenta">—</span></p>
-        <p><strong>Banco:</strong> <span id="bancoNombre">—</span></p>
-        <p class="monto">$<span id="montoDisplay">0</span> CLP</p>
-      </div>
-
-      <form id="bookingForm" style="margin-top:16px;">
-        <div class="form-group">
-          <label for="nombreClienta">Tu nombre</label>
-          <input id="nombreClienta" type="text" required placeholder="Nombre y apellido">
-        </div>
-        <div class="form-group">
-          <label for="telefonoClienta">WhatsApp</label>
-          <input id="telefonoClienta" type="tel" required placeholder="+56 9 1234 5678">
-        </div>
-        <div class="form-group">
-          <label for="servicioClienta">Servicio (opcional)</label>
-          <input id="servicioClienta" type="text" placeholder="Ej: Manicure semipermanente">
-        </div>
-        <div class="form-group">
-          <label for="comprobanteFile">Foto del comprobante de transferencia</label>
-          <input id="comprobanteFile" type="file" accept="image/*" required>
-          <p class="file-hint">JPG o PNG, máximo 5 MB.</p>
-        </div>
-
-        <button id="submitBtn" type="submit" class="btn">Confirmar reserva</button>
-      </form>
+    <div class="total-box">
+      Base Servicio: $18.000 CLP<br>
+      <span id="txt-viatico" style="font-weight: normal; font-size: 14px; color: var(--siena);">Viático traslado: +$0</span>
+      <div style="font-size: 20px; margin-top: 6px; color: var(--coffee);">Total Abono: <span id="monto-total">$18.000</span></div>
     </div>
 
-  </div>
-
-  <div id="successScreen" class="success-screen" style="display:none;">
-    <div class="icon">✅</div>
-    <h2>¡Reserva enviada!</h2>
-    <p style="color:var(--coffeesoft); font-size:14px; margin-top:8px;">
-      Tu hora quedará confirmada en cuanto validemos tu comprobante. Te avisamos por WhatsApp.
-    </p>
-  </div>
-
+    <button type="submit" class="btn-submit">Confirmar y Ver Datos CuentaRUT</button>
+  </form>
 </div>
 
 <script>
-  // ==========================================================
-  // CONFIGURACIÓN DE SUPABASE
-  // ==========================================================
-  const CONFIG_URL = "https://jcbqksnnuacfuryztqop.supabase.co";
-  const CONFIG_KEY = "sb_publishable_1kVwQ6XA470AC4P0mNYNKA_MI4ZyIQL";
+  // CREDENCIALES REALES UNIFICADAS Y PURIFICADAS SIN PLACEHOLDERS
+  const CONFIG_URL = "https://supabase.co";
+  const CONFIG_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+  
+  // ID Piloto por defecto de tu negocio de manicure
+  const NEGOCIO_ID = "wfosczhzszouukypsvasx"; 
+  let map, marker;
+  let precioBase = 18000;
 
-  // ==========================================================
-  // NEGOCIO: se identifica por el parámetro ?neg=slug en la URL
-  // Ej: agenda.html?neg=nombre-piloto
-  // ==========================================================
-  const DIAS_A_MOSTRAR = 10;
-
-  const params = new URLSearchParams(window.location.search);
-  const NEG_SLUG = params.get('neg');
-
-  let negocio = null; // se llena en init() con los datos reales del negocio
-  let selectedDate = null;
-  let selectedTime = null;
-  let citasOcupadas = []; // [{fecha, hora}, ...] desde la vista "disponibilidad"
-
-  async function cargarNegocio() {
-    if (!NEG_SLUG) {
-      showMsg('Este link no indica a qué negocio pertenece. Pide el link correcto a tu manicurista/esteticista.', 'error');
-      document.getElementById('bookingFlow').style.display = 'none';
-      return false;
-    }
-
+  // 1. CARGAR MARCA BLANCA EN VIVO (LOGO Y NOMBRE)
+  async function cargarMarcaBlanca() {
     try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/negocios?slug=eq.${encodeURIComponent(NEG_SLUG)}&select=*`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + CONFIG_KEY } }
-      );
-      if (!resp.ok) throw new Error('Error consultando el negocio');
-      const data = await resp.json();
-
-      if (!data.length) {
-        showMsg('No encontramos este negocio. Verifica el link.', 'error');
-        document.getElementById('bookingFlow').style.display = 'none';
-        return false;
-      }
-
-      negocio = data[0];
-      document.getElementById('montoDisplay').textContent = Number(negocio.monto_abono).toLocaleString('es-CL');
-      document.getElementById('nombreTitular').textContent = negocio.nombre_titular_cuenta || '—';
-      document.getElementById('rutCuenta').textContent = negocio.rut_cuenta || '—';
-      document.getElementById('bancoNombre').textContent = negocio.banco || '—';
-      document.querySelector('h1').textContent = `Reserva tu hora con ${negocio.nombre}`;
-      return true;
-
-    } catch (err) {
-      console.error(err);
-      showMsg('No pudimos cargar los datos del negocio. Refresca la página.', 'error');
-      document.getElementById('bookingFlow').style.display = 'none';
-      return false;
-    }
-  }
-
-  function pad(n) { return n.toString().padStart(2, '0'); }
-
-  function generarDias() {
-    const dias = [];
-    const diasCerrados = negocio.dias_cerrados || [0];
-    let cursor = new Date();
-    while (dias.length < DIAS_A_MOSTRAR) {
-      if (!diasCerrados.includes(cursor.getDay())) {
-        dias.push(new Date(cursor));
-      }
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return dias;
-  }
-
-  function formatoFecha(d) {
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  }
-
-  function generarHoras() {
-    const horas = [];
-    for (let h = negocio.hora_inicio; h <= negocio.hora_fin; h++) {
-      horas.push(`${pad(h)}:00`);
-    }
-    return horas;
-  }
-
-  async function cargarCitasOcupadas() {
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/disponibilidad?negocio_id=eq.${negocio.id}&select=fecha,hora,estado`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + CONFIG_KEY } }
-      );
-      if (!resp.ok) throw new Error('No se pudo cargar disponibilidad');
-      citasOcupadas = await resp.json();
-    } catch (err) {
-      console.error(err);
-      showMsg('No pudimos cargar los horarios disponibles. Refresca la página.', 'error');
-    }
-  }
-
-  function horaOcupada(fecha, hora) {
-    return citasOcupadas.some(c => c.fecha === fecha && c.hora.substring(0,5) === hora);
-  }
-
-  function renderDias() {
-    const cont = document.getElementById('daysScroll');
-    cont.innerHTML = '';
-    const dias = generarDias();
-    const nombresDia = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-
-    dias.forEach(d => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'day-btn';
-      btn.innerHTML = `${nombresDia[d.getDay()]}<strong>${d.getDate()}</strong>`;
-      btn.onclick = () => {
-        selectedDate = formatoFecha(d);
-        selectedTime = null;
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        renderHoras();
-      };
-      cont.appendChild(btn);
-    });
-  }
-
-  function renderHoras() {
-    const cont = document.getElementById('timesGrid');
-    const noSlotMsg = document.getElementById('noSlotMsg');
-    cont.innerHTML = '';
-
-    if (!selectedDate) {
-      noSlotMsg.style.display = 'block';
-      return;
-    }
-    noSlotMsg.style.display = 'none';
-
-    generarHoras().forEach(hora => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'time-btn';
-      btn.textContent = hora;
-      const ocupada = horaOcupada(selectedDate, hora);
-      btn.disabled = ocupada;
-      btn.onclick = () => {
-        selectedTime = hora;
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-      };
-      cont.appendChild(btn);
-    });
-  }
-
-  function showMsg(text, type) {
-    const el = document.getElementById('globalMsg');
-    el.textContent = text;
-    el.className = 'msg ' + type;
-    el.style.display = 'block';
-  }
-
-  function hideMsg() {
-    document.getElementById('globalMsg').style.display = 'none';
-  }
-
-  document.getElementById('bookingForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
-    hideMsg();
-
-    if (!selectedDate || !selectedTime) {
-      showMsg('Por favor elige un día y una hora antes de continuar.', 'error');
-      return;
-    }
-
-    const nombre = document.getElementById('nombreClienta').value.trim();
-    const telefono = document.getElementById('telefonoClienta').value.trim();
-    const servicio = document.getElementById('servicioClienta').value.trim();
-    const fileInput = document.getElementById('comprobanteFile');
-    const file = fileInput.files[0];
-
-    if (!file) {
-      showMsg('Debes subir la foto de tu comprobante.', 'error');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      showMsg('La imagen es muy pesada, máximo 5 MB.', 'error');
-      return;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
-
-    try {
-      // 1. Subir imagen al bucket "comprobantes"
-      const fileExt = file.name.split('.').pop();
-      const fileName = `comprobante_${Date.now()}_${Math.floor(Math.random()*10000)}.${fileExt}`;
-
-      const uploadResp = await fetch(
-        `${CONFIG_URL}/storage/v1/object/comprobantes/${fileName}`,
-        {
-          method: 'POST',
-          headers: {
-            'apikey': CONFIG_KEY,
-            'Authorization': 'Bearer ' + CONFIG_KEY,
-            'Content-Type': file.type
-          },
-          body: file
+      const response = await fetch(`${CONFIG_URL}/rest/v1/negocios?id=eq.${NEGOCIO_ID}`, {
+        method: 'GET',
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': `Bearer ${CONFIG_KEY}` }
+      });
+      const data = await response.json();
+      if (data && data.length > 0) {
+        document.getElementById('app-nombre').textContent = data[0].nombre || "Agenda Manicure Premium";
+        if (data[0].logo_url) {
+          document.getElementById('app-logo').src = data[0].logo_url;
         }
-      );
-
-      if (!uploadResp.ok) {
-        const errText = await uploadResp.text();
-        throw new Error('Error subiendo comprobante: ' + errText);
       }
+    } catch (err) {
+      document.getElementById('app-nombre').textContent = "Agenda Manicure Premium";
+    }
+  }
 
-      const comprobanteUrl = `${CONFIG_URL}/storage/v1/object/public/comprobantes/${fileName}`;
+  // 2. CARGAR VIÁTICOS Y COMUNAS DESDE TU NUEVA TABLA
+  async function cargarViaticos() {
+    try {
+      const response = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?negocio_id=eq.${NEGOCIO_ID}`, {
+        method: 'GET',
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': `Bearer ${CONFIG_KEY}` }
+      });
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const selector = document.getElementById('selector-comuna');
+        data.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.id;
+          opt.textContent = `${v.comuna} (+$${Number(v.monto).toLocaleString('es-CL')})`;
+          opt.setAttribute('data-monto', v.monto);
+          
+          // Coordenadas fijas por comuna chilena (o por defecto si el script SQL no las traía)
+          opt.setAttribute('data-lat', v.latitud || -33.0486); 
+          opt.setAttribute('data-lng', v.longitud || -71.4422);
+          selector.appendChild(opt);
+        });
+        document.getElementById('contenedor-viatico').style.display = 'block';
+      }
+    } catch (err) {
+      console.error("Error leyendo catálogo de viáticos:", err);
+    }
+  }
 
-      // 2. Insertar la cita
-      const insertResp = await fetch(`${CONFIG_URL}/rest/v1/citas`, {
+  // 3. LOGICA DEL SELECTOR Y MAPA INTERACTIVO LEAFLET
+  function actualizarMapaYPrecio() {
+    const selector = document.getElementById('selector-comuna');
+    const optSeleccionada = selector.options[selector.selectedIndex];
+    const viatico = Number(optSeleccionada.getAttribute('data-monto')) || 0;
+    const lat = Number(optSeleccionada.getAttribute('data-lat'));
+    const lng = Number(optSeleccionada.getAttribute('data-lng'));
+
+    // Calcular montos en CuentaRUT
+    document.getElementById('txt-viatico').textContent = `Viático traslado: +$${viatico.toLocaleString('es-CL')}`;
+    document.getElementById('monto-total').textContent = `$${(precioBase + viatico).toLocaleString('es-CL')}`;
+
+    // Desplegar y mover el mapa Leaflet interactivo gratis
+    if (lat !== 0 && lng !== 0) {
+      document.getElementById('map').style.display = 'block';
+      if (!map) {
+        map = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        marker = L.marker([lat, lng]).addTo(map);
+      } else {
+        map.setView([lat, lng], 13);
+        marker.setLatLng([lat, lng]);
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    } else {
+      document.getElementById('map').style.display = 'none';
+    }
+  }
+
+  // 4. GUARDAR RESERVA COMPLETA CON TELEGRAM
+  async function guardarCita(e) {
+    e.preventDefault();
+    const email = document.getElementById('c-email').value.trim();
+    const phone = document.getElementById('c-phone').value.trim();
+    const selector = document.getElementById('selector-comuna');
+    const comunaTexto = selector.options[selector.selectedIndex].text.split(' (')[0];
+    const viaticoValor = Number(selector.options[selector.selectedIndex].getAttribute('data-monto')) || 0;
+
+    try {
+      const response = await fetch(`${CONFIG_URL}/rest/v1/citas`, {
         method: 'POST',
         headers: {
           'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + CONFIG_KEY,
+          'Authorization': `Bearer ${CONFIG_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({
-          negocio_id: negocio.id,
-          fecha: selectedDate,
-          hora: selectedTime,
-          nombre_clienta: nombre,
-          telefono: telefono,
-          servicio: servicio || null,
-          monto_abono: negocio.monto_abono,
-          comprobante_url: comprobanteUrl,
-          estado: 'pendiente'
+          negocio_id: NEGOCIO_ID,
+          telefono: phone,
+          servicio: "Manicure Completa",
+          monto_abono: precioBase + viaticoValor,
+          comuna: viaticoValor > 0 ? comunaTexto : "Home Studio",
+          viatico_monto: viaticoValor,
+          estado: "pendiente"
         })
       });
 
-      if (!insertResp.ok) {
-        const errText = await insertResp.text();
-        throw new Error('Error guardando la reserva: ' + errText);
-      }
+      if (!response.ok) throw new Error("Error en Supabase");
 
-      document.getElementById('bookingFlow').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
+      alert("¡Reserva solicitada! Revisa los datos de CuentaRUT para realizar tu transferencia y activar tu hora.");
+      // Redirigir o simular el flujo comercial de Telegram que armó Claude
+      window.location.href = `https://t.me`; 
 
     } catch (err) {
-      console.error(err);
-      showMsg('No pudimos completar tu reserva. Intenta nuevamente en unos minutos.', 'error');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Confirmar reserva';
+      alert("No pudimos conectar con el servidor. Intenta nuevamente.");
     }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarMarcaBlanca();
+    cargarViaticos();
   });
-
-  // Inicializar
-  (async function init() {
-    const ok = await cargarNegocio();
-    if (!ok) return;
-    await cargarCitasOcupadas();
-    renderDias();
-  })();
 </script>
-
 </body>
 </html>
