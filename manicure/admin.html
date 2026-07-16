@@ -172,6 +172,32 @@
   .estado-pendiente { background: #FCEFD8; color: #93650B; }
   .estado-aprobada { background: #E6F4E8; color: var(--green); }
   .estado-rechazada { background: #FDECEC; color: var(--red); }
+  .estado-no_show { background: #F0E6F6; color: #6B3FA0; }
+
+  .riesgo-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    background: #FDECEC;
+    color: var(--red);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    margin-left: 6px;
+  }
+
+  .btn-noshow {
+    flex: 1;
+    padding: 10px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--white);
+    background: #6B3FA0;
+  }
+  .btn-noshow:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .comprobante-thumb {
     width: 100%;
@@ -240,6 +266,7 @@
       <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
       <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
       <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
+      <button class="tab-btn" data-estado="no_show" onclick="cambiarTab('no_show')">No llegó</button>
     </div>
 
     <div id="citasList"></div>
@@ -257,6 +284,7 @@
   let accessToken = null;
   let negocio = null;
   let tabActual = 'pendiente';
+  let historialRiesgo = {}; // { "nombre|telefono": cantidad de rechazadas/no_show }
 
   // ---------- LOGIN ----------
   document.getElementById('loginForm').addEventListener('submit', async function (event) {
@@ -340,6 +368,30 @@
     cargarCitas();
   }
 
+  // ---------- HISTORIAL DE RIESGO ----------
+  function claveClienta(nombre, telefono) {
+    return `${nombre.trim().toLowerCase()}|${telefono.trim()}`;
+  }
+
+  async function cargarHistorialRiesgo() {
+    try {
+      const resp = await fetch(
+        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=in.(rechazada,no_show)&select=nombre_clienta,telefono`,
+        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
+      );
+      if (!resp.ok) throw new Error('Error cargando historial');
+      const filas = await resp.json();
+
+      historialRiesgo = {};
+      filas.forEach(f => {
+        const clave = claveClienta(f.nombre_clienta, f.telefono);
+        historialRiesgo[clave] = (historialRiesgo[clave] || 0) + 1;
+      });
+    } catch (err) {
+      console.error('No se pudo cargar el historial de riesgo:', err);
+    }
+  }
+
   // ---------- CARGAR CITAS ----------
   async function cargarCitas() {
     const list = document.getElementById('citasList');
@@ -354,6 +406,7 @@
       if (!resp.ok) throw new Error('Error consultando citas');
       const citas = await resp.json();
 
+      await cargarHistorialRiesgo();
       renderCitas(citas);
 
     } catch (err) {
@@ -376,12 +429,22 @@
       card.className = 'cita-card';
 
       const estadoClase = 'estado-' + cita.estado;
+      const estadoTexto = cita.estado === 'no_show' ? 'no llegó' : cita.estado;
       const fechaFormateada = new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-CL', {
         weekday: 'long', day: 'numeric', month: 'long'
       });
 
+      const clave = claveClienta(cita.nombre_clienta, cita.telefono);
+      const vecesRiesgo = historialRiesgo[clave] || 0;
+      const esRiesgo = vecesRiesgo >= 2;
+      const badgeRiesgo = esRiesgo ? `<span class="riesgo-badge">⚠️ Historial: ${vecesRiesgo} veces</span>` : '';
+
+      const hoy = new Date().toISOString().split('T')[0];
+      const yaPaso = cita.fecha < hoy;
+      const mostrarBotonNoShow = cita.estado === 'aprobada' && yaPaso;
+
       card.innerHTML = `
-        <span class="estado-tag ${estadoClase}">${cita.estado}</span>
+        <span class="estado-tag ${estadoClase}">${estadoTexto}</span>${badgeRiesgo}
         <div class="cita-top">
           <span class="cita-fecha">${fechaFormateada}, ${cita.hora.substring(0,5)}</span>
           <span class="cita-monto">$${Number(cita.monto_abono).toLocaleString('es-CL')}</span>
@@ -394,6 +457,11 @@
           <div class="cita-actions">
             <button class="btn-approve" onclick="actualizarEstado('${cita.id}', 'aprobada', this)">Aprobar</button>
             <button class="btn-reject" onclick="actualizarEstado('${cita.id}', 'rechazada', this)">Rechazar</button>
+          </div>
+        ` : ''}
+        ${mostrarBotonNoShow ? `
+          <div class="cita-actions">
+            <button class="btn-noshow" onclick="actualizarEstado('${cita.id}', 'no_show', this)">Marcar como no llegó</button>
           </div>
         ` : ''}
       `;
@@ -424,7 +492,8 @@
         throw new Error(errText);
       }
 
-      showMsg('panelMsg', nuevoEstado === 'aprobada' ? 'Cita aprobada.' : 'Cita rechazada.', 'success');
+      const mensajes = { aprobada: 'Cita aprobada.', rechazada: 'Cita rechazada.', no_show: 'Marcada como no llegó.' };
+      showMsg('panelMsg', mensajes[nuevoEstado] || 'Cita actualizada.', 'success');
       await cargarCitas();
 
     } catch (err) {
