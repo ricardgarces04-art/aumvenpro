@@ -370,7 +370,14 @@
 
   // ---------- HISTORIAL DE RIESGO ----------
   function claveClienta(nombre, telefono) {
-    return `${nombre.trim().toLowerCase()}|${telefono.trim()}`;
+    const nombreNormalizado = nombre
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // quita tildes/acentos
+      .replace(/\s+/g, ' '); // colapsa espacios múltiples
+    const telefonoNormalizado = telefono.replace(/\s+/g, '').trim();
+    return `${nombreNormalizado}|${telefonoNormalizado}`;
   }
 
   async function cargarHistorialRiesgo() {
@@ -420,7 +427,8 @@
     list.innerHTML = '';
 
     if (!citas.length) {
-      list.innerHTML = `<p class="empty-state">No hay citas ${tabActual === 'pendiente' ? 'pendientes' : tabActual + 's'} por ahora.</p>`;
+      const etiquetas = { pendiente: 'pendientes', aprobada: 'aprobadas', rechazada: 'rechazadas', no_show: 'de "no llegó"' };
+      list.innerHTML = `<p class="empty-state">No hay citas ${etiquetas[tabActual] || tabActual} por ahora.</p>`;
       return;
     }
 
