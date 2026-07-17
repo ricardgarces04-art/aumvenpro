@@ -262,14 +262,67 @@
 
     <p id="panelMsg" class="msg"></p>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
-      <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
-      <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
-      <button class="tab-btn" data-estado="no_show" onclick="cambiarTab('no_show')">No llegó</button>
+    <div class="tabs" style="margin-bottom:10px;">
+      <button class="tab-btn active" data-vista="citas" onclick="cambiarVista('citas')">📋 Citas</button>
+      <button class="tab-btn" data-vista="viaticos" onclick="cambiarVista('viaticos')">🗺️ Viáticos</button>
+      <button class="tab-btn" data-vista="perfil" onclick="cambiarVista('perfil')">🎨 Mi Perfil</button>
     </div>
 
-    <div id="citasList"></div>
+    <div id="vistaCitas">
+      <div class="tabs">
+        <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
+        <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
+        <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
+        <button class="tab-btn" data-estado="no_show" onclick="cambiarTab('no_show')">No llegó</button>
+      </div>
+
+      <div id="citasList"></div>
+    </div>
+
+    <div id="vistaViaticos" style="display:none;">
+      <div class="cita-card">
+        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Agregar comuna con viático</p>
+        <div class="form-group">
+          <label for="comunaSelect">Comuna</label>
+          <select id="comunaSelect"></select>
+        </div>
+        <div class="form-group">
+          <label for="montoViatico">Monto del viático (CLP)</label>
+          <input id="montoViatico" type="number" min="0" step="500" placeholder="Ej: 3000">
+        </div>
+        <button id="agregarViaticoBtn" class="btn" onclick="agregarViatico()">Agregar comuna</button>
+      </div>
+
+      <div id="viaticosList"></div>
+    </div>
+
+    <div id="vistaPerfil" style="display:none;">
+      <div class="cita-card">
+        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Personaliza tu marca</p>
+
+        <div class="form-group">
+          <label for="nombreNegocioInput">Nombre de tu negocio</label>
+          <input id="nombreNegocioInput" type="text" placeholder="Ej: Valeria Nails">
+        </div>
+
+        <div class="form-group">
+          <label for="logoUrlInput">URL de tu logo (pega un link de imagen)</label>
+          <input id="logoUrlInput" type="text" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+          <label for="logoFileInput">O sube una imagen desde tu celular/PC</label>
+          <input id="logoFileInput" type="file" accept="image/*">
+          <p class="file-hint" style="font-size:12px;color:var(--coffeesoft);margin-top:6px;">JPG o PNG, máximo 2 MB.</p>
+        </div>
+
+        <div id="logoPreviewBox" style="display:none;margin:14px 0;text-align:center;">
+          <img id="logoPreview" style="max-height:80px;max-width:100%;border-radius:12px;">
+        </div>
+
+        <button id="guardarPerfilBtn" class="btn" onclick="guardarPerfil()">Guardar cambios</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -284,7 +337,50 @@
   let accessToken = null;
   let negocio = null;
   let tabActual = 'pendiente';
+  let vistaActual = 'citas';
   let historialRiesgo = {}; // { "nombre|telefono": cantidad de rechazadas/no_show }
+
+  // ==========================================================
+  // COMUNAS DE LA REGIÓN METROPOLITANA (nombre + coordenadas)
+  // ==========================================================
+  const COMUNAS_RM = {
+    "Santiago": [-33.4489, -70.6693],
+    "Providencia": [-33.4262, -70.6104],
+    "Las Condes": [-33.4089, -70.5680],
+    "Vitacura": [-33.3833, -70.5667],
+    "Ñuñoa": [-33.4558, -70.5989],
+    "La Reina": [-33.4425, -70.5353],
+    "Peñalolén": [-33.4833, -70.5333],
+    "Macul": [-33.4881, -70.5975],
+    "San Miguel": [-33.4967, -70.6500],
+    "La Florida": [-33.5228, -70.5906],
+    "Puente Alto": [-33.6106, -70.5756],
+    "Maipú": [-33.5167, -70.7500],
+    "Pudahuel": [-33.4419, -70.7647],
+    "Cerrillos": [-33.4989, -70.7133],
+    "Estación Central": [-33.4597, -70.6819],
+    "Quinta Normal": [-33.4333, -70.7000],
+    "Independencia": [-33.4167, -70.6667],
+    "Recoleta": [-33.4058, -70.6394],
+    "Conchalí": [-33.3833, -70.6667],
+    "Huechuraba": [-33.3667, -70.6333],
+    "Renca": [-33.4028, -70.7217],
+    "Quilicura": [-33.3608, -70.7297],
+    "Lo Barnechea": [-33.3500, -70.5167],
+    "La Pintana": [-33.5833, -70.6333],
+    "San Bernardo": [-33.5928, -70.7053],
+    "El Bosque": [-33.5619, -70.6742],
+    "La Cisterna": [-33.5333, -70.6667],
+    "San Joaquín": [-33.5000, -70.6333],
+    "Pedro Aguirre Cerda": [-33.4833, -70.6667],
+    "Lo Espejo": [-33.5167, -70.6833],
+    "Lo Prado": [-33.4408, -70.7211],
+    "Cerro Navia": [-33.4231, -70.7328],
+    "San Ramón": [-33.5333, -70.6417],
+    "La Granja": [-33.5333, -70.6167]
+  };
+
+  let viaticosActuales = []; // lista de comunas ya configuradas para este negocio
 
   // ---------- LOGIN ----------
   document.getElementById('loginForm').addEventListener('submit', async function (event) {
@@ -362,10 +458,279 @@
   // ---------- TABS ----------
   function cambiarTab(estado) {
     tabActual = estado;
-    document.querySelectorAll('.tab-btn').forEach(b => {
+    document.querySelectorAll('#vistaCitas .tab-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.estado === estado);
     });
     cargarCitas();
+  }
+
+  // ---------- CAMBIO DE VISTA (Citas / Viáticos / Perfil) ----------
+  function cambiarVista(vista) {
+    vistaActual = vista;
+    document.querySelectorAll('[data-vista]').forEach(b => {
+      b.classList.toggle('active', b.dataset.vista === vista);
+    });
+    document.getElementById('vistaCitas').style.display = vista === 'citas' ? 'block' : 'none';
+    document.getElementById('vistaViaticos').style.display = vista === 'viaticos' ? 'block' : 'none';
+    document.getElementById('vistaPerfil').style.display = vista === 'perfil' ? 'block' : 'none';
+
+    if (vista === 'viaticos') {
+      cargarViaticos();
+    }
+    if (vista === 'perfil') {
+      cargarPerfil();
+    }
+  }
+
+  // ---------- VIÁTICOS ----------
+  function poblarSelectorComunas() {
+    const select = document.getElementById('comunaSelect');
+    const yaAgregadas = viaticosActuales.map(v => v.comuna);
+    select.innerHTML = '';
+    Object.keys(COMUNAS_RM).forEach(comuna => {
+      if (!yaAgregadas.includes(comuna)) {
+        const opt = document.createElement('option');
+        opt.value = comuna;
+        opt.textContent = comuna;
+        select.appendChild(opt);
+      }
+    });
+    if (!select.options.length) {
+      const opt = document.createElement('option');
+      opt.textContent = 'Ya agregaste todas las comunas disponibles';
+      select.appendChild(opt);
+    }
+  }
+
+  async function cargarViaticos() {
+    const list = document.getElementById('viaticosList');
+    list.innerHTML = '<p class="empty-state">Cargando...</p>';
+
+    try {
+      const resp = await fetch(
+        `${CONFIG_URL}/rest/v1/viaticos_comuna?negocio_id=eq.${negocio.id}&order=comuna.asc&select=*`,
+        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
+      );
+      if (!resp.ok) throw new Error('Error consultando viáticos');
+      viaticosActuales = await resp.json();
+
+      renderViaticos();
+      poblarSelectorComunas();
+
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = '<p class="empty-state">No pudimos cargar los viáticos. Intenta refrescar.</p>';
+    }
+  }
+
+  function renderViaticos() {
+    const list = document.getElementById('viaticosList');
+    list.innerHTML = '';
+
+    if (!viaticosActuales.length) {
+      list.innerHTML = '<p class="empty-state">Aún no has agregado comunas con viático. Si no agregas ninguna, tus clientas no verán el paso de viático al reservar.</p>';
+      return;
+    }
+
+    viaticosActuales.forEach(v => {
+      const card = document.createElement('div');
+      card.className = 'cita-card';
+      card.innerHTML = `
+        <div class="cita-top">
+          <span class="cita-fecha">${escapeHtml(v.comuna)}</span>
+          <span class="cita-monto">$${Number(v.monto).toLocaleString('es-CL')}</span>
+        </div>
+        <div class="cita-actions">
+          <button class="btn-reject" onclick="eliminarViatico('${v.id}', this)">Eliminar</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  async function agregarViatico() {
+    const comuna = document.getElementById('comunaSelect').value;
+    const monto = document.getElementById('montoViatico').value;
+    const btn = document.getElementById('agregarViaticoBtn');
+
+    if (!comuna || !COMUNAS_RM[comuna]) {
+      showMsg('panelMsg', 'Selecciona una comuna válida.', 'error');
+      return;
+    }
+    if (!monto || Number(monto) < 0) {
+      showMsg('panelMsg', 'Ingresa un monto válido.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Agregando...';
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna`, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ negocio_id: negocio.id, comuna: comuna, monto: Number(monto) })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText);
+      }
+
+      document.getElementById('montoViatico').value = '';
+      showMsg('panelMsg', `${comuna} agregada correctamente.`, 'success');
+      await cargarViaticos();
+
+    } catch (err) {
+      console.error(err);
+      showMsg('panelMsg', 'No pudimos agregar la comuna. Intenta de nuevo.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Agregar comuna';
+    }
+  }
+
+  async function eliminarViatico(viaticoId, btnEl) {
+    btnEl.disabled = true;
+    try {
+      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?id=eq.${viaticoId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Authorization': 'Bearer ' + accessToken,
+          'Prefer': 'return=minimal'
+        }
+      });
+      if (!resp.ok) throw new Error('Error eliminando');
+      showMsg('panelMsg', 'Comuna eliminada.', 'success');
+      await cargarViaticos();
+    } catch (err) {
+      console.error(err);
+      showMsg('panelMsg', 'No pudimos eliminar la comuna. Intenta de nuevo.', 'error');
+      btnEl.disabled = false;
+    }
+  }
+
+  // ---------- MI PERFIL (nombre + logo) ----------
+  function cargarPerfil() {
+    document.getElementById('nombreNegocioInput').value = negocio.nombre || '';
+    document.getElementById('logoUrlInput').value = negocio.logo_url || '';
+    mostrarPreviewLogo(negocio.logo_url);
+  }
+
+  function mostrarPreviewLogo(url) {
+    const box = document.getElementById('logoPreviewBox');
+    const img = document.getElementById('logoPreview');
+    if (url) {
+      img.src = url;
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+      img.src = '';
+    }
+  }
+
+  // Vista previa en vivo si la manicurista pega una URL directamente
+  document.getElementById('logoUrlInput').addEventListener('input', function () {
+    mostrarPreviewLogo(this.value.trim());
+  });
+
+  // Si sube un archivo, lo subimos al bucket "logos" y llenamos la URL sola
+  document.getElementById('logoFileInput').addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      showMsg('panelMsg', 'La imagen es muy pesada, máximo 2 MB.', 'error');
+      this.value = '';
+      return;
+    }
+
+    const btn = document.getElementById('guardarPerfilBtn');
+    btn.disabled = true;
+    btn.textContent = 'Subiendo logo...';
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${negocio.id}/logo_${Date.now()}.${fileExt}`;
+
+      const uploadResp = await fetch(`${CONFIG_URL}/storage/v1/object/logos/${fileName}`, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': file.type
+        },
+        body: file
+      });
+
+      if (!uploadResp.ok) {
+        const errText = await uploadResp.text();
+        throw new Error(errText);
+      }
+
+      const logoUrl = `${CONFIG_URL}/storage/v1/object/public/logos/${fileName}`;
+      document.getElementById('logoUrlInput').value = logoUrl;
+      mostrarPreviewLogo(logoUrl);
+      showMsg('panelMsg', 'Logo subido. No olvides darle "Guardar cambios".', 'success');
+
+    } catch (err) {
+      console.error(err);
+      showMsg('panelMsg', 'No pudimos subir la imagen. Intenta de nuevo.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Guardar cambios';
+    }
+  });
+
+  async function guardarPerfil() {
+    const nombre = document.getElementById('nombreNegocioInput').value.trim();
+    const logoUrl = document.getElementById('logoUrlInput').value.trim();
+    const btn = document.getElementById('guardarPerfilBtn');
+
+    if (!nombre) {
+      showMsg('panelMsg', 'El nombre del negocio no puede quedar vacío.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/rest/v1/negocios?id=eq.${negocio.id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': CONFIG_KEY,
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ nombre: nombre, logo_url: logoUrl || null })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText);
+      }
+
+      negocio.nombre = nombre;
+      negocio.logo_url = logoUrl || null;
+      document.getElementById('negocioNombre').textContent = nombre;
+
+      showMsg('panelMsg', 'Perfil actualizado. Tus clientas ya ven los cambios.', 'success');
+
+    } catch (err) {
+      console.error(err);
+      showMsg('panelMsg', 'No pudimos guardar los cambios. Intenta de nuevo.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Guardar cambios';
+    }
   }
 
   // ---------- HISTORIAL DE RIESGO ----------
