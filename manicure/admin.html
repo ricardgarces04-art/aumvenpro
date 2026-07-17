@@ -3,394 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de aprobación · Agenda</title>
-
+<title>Panel de Administración · Manicure Pro</title>
+<link rel="stylesheet" href="https://googleapis.com">
 <style>
-  :root {
-    --cream: #FBF3EE;
-    --blush: #F5DFD9;
-    --coffee: #4A342E;
-    --coffeesoft: #6B5049;
-    --siena: #AD6B5F;
-    --sienadark: #8F4F45;
-    --white: #FFFFFF;
-    --green: #3A7D44;
-    --red: #B3261E;
-  }
+  :root { --cream: #FBF3EE; --blush: #F5DFD9; --coffee: #4A342E; --coffeesoft: #6B5049; --siena: #AD6B5F; --white: #FFFFFF; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: var(--cream);
-    color: var(--coffee);
-    line-height: 1.5;
-  }
-  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
-  .container { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
-
-  /* ---- LOGIN ---- */
-  #loginScreen {
-    max-width: 360px;
-    margin: 60px auto;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    padding: 28px;
-  }
-  #loginScreen h1 { font-size: 22px; margin-bottom: 6px; text-align: center; }
-  #loginScreen p.hint { color: var(--coffeesoft); font-size: 13px; text-align: center; margin-bottom: 20px; }
-
-  .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .form-group input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid #E5D9D3;
-    background: var(--white);
-    color: var(--coffee);
-    font-size: 14px;
-  }
-  .form-group input:focus {
-    outline: none;
-    border-color: var(--siena);
-    box-shadow: 0 0 0 3px rgba(173,107,95,0.15);
-  }
-
-  .btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 14px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    color: var(--white);
-    background: var(--siena);
-  }
-  .btn:hover { background: var(--sienadark); }
-  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .msg {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 14px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    display: none;
-  }
-  .msg.error { background: #FDECEC; color: var(--red); }
-  .msg.success { background: #E6F4E8; color: var(--green); }
-
-  /* ---- PANEL ---- */
-  #panelScreen { display: none; }
-
-  .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  .panel-header h1 { font-size: 20px; }
-  .logout-link {
-    font-size: 12px;
-    color: var(--coffeesoft);
-    text-decoration: underline;
-    cursor: pointer;
-    background: none;
-    border: none;
-  }
-
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
-  }
-  .tab-btn {
-    flex: 1;
-    background: var(--blush);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    color: var(--coffee);
-  }
-  .tab-btn.active { border-color: var(--siena); background: var(--white); }
-
-  .empty-state {
-    text-align: center;
-    color: var(--coffeesoft);
-    font-size: 14px;
-    padding: 40px 10px;
-  }
-
-  .cita-card {
-    background: var(--white);
-    border-radius: 18px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    padding: 18px;
-    margin-bottom: 14px;
-  }
-  .cita-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-  }
-  .cita-fecha {
-    font-size: 15px;
-    font-weight: 700;
-  }
-  .cita-monto {
-    font-size: 13px;
-    color: var(--sienadark);
-    font-weight: 700;
-  }
-  .cita-info { font-size: 13px; color: var(--coffeesoft); margin-bottom: 4px; }
-  .cita-info strong { color: var(--coffee); }
-
-  .estado-tag {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 3px 10px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-  }
-  .estado-pendiente { background: #FCEFD8; color: #93650B; }
-  .estado-aprobada { background: #E6F4E8; color: var(--green); }
-  .estado-rechazada { background: #FDECEC; color: var(--red); }
-  .estado-no_show { background: #F0E6F6; color: #6B3FA0; }
-
-  .riesgo-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    background: #FDECEC;
-    color: var(--red);
-    padding: 4px 10px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-    margin-left: 6px;
-  }
-
-  .btn-noshow {
-    flex: 1;
-    padding: 10px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--white);
-    background: #6B3FA0;
-  }
-  .btn-noshow:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .comprobante-thumb {
-    width: 100%;
-    max-width: 220px;
-    border-radius: 12px;
-    display: block;
-    margin: 10px 0;
-    cursor: pointer;
-    border: 1px solid #E5D9D3;
-  }
-
-  .cita-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .btn-approve, .btn-reject {
-    flex: 1;
-    padding: 10px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--white);
-  }
-  .btn-approve { background: var(--green); }
-  .btn-reject { background: var(--red); }
-  .btn-approve:disabled, .btn-reject:disabled { opacity: 0.6; cursor: not-allowed; }
+  body { font-family: 'DM Sans', sans-serif; background-color: var(--cream); color: var(--coffee); padding: 24px; }
+  .admin-box { max-width: 720px; margin: 0 auto; background: var(--white); padding: 32px; border-radius: 24px; box-shadow: 0 4px 24px rgba(74,52,46,0.05); }
+  h2 { font-family: 'Fraunces', serif; font-size: 26px; margin-bottom: 20px; }
+  .tabs { display: flex; gap: 12px; border-bottom: 2px solid var(--blush); margin-bottom: 24px; padding-bottom: 8px; }
+  .tab-btn { background: none; border: none; font-size: 15px; font-weight: bold; color: var(--coffeesoft); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
+  .tab-btn.active { background: var(--siena); color: var(--white); }
+  .panel-section { display: none; }
+  .panel-section.active { display: block; }
+  .form-inline { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .form-input { padding: 12px 14px; border-radius: 12px; border: 1px solid #E5D9D3; color: var(--coffee); outline: none; font-size: 14px; }
+  .btn-add { background: var(--coffee); color: var(--white); border: none; padding: 12px 24px; border-radius: 999px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+  .btn-add:hover { background: #33231F; }
+  table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 12px; }
+  th { padding: 12px; border-bottom: 2px solid var(--blush); font-weight: bold; font-size: 13px; text-transform: uppercase; color: var(--coffeesoft); }
+  td { padding: 14px 12px; border-bottom: 1px solid var(--blush); font-size: 14px; }
+  .btn-delete { background: #FDECEC; color: #B3261E; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; }
+  .btn-delete:hover { background: #F9D5D5; }
+  .login-container { max-width: 360px; margin: 60px auto; background: var(--white); padding: 32px; border-radius: 24px; box-shadow: 0 4px 24px rgba(74,52,46,0.05); text-align: center; }
+  .btn-login { background: var(--siena); color: var(--white); border: none; padding: 14px; border-radius: 999px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 12px; }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- LOGIN -->
-  <div id="loginScreen">
-    <h1>Panel de aprobación</h1>
-    <p class="hint">Entra con tu cuenta para revisar tus reservas.</p>
-
-    <p id="loginMsg" class="msg"></p>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="loginEmail">Correo</label>
-        <input id="loginEmail" type="email" required placeholder="tu@correo.com">
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Contraseña</label>
-        <input id="loginPassword" type="password" required placeholder="••••••••">
-      </div>
-      <button id="loginBtn" type="submit" class="btn">Entrar</button>
-    </form>
-  </div>
-
-  <!-- PANEL -->
-  <div id="panelScreen">
-    <div class="panel-header">
-      <h1 id="negocioNombre">Mi negocio</h1>
-      <button class="logout-link" onclick="logout()">Cerrar sesión</button>
+<!-- FORMULARIO DE ACCESO -->
+<div id="loginFormContainer" class="login-container">
+  <h2 style="font-size: 22px; margin-bottom: 8px;">Panel de aprobación</h2>
+  <p style="color: var(--coffeesoft); font-size: 13px; margin-bottom: 20px;">Entra con tu cuenta para revisar tus reservas.</p>
+  <form id="loginForm">
+    <div style="text-align: left; margin-bottom: 14px;">
+      <label style="display:block; font-size:11px; font-weight:bold; margin-bottom:6px; text-transform:uppercase;">Correo</label>
+      <input id="loginEmail" type="email" required placeholder="tu@correo.com" class="form-input" style="width:100%;">
     </div>
-
-    <p id="panelMsg" class="msg"></p>
-
-    <div class="tabs" style="margin-bottom:10px;">
-      <button class="tab-btn active" data-vista="citas" onclick="cambiarVista('citas')">📋 Citas</button>
-      <button class="tab-btn" data-vista="viaticos" onclick="cambiarVista('viaticos')">🗺️ Viáticos</button>
-      <button class="tab-btn" data-vista="perfil" onclick="cambiarVista('perfil')">🎨 Mi Perfil</button>
+    <div style="text-align: left; margin-bottom: 18px;">
+      <label style="display:block; font-size:11px; font-weight:bold; margin-bottom:6px; text-transform:uppercase;">Contraseña</label>
+      <input id="loginPassword" type="password" required placeholder="********" class="form-input" style="width:100%;">
     </div>
-
-    <div id="vistaCitas">
-      <div class="tabs">
-        <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
-        <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
-        <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
-        <button class="tab-btn" data-estado="no_show" onclick="cambiarTab('no_show')">No llegó</button>
-      </div>
-
-      <div id="citasList"></div>
-    </div>
-
-    <div id="vistaViaticos" style="display:none;">
-      <div class="cita-card">
-        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Agregar comuna con viático</p>
-        <div class="form-group">
-          <label for="comunaSelect">Comuna</label>
-          <select id="comunaSelect"></select>
-        </div>
-        <div class="form-group">
-          <label for="montoViatico">Monto del viático (CLP)</label>
-          <input id="montoViatico" type="number" min="0" step="500" placeholder="Ej: 3000">
-        </div>
-        <button id="agregarViaticoBtn" class="btn" onclick="agregarViatico()">Agregar comuna</button>
-      </div>
-
-      <div id="viaticosList"></div>
-    </div>
-
-    <div id="vistaPerfil" style="display:none;">
-      <div class="cita-card">
-        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Personaliza tu marca</p>
-
-        <div class="form-group">
-          <label for="nombreNegocioInput">Nombre de tu negocio</label>
-          <input id="nombreNegocioInput" type="text" placeholder="Ej: Valeria Nails">
-        </div>
-
-        <div class="form-group">
-          <label for="logoUrlInput">URL de tu logo (pega un link de imagen)</label>
-          <input id="logoUrlInput" type="text" placeholder="https://...">
-        </div>
-
-        <div class="form-group">
-          <label for="logoFileInput">O sube una imagen desde tu celular/PC</label>
-          <input id="logoFileInput" type="file" accept="image/*">
-          <p class="file-hint" style="font-size:12px;color:var(--coffeesoft);margin-top:6px;">JPG o PNG, máximo 2 MB.</p>
-        </div>
-
-        <div id="logoPreviewBox" style="display:none;margin:14px 0;text-align:center;">
-          <img id="logoPreview" style="max-height:80px;max-width:100%;border-radius:12px;">
-        </div>
-
-        <button id="guardarPerfilBtn" class="btn" onclick="guardarPerfil()">Guardar cambios</button>
-      </div>
-    </div>
-  </div>
-
+    <button type="submit" id="loginBtn" class="btn-login">Entrar</button>
+  </form>
 </div>
 
-<script>
+<!-- CONTENEDOR PRINCIPAL ADMINISTRATIVO (OCULTO POR DEFECTO) -->
+<div id="adminContent" class="admin-box" style="display: none;">
+  <h2>Panel de Gestión Profesional</h2>
   
-    // ==========================================================
-  // CONFIGURACIÓN DE SUPABASE REAL Y ACTUALIZADA
-  // ==========================================================
-  const CONFIG_URL = "https://wfosczhzszouukypsvasx.supabase.co";
+  <div class="tabs">
+    <button id="btn-tab-citas" class="tab-btn active" onclick="cambiarVista('citas')">Citas Recibidas</button>
+    <button id="btn-tab-viaticos" class="tab-btn" onclick="cambiarVista('viaticos')">Configurar Viáticos</button>
+  </div>
+
+  <div id="sec-citas" class="panel-section active">
+    <p style="color: var(--coffeesoft); font-size: 14px;">Las citas de CuentaRUT y notificaciones se gestionan directo por tu bot de Telegram.</p>
+  </div>
+
+  <div id="sec-viaticos" class="panel-section">
+    <p style="color: var(--coffeesoft); font-size: 14px; margin-bottom: 16px;">Configura las comunas de Chile a las que realizas servicio a domicilio y su tarifa de traslado.</p>
+    
+    <form id="formViatico" onsubmit="guardarNuevaComuna(event)" class="form-inline">
+      <input id="v-comuna" class="form-input" type="text" required placeholder="Ej: Quilpué, Viña, Santiago" style="flex: 2; min-width: 180px;">
+      <input id="v-monto" class="form-input" type="number" required placeholder="Valor Traslado ($)" style="flex: 1; min-width: 120px;">
+      <button type="submit" class="btn-add">Agregar Zona</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Comuna / Zona</th>
+          <th>Monto Viático</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-viaticos-cuerpo">
+        <!-- Se llena dinámicamente -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  // CREDENCIALES COMPLETAS UNIFICADAS Y PURIFICADAS SIN PLACEHOLDERS
+  const CONFIG_URL = "https://supabase.co";
   const CONFIG_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+  const NEGOCIO_ID = "wfosczhzszouukypsvasx";
 
   let accessToken = null;
-  let negocio = null;
-  let tabActual = 'pendiente';
-  let vistaActual = 'citas';
-  let historialRiesgo = {}; 
 
-  // ==========================================================
-  // MOTOR DE GEOLOCALIZACIÓN AUTOMÁTICO PARA TODO CHILE
-  // ==========================================================
-  function obtenerCoordenadasChile(comunaTexto) {
-    const texto = comunaTexto.toLowerCase().trim();
+  function cambiarVista(vista) {
+    document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
-    // 1. Quinta Región (Tu patio principal)
-    if (texto.includes('quilpue')) return [-33.0486, -71.4422];
-    if (texto.includes('alemana')) return [-33.0436, -71.3725];
-    if (texto.includes('viña') || texto.includes('vina')) return [-33.0245, -71.5518];
-    if (texto.includes('valpo') || texto.includes('valparaiso')) return [-33.0472, -71.6127];
-    if (texto.includes('concon')) return [-32.9168, -71.5164];
-    if (texto.includes('limache')) return [-33.0135, -71.2612];
-    
-    // 2. Región Metropolitana (Santiago completo)
-    if (texto.includes('santiago') || texto.includes('centro')) return [-33.4489, -70.6693];
-    if (texto.includes('condes')) return [-33.4089, -70.5680];
-    if (texto.includes('providencia')) return [-33.4262, -70.6104];
-    if (texto.includes('maipu')) return [-33.5167, -70.7500];
-    if (texto.includes('florida')) return [-33.5228, -70.5906];
-    if (texto.includes('puente alto')) return [-33.6106, -70.5756];
-    
-    // 3. Regiones del Norte y Sur de Chile
-    if (texto.includes('serena')) return [-29.9027, -71.2520];
-    if (texto.includes('antofagasta')) return [-23.6500, -70.4000];
-    if (texto.includes('iquique')) return [-20.2139, -70.1458];
-    if (texto.includes('arica')) return [-18.4746, -70.2979];
-    if (texto.includes('rancagua')) return [-34.1708, -70.7444];
-    if (texto.includes('talca')) return [-35.4264, -71.6554];
-    if (texto.includes('concepcion')) return [-36.8201, -73.0444];
-    if (texto.includes('temuco')) return [-38.7359, -72.5904];
-    if (texto.includes('valdivia')) return [-39.8142, -73.2459];
-    if (texto.includes('puerto montt')) return [-41.4717, -72.9369];
-    if (texto.includes('punta arenas')) return [-53.1548, -70.9089];
-    
-    // Coordenada neutral de Chile por defecto
-    return [-33.4489, -70.6693]; 
+    if (vista === 'citas') {
+      document.getElementById('sec-citas').classList.add('active');
+      document.getElementById('btn-tab-citas').classList.add('active');
+    } else {
+      document.getElementById('sec-viaticos').classList.add('active');
+      document.getElementById('btn-tab-viaticos').classList.add('active');
+      renderizarViaticos();
+    }
   }
 
-
-  let viaticosActuales = []; // lista de comunas ya configuradas para este negocio
-
-  // ---------- LOGIN ----------
-    // ---------- LOGIN REPARADO ----------
+  // 1. INICIO DE SESIÓN INTEGRAL SANO
   document.getElementById('loginForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    const btn = document.querySelector('#loginForm button') || document.getElementById('loginBtn');
+    const btn = document.getElementById('loginBtn');
 
     if (btn) {
       btn.disabled = true;
@@ -412,8 +134,9 @@
 
       accessToken = data.access_token;
       
-      // Ocultar el formulario de acceso y abrir directo la pestaña de viáticos
-      document.getElementById('loginForm').style.display = 'none';
+      // Transición limpia de interfaz
+      document.getElementById('loginFormContainer').style.display = 'none';
+      document.getElementById('adminContent').style.display = 'block';
       cambiarVista('viaticos');
 
     } catch (err) {
@@ -425,494 +148,101 @@
     }
   });
 
-
-  async function cargarNegocioDelUsuario(userId) {
-    const resp = await fetch(
-      `${CONFIG_URL}/rest/v1/negocios?owner_user_id=eq.${userId}&select=*`,
-      { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-    );
-    const data = await resp.json();
-
-    if (!resp.ok || !data.length) {
-      showMsg('loginMsg', 'Tu usuario no tiene un negocio asociado todavía. Pide que te lo configuren.', 'error');
-      return;
-    }
-
-    negocio = data[0];
-    document.getElementById('negocioNombre').textContent = negocio.nombre;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('panelScreen').style.display = 'block';
-
-    await cargarCitas();
-  }
-
-  function logout() {
-    accessToken = null;
-    negocio = null;
-    sessionStorage.removeItem('accessToken');
-    document.getElementById('panelScreen').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('loginForm').reset();
-  }
-
-  // ---------- TABS ----------
-  function cambiarTab(estado) {
-    tabActual = estado;
-    document.querySelectorAll('#vistaCitas .tab-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.estado === estado);
-    });
-    cargarCitas();
-  }
-
-  // ---------- CAMBIO DE VISTA (Citas / Viáticos / Perfil) ----------
-  function cambiarVista(vista) {
-    vistaActual = vista;
-    document.querySelectorAll('[data-vista]').forEach(b => {
-      b.classList.toggle('active', b.dataset.vista === vista);
-    });
-    document.getElementById('vistaCitas').style.display = vista === 'citas' ? 'block' : 'none';
-    document.getElementById('vistaViaticos').style.display = vista === 'viaticos' ? 'block' : 'none';
-    document.getElementById('vistaPerfil').style.display = vista === 'perfil' ? 'block' : 'none';
-
-    if (vista === 'viaticos') {
-      cargarViaticos();
-    }
-    if (vista === 'perfil') {
-      cargarPerfil();
-    }
-  }
-
-  // ---------- VIÁTICOS ----------
-  function poblarSelectorComunas() {
-    const select = document.getElementById('comunaSelect');
-    const yaAgregadas = viaticosActuales.map(v => v.comuna);
-    select.innerHTML = '';
-    Object.keys(COMUNAS_RM).forEach(comuna => {
-      if (!yaAgregadas.includes(comuna)) {
-        const opt = document.createElement('option');
-        opt.value = comuna;
-        opt.textContent = comuna;
-        select.appendChild(opt);
+  // 2. LEER LAS COMUNAS EXISTENTES (GET)
+  async function renderizarViaticos() {
+    const tabla = document.getElementById('tabla-viaticos-cuerpo');
+    if (!tabla) return;
+    tabla.innerHTML = '<tr><td colspan="3">Cargando tus configuraciones...</td></tr>';
+    
+    try {
+      const response = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?negocio_id=eq.${NEGOCIO_ID}`, {
+        method: 'GET',
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': `Bearer ${CONFIG_KEY}` }
+      });
+      const data = await response.json();
+      tabla.innerHTML = '';
+      
+      if (!data || data.length === 0) {
+        tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--coffeesoft);">No has configurado viáticos. Tu cuenta opera como "Home Studio" sin recargos.</td></tr>';
+        return;
       }
-    });
-    if (!select.options.length) {
-      const opt = document.createElement('option');
-      opt.textContent = 'Ya agregaste todas las comunas disponibles';
-      select.appendChild(opt);
-    }
-  }
 
-  async function cargarViaticos() {
-    const list = document.getElementById('viaticosList');
-    list.innerHTML = '<p class="empty-state">Cargando...</p>';
-
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/viaticos_comuna?negocio_id=eq.${negocio.id}&order=comuna.asc&select=*`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-      if (!resp.ok) throw new Error('Error consultando viáticos');
-      viaticosActuales = await resp.json();
-
-      renderViaticos();
-      poblarSelectorComunas();
-
+      data.forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="font-weight:bold;">${v.comuna}</td>
+          <td>$${Number(v.monto).toLocaleString('es-CL')} CLP</td>
+          <td><button class="btn-delete" onclick="eliminarComuna('${v.id}')">Eliminar</button></td>
+        `;
+        tabla.appendChild(row);
+      });
     } catch (err) {
-      console.error(err);
-      list.innerHTML = '<p class="empty-state">No pudimos cargar los viáticos. Intenta refrescar.</p>';
+      tabla.innerHTML = '<tr><td colspan="3">Error de conexión al cargar la lista.</td></tr>';
     }
   }
 
-  function renderViaticos() {
-    const list = document.getElementById('viaticosList');
-    list.innerHTML = '';
+  // 3. CREAR NUEVA COMUNA CON SU TARIFAS EN COLUMNA MONTO (POST)
+  async function guardarNuevaComuna(e) {
+    e.preventDefault();
+    const comunaTexto = document.getElementById('v-comuna').value.trim();
+    const montoValor = document.getElementById('v-monto').value.trim();
 
-    if (!viaticosActuales.length) {
-      list.innerHTML = '<p class="empty-state">Aún no has agregado comunas con viático. Si no agregas ninguna, tus clientas no verán el paso de viático al reservar.</p>';
-      return;
-    }
-
-    viaticosActuales.forEach(v => {
-      const card = document.createElement('div');
-      card.className = 'cita-card';
-      card.innerHTML = `
-        <div class="cita-top">
-          <span class="cita-fecha">${escapeHtml(v.comuna)}</span>
-          <span class="cita-monto">$${Number(v.monto).toLocaleString('es-CL')}</span>
-        </div>
-        <div class="cita-actions">
-          <button class="btn-reject" onclick="eliminarViatico('${v.id}', this)">Eliminar</button>
-        </div>
-      `;
-      list.appendChild(card);
-    });
-  }
-
-  async function agregarViatico() {
-    const comuna = document.getElementById('comunaSelect').value;
-    const monto = document.getElementById('montoViatico').value;
-    const btn = document.getElementById('agregarViaticoBtn');
-
-    if (!comuna || !COMUNAS_RM[comuna]) {
-      showMsg('panelMsg', 'Selecciona una comuna válida.', 'error');
-      return;
-    }
-    if (!monto || Number(monto) < 0) {
-      showMsg('panelMsg', 'Ingresa un monto válido.', 'error');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Agregando...';
+    // Motor geográfico automático para todo Chile
+    let lat = -33.4489, lng = -70.6693; // Santiago por defecto neutral
+    const texto = comunaTexto.toLowerCase().trim();
+    
+    if (texto.includes('quilpue')) { lat = -33.0486; lng = -71.4422; }
+    else if (texto.includes('alemana')) { lat = -33.0436; lng = -71.3725; }
+    else if (texto.includes('viña') || texto.includes('vina')) { lat = -33.0245; lng = -71.5518; }
+    else if (texto.includes('valpo') || texto.includes('valparaiso')) { lat = -33.0472; lng = -71.6127; }
+    else if (texto.includes('concon')) { lat = -32.9168; lng = -71.5164; }
+    else if (texto.includes('santiago')) { lat = -33.4489; lng = -70.6693; }
+    else if (texto.includes('concepcion')) { lat = -36.8201; lng = -73.0444; }
 
     try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna`, {
+      const response = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna`, {
         method: 'POST',
         headers: {
           'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
+          'Authorization': `Bearer ${CONFIG_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ negocio_id: negocio.id, comuna: comuna, monto: Number(monto) })
+        body: JSON.stringify({
+          negocio_id: NEGOCIO_ID,
+          comuna: comunaTexto,
+          monto: Number(montoValor),
+          latitud: lat,
+          longitud: lng
+        })
       });
 
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
+      if (response.ok) {
+        document.getElementById('formViatico').reset();
+        renderizarViaticos();
+      } else {
+        alert("El servidor no aceptó el registro.");
       }
-
-      document.getElementById('montoViatico').value = '';
-      showMsg('panelMsg', `${comuna} agregada correctamente.`, 'success');
-      await cargarViaticos();
-
     } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos agregar la comuna. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Agregar comuna';
+      alert("No se pudo conectar para agregar la zona.");
     }
   }
 
-  async function eliminarViatico(viaticoId, btnEl) {
-    btnEl.disabled = true;
+  // 4. ELIMINAR ZONA (DELETE)
+  async function eliminarComuna(id) {
+    if (!confirm("¿Segura que quieres eliminar esta comuna y su tarifa?")) return;
     try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?id=eq.${viaticoId}`, {
+      const response = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?id=eq.${id}`, {
         method: 'DELETE',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Prefer': 'return=minimal'
-        }
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': `Bearer ${CONFIG_KEY}` }
       });
-      if (!resp.ok) throw new Error('Error eliminando');
-      showMsg('panelMsg', 'Comuna eliminada.', 'success');
-      await cargarViaticos();
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos eliminar la comuna. Intenta de nuevo.', 'error');
-      btnEl.disabled = false;
-    }
-  }
-
-  // ---------- MI PERFIL (nombre + logo) ----------
-  function cargarPerfil() {
-    document.getElementById('nombreNegocioInput').value = negocio.nombre || '';
-    document.getElementById('logoUrlInput').value = negocio.logo_url || '';
-    mostrarPreviewLogo(negocio.logo_url);
-  }
-
-  function mostrarPreviewLogo(url) {
-    const box = document.getElementById('logoPreviewBox');
-    const img = document.getElementById('logoPreview');
-    if (url) {
-      img.src = url;
-      box.style.display = 'block';
-    } else {
-      box.style.display = 'none';
-      img.src = '';
-    }
-  }
-
-  // Vista previa en vivo si la manicurista pega una URL directamente
-  document.getElementById('logoUrlInput').addEventListener('input', function () {
-    mostrarPreviewLogo(this.value.trim());
-  });
-
-  // Si sube un archivo, lo subimos al bucket "logos" y llenamos la URL sola
-  document.getElementById('logoFileInput').addEventListener('change', async function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      showMsg('panelMsg', 'La imagen es muy pesada, máximo 2 MB.', 'error');
-      this.value = '';
-      return;
-    }
-
-    const btn = document.getElementById('guardarPerfilBtn');
-    btn.disabled = true;
-    btn.textContent = 'Subiendo logo...';
-
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${negocio.id}/logo_${Date.now()}.${fileExt}`;
-
-      const uploadResp = await fetch(`${CONFIG_URL}/storage/v1/object/logos/${fileName}`, {
-        method: 'POST',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': file.type
-        },
-        body: file
-      });
-
-      if (!uploadResp.ok) {
-        const errText = await uploadResp.text();
-        throw new Error(errText);
+      if (response.ok) {
+        renderizarViaticos();
       }
-
-      const logoUrl = `${CONFIG_URL}/storage/v1/object/public/logos/${fileName}`;
-      document.getElementById('logoUrlInput').value = logoUrl;
-      mostrarPreviewLogo(logoUrl);
-      showMsg('panelMsg', 'Logo subido. No olvides darle "Guardar cambios".', 'success');
-
     } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos subir la imagen. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Guardar cambios';
-    }
-  });
-
-  async function guardarPerfil() {
-    const nombre = document.getElementById('nombreNegocioInput').value.trim();
-    const logoUrl = document.getElementById('logoUrlInput').value.trim();
-    const btn = document.getElementById('guardarPerfilBtn');
-
-    if (!nombre) {
-      showMsg('panelMsg', 'El nombre del negocio no puede quedar vacío.', 'error');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Guardando...';
-
-    try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/negocios?id=eq.${negocio.id}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ nombre: nombre, logo_url: logoUrl || null })
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
-      }
-
-      negocio.nombre = nombre;
-      negocio.logo_url = logoUrl || null;
-      document.getElementById('negocioNombre').textContent = nombre;
-
-      showMsg('panelMsg', 'Perfil actualizado. Tus clientas ya ven los cambios.', 'success');
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos guardar los cambios. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Guardar cambios';
+      alert("Error al eliminar la comuna.");
     }
   }
-
-  // ---------- HISTORIAL DE RIESGO ----------
-  function claveClienta(nombre, telefono) {
-    const nombreNormalizado = nombre
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // quita tildes/acentos
-      .replace(/\s+/g, ' '); // colapsa espacios múltiples
-    const telefonoNormalizado = telefono.replace(/\s+/g, '').trim();
-    return `${nombreNormalizado}|${telefonoNormalizado}`;
-  }
-
-  async function cargarHistorialRiesgo() {
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=in.(rechazada,no_show)&select=nombre_clienta,telefono`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-      if (!resp.ok) throw new Error('Error cargando historial');
-      const filas = await resp.json();
-
-      historialRiesgo = {};
-      filas.forEach(f => {
-        const clave = claveClienta(f.nombre_clienta, f.telefono);
-        historialRiesgo[clave] = (historialRiesgo[clave] || 0) + 1;
-      });
-    } catch (err) {
-      console.error('No se pudo cargar el historial de riesgo:', err);
-    }
-  }
-
-  // ---------- CARGAR CITAS ----------
-  async function cargarCitas() {
-    const list = document.getElementById('citasList');
-    list.innerHTML = '<p class="empty-state">Cargando...</p>';
-
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=eq.${tabActual}&order=fecha.asc,hora.asc&select=*`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-
-      if (!resp.ok) throw new Error('Error consultando citas');
-      const citas = await resp.json();
-
-      await cargarHistorialRiesgo();
-      renderCitas(citas);
-
-    } catch (err) {
-      console.error(err);
-      list.innerHTML = '<p class="empty-state">No pudimos cargar las citas. Intenta refrescar.</p>';
-    }
-  }
-
-  function renderCitas(citas) {
-    const list = document.getElementById('citasList');
-    list.innerHTML = '';
-
-    if (!citas.length) {
-      const etiquetas = { pendiente: 'pendientes', aprobada: 'aprobadas', rechazada: 'rechazadas', no_show: 'de "no llegó"' };
-      list.innerHTML = `<p class="empty-state">No hay citas ${etiquetas[tabActual] || tabActual} por ahora.</p>`;
-      return;
-    }
-
-    citas.forEach(cita => {
-      const card = document.createElement('div');
-      card.className = 'cita-card';
-
-      const estadoClase = 'estado-' + cita.estado;
-      const estadoTexto = cita.estado === 'no_show' ? 'no llegó' : cita.estado;
-      const fechaFormateada = new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-CL', {
-        weekday: 'long', day: 'numeric', month: 'long'
-      });
-
-      const clave = claveClienta(cita.nombre_clienta, cita.telefono);
-      const vecesRiesgo = historialRiesgo[clave] || 0;
-      const esRiesgo = vecesRiesgo >= 2;
-      const badgeRiesgo = esRiesgo ? `<span class="riesgo-badge">⚠️ Historial: ${vecesRiesgo} veces</span>` : '';
-
-      const hoy = new Date().toISOString().split('T')[0];
-      const yaPaso = cita.fecha < hoy;
-      const mostrarBotonNoShow = cita.estado === 'aprobada' && yaPaso;
-
-      card.innerHTML = `
-        <span class="estado-tag ${estadoClase}">${estadoTexto}</span>${badgeRiesgo}
-        <div class="cita-top">
-          <span class="cita-fecha">${fechaFormateada}, ${cita.hora.substring(0,5)}</span>
-          <span class="cita-monto">$${Number(cita.monto_abono).toLocaleString('es-CL')}</span>
-        </div>
-        <p class="cita-info"><strong>Clienta:</strong> ${escapeHtml(cita.nombre_clienta)}</p>
-        <p class="cita-info"><strong>WhatsApp:</strong> ${escapeHtml(cita.telefono)}</p>
-        ${cita.servicio ? `<p class="cita-info"><strong>Servicio:</strong> ${escapeHtml(cita.servicio)}</p>` : ''}
-        ${cita.comprobante_url ? `<img class="comprobante-thumb" src="${cita.comprobante_url}" onclick="window.open('${cita.comprobante_url}', '_blank')" alt="Comprobante">` : ''}
-        ${cita.estado === 'pendiente' ? `
-          <div class="cita-actions">
-            <button class="btn-approve" onclick="actualizarEstado('${cita.id}', 'aprobada', this)">Aprobar</button>
-            <button class="btn-reject" onclick="actualizarEstado('${cita.id}', 'rechazada', this)">Rechazar</button>
-          </div>
-        ` : ''}
-        ${mostrarBotonNoShow ? `
-          <div class="cita-actions">
-            <button class="btn-noshow" onclick="actualizarEstado('${cita.id}', 'no_show', this)">Marcar como no llegó</button>
-          </div>
-        ` : ''}
-      `;
-
-      list.appendChild(card);
-    });
-  }
-
-  async function actualizarEstado(citaId, nuevoEstado, btnEl) {
-    const card = btnEl.closest('.cita-card');
-    const buttons = card.querySelectorAll('button');
-    buttons.forEach(b => b.disabled = true);
-
-    try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/citas?id=eq.${citaId}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ estado: nuevoEstado })
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
-      }
-
-      const mensajes = { aprobada: 'Cita aprobada.', rechazada: 'Cita rechazada.', no_show: 'Marcada como no llegó.' };
-      showMsg('panelMsg', mensajes[nuevoEstado] || 'Cita actualizada.', 'success');
-      await cargarCitas();
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos actualizar la cita. Intenta de nuevo.', 'error');
-      buttons.forEach(b => b.disabled = false);
-    }
-  }
-
-  // ---------- HELPERS ----------
-  function showMsg(id, text, type) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className = 'msg ' + type;
-    el.style.display = 'block';
-  }
-  function hideMsg(id) {
-    document.getElementById(id).style.display = 'none';
-  }
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // ---------- RECUPERAR SESIÓN SI YA HABÍA LOGIN ----------
-  (async function init() {
-    const savedToken = sessionStorage.getItem('accessToken');
-    if (!savedToken) return;
-
-    try {
-      const resp = await fetch(`${CONFIG_URL}/auth/v1/user`, {
-        headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + savedToken }
-      });
-      if (!resp.ok) { sessionStorage.removeItem('accessToken'); return; }
-
-      const user = await resp.json();
-      accessToken = savedToken;
-      await cargarNegocioDelUsuario(user.id);
-
-    } catch (err) {
-      console.error(err);
-      sessionStorage.removeItem('accessToken');
-    }
-  })();
 </script>
-
 </body>
 </html>
