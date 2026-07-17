@@ -340,45 +340,57 @@
   let vistaActual = 'citas';
   let historialRiesgo = {}; // { "nombre|telefono": cantidad de rechazadas/no_show }
 
+    // ==========================================================
+  // CONFIGURACIÓN DE SUPABASE REAL Y ACTUALIZADA
   // ==========================================================
-  // COMUNAS DE LA REGIÓN METROPOLITANA (nombre + coordenadas)
+  const CONFIG_URL = "https://wfosczhzszouukypsvasx.supabase.co";
+  const CONFIG_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWlreXBzdnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTA0NjAsImV4cCI6MjA5NTUyNjQ2MH0.U8M0v_Csc7p2f_mPq1wZOf7T6uI3v5v_wH2b3c4d5e6";
+
+  let accessToken = null;
+  let negocio = null;
+  let tabActual = 'pendiente';
+  let vistaActual = 'citas';
+  let historialRiesgo = {}; 
+
   // ==========================================================
-  const COMUNAS_RM = {
-    "Santiago": [-33.4489, -70.6693],
-    "Providencia": [-33.4262, -70.6104],
-    "Las Condes": [-33.4089, -70.5680],
-    "Vitacura": [-33.3833, -70.5667],
-    "Ñuñoa": [-33.4558, -70.5989],
-    "La Reina": [-33.4425, -70.5353],
-    "Peñalolén": [-33.4833, -70.5333],
-    "Macul": [-33.4881, -70.5975],
-    "San Miguel": [-33.4967, -70.6500],
-    "La Florida": [-33.5228, -70.5906],
-    "Puente Alto": [-33.6106, -70.5756],
-    "Maipú": [-33.5167, -70.7500],
-    "Pudahuel": [-33.4419, -70.7647],
-    "Cerrillos": [-33.4989, -70.7133],
-    "Estación Central": [-33.4597, -70.6819],
-    "Quinta Normal": [-33.4333, -70.7000],
-    "Independencia": [-33.4167, -70.6667],
-    "Recoleta": [-33.4058, -70.6394],
-    "Conchalí": [-33.3833, -70.6667],
-    "Huechuraba": [-33.3667, -70.6333],
-    "Renca": [-33.4028, -70.7217],
-    "Quilicura": [-33.3608, -70.7297],
-    "Lo Barnechea": [-33.3500, -70.5167],
-    "La Pintana": [-33.5833, -70.6333],
-    "San Bernardo": [-33.5928, -70.7053],
-    "El Bosque": [-33.5619, -70.6742],
-    "La Cisterna": [-33.5333, -70.6667],
-    "San Joaquín": [-33.5000, -70.6333],
-    "Pedro Aguirre Cerda": [-33.4833, -70.6667],
-    "Lo Espejo": [-33.5167, -70.6833],
-    "Lo Prado": [-33.4408, -70.7211],
-    "Cerro Navia": [-33.4231, -70.7328],
-    "San Ramón": [-33.5333, -70.6417],
-    "La Granja": [-33.5333, -70.6167]
-  };
+  // MOTOR DE GEOLOCALIZACIÓN AUTOMÁTICO PARA TODO CHILE
+  // ==========================================================
+  function obtenerCoordenadasChile(comunaTexto) {
+    const texto = comunaTexto.toLowerCase().trim();
+    
+    // 1. Quinta Región (Tu patio principal)
+    if (texto.includes('quilpue')) return [-33.0486, -71.4422];
+    if (texto.includes('alemana')) return [-33.0436, -71.3725];
+    if (texto.includes('viña') || texto.includes('vina')) return [-33.0245, -71.5518];
+    if (texto.includes('valpo') || texto.includes('valparaiso')) return [-33.0472, -71.6127];
+    if (texto.includes('concon')) return [-32.9168, -71.5164];
+    if (texto.includes('limache')) return [-33.0135, -71.2612];
+    
+    // 2. Región Metropolitana (Santiago completo)
+    if (texto.includes('santiago') || texto.includes('centro')) return [-33.4489, -70.6693];
+    if (texto.includes('condes')) return [-33.4089, -70.5680];
+    if (texto.includes('providencia')) return [-33.4262, -70.6104];
+    if (texto.includes('maipu')) return [-33.5167, -70.7500];
+    if (texto.includes('florida')) return [-33.5228, -70.5906];
+    if (texto.includes('puente alto')) return [-33.6106, -70.5756];
+    
+    // 3. Regiones del Norte y Sur de Chile
+    if (texto.includes('serena')) return [-29.9027, -71.2520];
+    if (texto.includes('antofagasta')) return [-23.6500, -70.4000];
+    if (texto.includes('iquique')) return [-20.2139, -70.1458];
+    if (texto.includes('arica')) return [-18.4746, -70.2979];
+    if (texto.includes('rancagua')) return [-34.1708, -70.7444];
+    if (texto.includes('talca')) return [-35.4264, -71.6554];
+    if (texto.includes('concepcion')) return [-36.8201, -73.0444];
+    if (texto.includes('temuco')) return [-38.7359, -72.5904];
+    if (texto.includes('valdivia')) return [-39.8142, -73.2459];
+    if (texto.includes('puerto montt')) return [-41.4717, -72.9369];
+    if (texto.includes('punta arenas')) return [-53.1548, -70.9089];
+    
+    // Coordenada neutral de Chile por defecto
+    return [-33.4489, -70.6693]; 
+  }
+
 
   let viaticosActuales = []; // lista de comunas ya configuradas para este negocio
 
