@@ -311,46 +311,11 @@
   let citasOcupadas = []; // [{fecha, hora}, ...] desde la vista "disponibilidad"
 
   // ==========================================================
-  // COMUNAS DE LA REGIÓN METROPOLITANA (nombre + coordenadas)
+  // Nota: las coordenadas de cada comuna vienen guardadas
+  // directamente en viaticos_comuna (columnas lat, lng),
+  // ya no dependemos de un listado fijo.
   // ==========================================================
-  const COMUNAS_RM = {
-    "Santiago": [-33.4489, -70.6693],
-    "Providencia": [-33.4262, -70.6104],
-    "Las Condes": [-33.4089, -70.5680],
-    "Vitacura": [-33.3833, -70.5667],
-    "Ñuñoa": [-33.4558, -70.5989],
-    "La Reina": [-33.4425, -70.5353],
-    "Peñalolén": [-33.4833, -70.5333],
-    "Macul": [-33.4881, -70.5975],
-    "San Miguel": [-33.4967, -70.6500],
-    "La Florida": [-33.5228, -70.5906],
-    "Puente Alto": [-33.6106, -70.5756],
-    "Maipú": [-33.5167, -70.7500],
-    "Pudahuel": [-33.4419, -70.7647],
-    "Cerrillos": [-33.4989, -70.7133],
-    "Estación Central": [-33.4597, -70.6819],
-    "Quinta Normal": [-33.4333, -70.7000],
-    "Independencia": [-33.4167, -70.6667],
-    "Recoleta": [-33.4058, -70.6394],
-    "Conchalí": [-33.3833, -70.6667],
-    "Huechuraba": [-33.3667, -70.6333],
-    "Renca": [-33.4028, -70.7217],
-    "Quilicura": [-33.3608, -70.7297],
-    "Lo Barnechea": [-33.3500, -70.5167],
-    "La Pintana": [-33.5833, -70.6333],
-    "San Bernardo": [-33.5928, -70.7053],
-    "El Bosque": [-33.5619, -70.6742],
-    "La Cisterna": [-33.5333, -70.6667],
-    "San Joaquín": [-33.5000, -70.6333],
-    "Pedro Aguirre Cerda": [-33.4833, -70.6667],
-    "Lo Espejo": [-33.5167, -70.6833],
-    "Lo Prado": [-33.4408, -70.7211],
-    "Cerro Navia": [-33.4231, -70.7328],
-    "San Ramón": [-33.5333, -70.6417],
-    "La Granja": [-33.5333, -70.6167]
-  };
-
-  let viaticosNegocio = [];   // comunas configuradas por este negocio, con su monto
+  let viaticosNegocio = [];   // comunas configuradas por este negocio, con su monto y coordenadas
   let selectedComuna = null;
   let selectedViaticoMonto = 0;
   let mapaLeaflet = null;
@@ -421,15 +386,15 @@
 
   function dibujarMapa() {
     const coordsValidas = viaticosNegocio
-      .map(v => COMUNAS_RM[v.comuna])
-      .filter(c => c);
+      .filter(v => v.lat != null && v.lng != null)
+      .map(v => [Number(v.lat), Number(v.lng)]);
 
     if (!coordsValidas.length) return;
 
     const latPromedio = coordsValidas.reduce((s, c) => s + c[0], 0) / coordsValidas.length;
     const lngPromedio = coordsValidas.reduce((s, c) => s + c[1], 0) / coordsValidas.length;
 
-    mapaLeaflet = L.map('comunaMap').setView([latPromedio, lngPromedio], 10);
+    mapaLeaflet = L.map('comunaMap').setView([latPromedio, lngPromedio], 9);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap',
@@ -437,8 +402,8 @@
     }).addTo(mapaLeaflet);
 
     viaticosNegocio.forEach(v => {
-      const coords = COMUNAS_RM[v.comuna];
-      if (!coords) return;
+      if (v.lat == null || v.lng == null) return;
+      const coords = [Number(v.lat), Number(v.lng)];
 
       const marker = L.circleMarker(coords, {
         radius: 10,
