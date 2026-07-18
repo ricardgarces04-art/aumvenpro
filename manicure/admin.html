@@ -283,14 +283,15 @@
       <div class="cita-card">
         <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Agregar comuna con viático</p>
         <div class="form-group">
-          <label for="comunaSelect">Comuna</label>
-          <select id="comunaSelect"></select>
+          <label for="comunaInput">Comuna (cualquier comuna de Chile)</label>
+          <input id="comunaInput" type="text" placeholder="Ej: Valparaíso, Viña del Mar, Concepción">
         </div>
         <div class="form-group">
           <label for="montoViatico">Monto del viático (CLP)</label>
           <input id="montoViatico" type="number" min="0" step="500" placeholder="Ej: 3000">
         </div>
         <button id="agregarViaticoBtn" class="btn" onclick="agregarViatico()">Agregar comuna</button>
+        <p class="file-hint" style="margin-top:8px;">Escribe el nombre tal cual se conoce (ej: "Viña del Mar", no "viña"). Buscamos su ubicación automáticamente.</p>
       </div>
 
       <div id="viaticosList"></div>
@@ -341,45 +342,10 @@
   let historialRiesgo = {}; // { "nombre|telefono": cantidad de rechazadas/no_show }
 
   // ==========================================================
-  // COMUNAS DE LA REGIÓN METROPOLITANA (nombre + coordenadas)
+  // Nota: ya no usamos un listado fijo de comunas.
+  // Cada comuna se busca dinámicamente con Nominatim (OpenStreetMap),
+  // un servicio gratuito de geocodificación, sin API key.
   // ==========================================================
-  const COMUNAS_RM = {
-    "Santiago": [-33.4489, -70.6693],
-    "Providencia": [-33.4262, -70.6104],
-    "Las Condes": [-33.4089, -70.5680],
-    "Vitacura": [-33.3833, -70.5667],
-    "Ñuñoa": [-33.4558, -70.5989],
-    "La Reina": [-33.4425, -70.5353],
-    "Peñalolén": [-33.4833, -70.5333],
-    "Macul": [-33.4881, -70.5975],
-    "San Miguel": [-33.4967, -70.6500],
-    "La Florida": [-33.5228, -70.5906],
-    "Puente Alto": [-33.6106, -70.5756],
-    "Maipú": [-33.5167, -70.7500],
-    "Pudahuel": [-33.4419, -70.7647],
-    "Cerrillos": [-33.4989, -70.7133],
-    "Estación Central": [-33.4597, -70.6819],
-    "Quinta Normal": [-33.4333, -70.7000],
-    "Independencia": [-33.4167, -70.6667],
-    "Recoleta": [-33.4058, -70.6394],
-    "Conchalí": [-33.3833, -70.6667],
-    "Huechuraba": [-33.3667, -70.6333],
-    "Renca": [-33.4028, -70.7217],
-    "Quilicura": [-33.3608, -70.7297],
-    "Lo Barnechea": [-33.3500, -70.5167],
-    "La Pintana": [-33.5833, -70.6333],
-    "San Bernardo": [-33.5928, -70.7053],
-    "El Bosque": [-33.5619, -70.6742],
-    "La Cisterna": [-33.5333, -70.6667],
-    "San Joaquín": [-33.5000, -70.6333],
-    "Pedro Aguirre Cerda": [-33.4833, -70.6667],
-    "Lo Espejo": [-33.5167, -70.6833],
-    "Lo Prado": [-33.4408, -70.7211],
-    "Cerro Navia": [-33.4231, -70.7328],
-    "San Ramón": [-33.5333, -70.6417],
-    "La Granja": [-33.5333, -70.6167]
-  };
-
   let viaticosActuales = []; // lista de comunas ya configuradas para este negocio
 
   // ---------- LOGIN ----------
@@ -483,25 +449,6 @@
   }
 
   // ---------- VIÁTICOS ----------
-  function poblarSelectorComunas() {
-    const select = document.getElementById('comunaSelect');
-    const yaAgregadas = viaticosActuales.map(v => v.comuna);
-    select.innerHTML = '';
-    Object.keys(COMUNAS_RM).forEach(comuna => {
-      if (!yaAgregadas.includes(comuna)) {
-        const opt = document.createElement('option');
-        opt.value = comuna;
-        opt.textContent = comuna;
-        select.appendChild(opt);
-      }
-    });
-    if (!select.options.length) {
-      const opt = document.createElement('option');
-      opt.textContent = 'Ya agregaste todas las comunas disponibles';
-      select.appendChild(opt);
-    }
-  }
-
   async function cargarViaticos() {
     const list = document.getElementById('viaticosList');
     list.innerHTML = '<p class="empty-state">Cargando...</p>';
@@ -515,7 +462,6 @@
       viaticosActuales = await resp.json();
 
       renderViaticos();
-      poblarSelectorComunas();
 
     } catch (err) {
       console.error(err);
@@ -549,12 +495,13 @@
   }
 
   async function agregarViatico() {
-    const comuna = document.getElementById('comunaSelect').value;
+    const comunaInput = document.getElementById('comunaInput');
+    const comuna = comunaInput.value.trim();
     const monto = document.getElementById('montoViatico').value;
     const btn = document.getElementById('agregarViaticoBtn');
 
-    if (!comuna || !COMUNAS_RM[comuna]) {
-      showMsg('panelMsg', 'Selecciona una comuna válida.', 'error');
+    if (!comuna) {
+      showMsg('panelMsg', 'Escribe el nombre de la comuna.', 'error');
       return;
     }
     if (!monto || Number(monto) < 0) {
@@ -563,9 +510,31 @@
     }
 
     btn.disabled = true;
-    btn.textContent = 'Agregando...';
+    btn.textContent = 'Buscando ubicación...';
 
     try {
+      // 1. Geocodificar la comuna con Nominatim (OpenStreetMap, gratis, sin API key)
+      const geoResp = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna + ', Chile')}&format=json&limit=1`,
+        { headers: { 'Accept-Language': 'es' } }
+      );
+
+      if (!geoResp.ok) throw new Error('No pudimos buscar la ubicación.');
+      const geoData = await geoResp.json();
+
+      if (!geoData.length) {
+        showMsg('panelMsg', `No encontramos "${comuna}" en el mapa. Revisa cómo lo escribiste (ej: "Viña del Mar").`, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Agregar comuna';
+        return;
+      }
+
+      const lat = Number(geoData[0].lat);
+      const lng = Number(geoData[0].lon);
+
+      // 2. Guardar la comuna con sus coordenadas
+      btn.textContent = 'Guardando...';
+
       const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna`, {
         method: 'POST',
         headers: {
@@ -574,7 +543,7 @@
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ negocio_id: negocio.id, comuna: comuna, monto: Number(monto) })
+        body: JSON.stringify({ negocio_id: negocio.id, comuna: comuna, monto: Number(monto), lat: lat, lng: lng })
       });
 
       if (!resp.ok) {
@@ -582,6 +551,7 @@
         throw new Error(errText);
       }
 
+      comunaInput.value = '';
       document.getElementById('montoViatico').value = '';
       showMsg('panelMsg', `${comuna} agregada correctamente.`, 'success');
       await cargarViaticos();
