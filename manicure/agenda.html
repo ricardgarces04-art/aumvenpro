@@ -211,7 +211,7 @@
   <span class="badge">Agenda protegida</span>
   <img id="negocioLogo" src="" alt="Logo del negocio" style="display:none;max-height:64px;max-width:200px;border-radius:12px;margin-bottom:12px;">
   <h1>Reserva tu hora</h1>
-  <p class="subtitle">Elige día y horario, y asegura tu cupo con una seña.</p>
+  <p class="subtitle">Elige día y horario, y asegura tu cupo con una Abono.</p>
 
   <div id="bookingFlow">
 
@@ -240,16 +240,16 @@
       </div>
     </div>
 
-    <!-- Paso 4: Datos + seña -->
+    <!-- Paso 4: Datos + Abono -->
     <div class="step">
-      <p class="step-label" id="stepDatosLabel">3. Tus datos y seña de reserva</p>
+      <p class="step-label" id="stepDatosLabel">3. Tus datos y Abono de reserva</p>
 
       <div class="transfer-box">
         <p>Transfiere a:</p>
         <p><strong>Nombre:</strong> <span id="nombreTitular">—</span></p>
         <p><strong>CuentaRUT:</strong> <span id="rutCuenta">—</span></p>
         <p><strong>Banco:</strong> <span id="bancoNombre">—</span></p>
-        <p id="desgloseSena" style="margin-top:8px;">Seña: $<span id="senaDisplay">0</span></p>
+        <p id="desgloseSena" style="margin-top:8px;">Abono: $<span id="senaDisplay">0</span></p>
         <p id="desgloseViatico" style="display:none;">Viático: $<span id="viaticoDisplay">0</span></p>
         <p class="monto">$<span id="montoDisplay">0</span> CLP</p>
       </div>
@@ -410,7 +410,7 @@ const CONFIG_KEY = "sb_publishable_1kVwQ6XA470AC4P0mNYNKA_MI4ZyIQL";
 
       if (viaticosNegocio.length) {
         document.getElementById('stepComuna').style.display = 'block';
-        document.getElementById('stepDatosLabel').textContent = '4. Tus datos y seña de reserva';
+        document.getElementById('stepDatosLabel').textContent = '4. Tus datos y Abono de reserva';
         dibujarMapa();
       }
     } catch (err) {
