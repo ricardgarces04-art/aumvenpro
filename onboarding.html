@@ -216,7 +216,7 @@ textarea{resize:vertical;min-height:72px;line-height:1.5}
       <div id="resumen" style="font-size:.84rem;line-height:1.85;color:var(--mt);margin-bottom:1rem"></div>
       <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);
         border-radius:var(--rs);padding:.85rem;margin-bottom:1rem;font-size:.79rem;color:var(--mt)">
-        &#9989; Al activar aceptas los t&#233;rminos de uso de AUMVEN Pro.<br>
+        &#9989; Al activar aceptas los <a href="https://aumven.cl/terminos.html" target="_blank" style="color:var(--ac2)">T&#233;rminos y Condiciones</a> de AUMVEN Pro.<br>
         &#128274; Tus datos son confidenciales y no se comparten con terceros.
       </div>
       <div style="display:flex;gap:.6rem">
@@ -396,6 +396,20 @@ async function activarTienda() {
     });
     if (res.error) throw new Error(res.error.message);
     var linkJuego = BASE_URL + '/juego.html?neg=' + slug;
+
+    // ── NOTIFICACIÓN AUTOMÁTICA A RIC VÍA WHATSAPP (CallMeBot) ──
+    try {
+      var msgNotif = encodeURIComponent(
+        '⚡ NUEVO NEGOCIO EN AUMVEN Pro!\n' +
+        '🏪 ' + nombre + '\n' +
+        '📱 +' + wa + '\n' +
+        '🎮 Juego: ' + juego + '\n' +
+        '🔑 Prefijo: ' + prefijo + '\n' +
+        '🔗 ' + linkJuego + '\n' +
+        '📅 Vence: ' + venceStr
+      );
+      fetch('https://api.callmebot.com/whatsapp.php?phone=56931341245&text=' + msgNotif + '&apikey=8153793');
+    } catch(notifErr) { console.log('Notif error (no crítico):', notifErr); }
     document.getElementById('link-juego').textContent = linkJuego;
     document.getElementById('link-admin').textContent = linkJuego;
     document.getElementById('cod-ejemplo').textContent = prefijo+'001, '+prefijo+'002, '+prefijo+'003...';
