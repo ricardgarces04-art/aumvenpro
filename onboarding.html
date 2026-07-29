@@ -365,28 +365,50 @@ function irPaso3() {
   window.scrollTo(0,0);
 }
 
-// ── ACTIVAR ──
+// ── ACTIVAR CON LÍMITE DE 5 PILOTOS CEÑIDO A LA ESTRATEGIA ──
 async function activarTienda() {
   var btn = document.getElementById('btn-activar');
-  btn.disabled = true; btn.textContent = '⏳ Activando...';
-  var nombre = document.getElementById('f-nombre').value.trim();
-  var wa = document.getElementById('f-wa').value.replace(/[^0-9]/g,'');
-  var juego = document.getElementById('f-juego').value;
-  var prefijo = document.getElementById('f-prefijo').value.trim().toUpperCase();
-  var premiosArr = document.getElementById('f-premios').value.trim().split(',').map(function(p){return p.trim();}).filter(Boolean);
-  var consolacion = document.getElementById('f-consolacion').value.trim();
-  var ventas = parseFloat(document.getElementById('f-ventas').value)||0;
-  var pedidos = parseFloat(document.getElementById('f-pedidos').value)||1;
-  var adicional = parseInt(document.getElementById('f-adicional').value)||2500;
-  var ticket = pedidos > 0 ? Math.round(ventas/pedidos) : 0;
-  var meta = ticket + adicional;
-  var slug = nombre.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').substring(0,25)
-    + '-' + Date.now().toString(36).slice(-4);
-  var vence = new Date(); vence.setDate(vence.getDate()+30);
-  var venceStr = vence.toISOString().split('T')[0];
+  btn.disabled = true; 
+  btn.textContent = '⏳ Verificando cupos disponibles...';
+  
+  ocultarError();
+
   try {
+    // 1. Consultar a Supabase cuántas configuraciones ya existen creadas
+    const { count, error: countError } = await sb
+      .from('configuraciones')
+      .select('*', { count: 'exact', head: true });
+
+    if (countError) throw new Error('No se pudo verificar la disponibilidad: ' + countError.message);
+
+    // 2. Candado comercial: Si ya hay 5 o más, bloquea el onboarding automático
+    if (count >= 5) {
+      mostrarError('🚫 Lo sentimos, los 5 cupos del piloto gratuito ya se han completado. Por favor, comunícate por WhatsApp para suscribirte a un plan de pago o entrar en la lista de espera.');
+      btn.disabled = false; 
+      btn.textContent = '⚡ Activar mi tienda';
+      return; // Detiene el código aquí, impidiendo que se guarde en Supabase
+    }
+
+    // 3. Si hay menos de 5, procede con el registro normal
+    btn.textContent = '⏳ Activando...';
+    var nombre = document.getElementById('f-nombre').value.trim();
+    var wa = document.getElementById('f-wa').value.replace(/[^0-9]/g,'');
+    var juego = document.getElementById('f-juego').value;
+    var prefijo = document.getElementById('f-prefijo').value.trim().toUpperCase();
+    var premiosArr = document.getElementById('f-premios').value.trim().split(',').map(function(p){return p.trim();}).filter(Boolean);
+    var consolacion = document.getElementById('f-consolacion').value.trim();
+    var ventas = parseFloat(document.getElementById('f-ventas').value)||0;
+    var pedidos = parseFloat(document.getElementById('f-pedidos').value)||1;
+    var adicional = parseInt(document.getElementById('f-adicional').value)||2500;
+    var ticket = pedidos > 0 ? Math.round(ventas/pedidos) : 0;
+    var meta = ticket + adicional;
+    var slug = nombre.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').substring(0,25)
+      + '-' + Date.now().toString(36).slice(-4);
+    var vence = new Date(); vence.setDate(vence.getDate()+30);
+    var venceStr = vence.toISOString().split('T')[0];
+
     var res = await sb.from('configuraciones').insert({
       id: slug, nombre: nombre, juego: juego, premios: premiosArr,
       consolacion: consolacion, wa: wa, prefijo: prefijo,
@@ -410,11 +432,13 @@ async function activarTienda() {
       );
       fetch('https://api.callmebot.com/whatsapp.php?phone=56931341245&text=' + msgNotif + '&apikey=8153793');
     } catch(notifErr) { console.log('Notif error (no crítico):', notifErr); }
+
     document.getElementById('link-juego').textContent = linkJuego;
     document.getElementById('link-admin').textContent = linkJuego;
     document.getElementById('cod-ejemplo').textContent = prefijo+'001, '+prefijo+'002, '+prefijo+'003...';
     document.getElementById('btn-ir-admin').href = linkJuego;
     document.getElementById('qr-neg-nombre').textContent = nombre;
+    
     // Generar QR
     document.getElementById('qr-canvas').innerHTML = '';
     new QRCode(document.getElementById('qr-canvas'), {
@@ -426,10 +450,12 @@ async function activarTienda() {
     document.getElementById('steps-ind').style.display = 'none';
     document.getElementById('sc-success').style.display = 'block';
     window.scrollTo(0,0);
-    console.log('✅ Negocio activado:', slug);
+    console.log('✅ Negocio activado con éxito bajo límite controlado:', slug);
+
   } catch(e) {
     mostrarError('Error al activar: ' + e.message);
-    btn.disabled = false; btn.textContent = '⚡ Activar mi tienda';
+    btn.disabled = false; 
+    btn.textContent = '⚡ Activar mi tienda';
   }
 }
 
