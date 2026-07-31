@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel General · AUMVEN Manicure</title>
+
+<style>
+  :root {
+    --cream: #FBF3EE;
+    --blush: #F5DFD9;
+    --coffee: #4A342E;
+    --coffeesoft: #6B5049;
+    --siena: #AD6B5F;
+    --sienadark: #8F4F45;
+    --white: #FFFFFF;
+    --green: #3A7D44;
+    --red: #B3261E;
+    --amber: #93650B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--coffee);
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
+  .container { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
+
+  #loginScreen {
+    max-width: 360px;
+    margin: 60px auto;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 28px;
+  }
+  #loginScreen h1 { font-size: 22px; margin-bottom: 6px; text-align: center; }
+  #loginScreen p.hint { color: var(--coffeesoft); font-size: 13px; text-align: center; margin-bottom: 20px; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #E5D9D3;
+    background: var(--white);
+    color: var(--coffee);
+    font-size: 14px;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--siena);
+    box-shadow: 0 0 0 3px rgba(173,107,95,0.15);
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--white);
+    background: var(--siena);
+  }
+  .btn:hover { background: var(--sienadark); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .msg {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .msg.error { background: #FDECEC; color: var(--red); }
+  .msg.success { background: #E6F4E8; color: var(--green); }
+
+  #panelScreen { display: none; }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .panel-header h1 { font-size: 20px; }
+  .logout-link {
+    font-size: 12px;
+    color: var(--coffeesoft);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .summary-card .num { font-size: 22px; font-weight: 700; font-family: Georgia, serif; color: var(--sienadark); }
+  .summary-card .lbl { font-size: 10px; color: var(--coffeesoft); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+  .empty-state {
+    text-align: center;
+    color: var(--coffeesoft);
+    font-size: 14px;
+    padding: 40px 10px;
+  }
+
+  .negocio-card {
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .negocio-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .negocio-nombre { font-size: 17px; font-weight: 700; font-family: Georgia, serif; }
+  .negocio-slug { font-size: 11px; color: var(--coffeesoft); }
+
+  .actividad-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .actividad-activa { background: #E6F4E8; color: var(--green); }
+  .actividad-tibia { background: #FCEFD8; color: var(--amber); }
+  .actividad-fria { background: #FDECEC; color: var(--red); }
+
+  .stats-row {
+    display: flex;
+    gap: 14px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .stat-mini { font-size: 12px; color: var(--coffeesoft); }
+  .stat-mini strong { color: var(--coffee); font-size: 13px; }
+
+  .ultima-actividad { font-size: 12px; color: var(--coffeesoft); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginScreen">
+    <h1>Panel General</h1>
+    <p class="hint">Acceso solo para administración AUMVEN.</p>
+
+    <p id="loginMsg" class="msg"></p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Correo</label>
+        <input id="loginEmail" type="email" required placeholder="tu@correo.com">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input id="loginPassword" type="password" required placeholder="••••••••">
+      </div>
+      <button id="loginBtn" type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panelScreen">
+    <div class="panel-header">
+      <h1>Panel General · Todos los negocios</h1>
+      <button class="logout-link" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <p id="panelMsg" class="msg"></p>
+
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <div id="negociosList"></div>
+  </div>
+
+</div>
+
+<script>
+  // ==========================================================
+  // CONFIGURACIÓN DE SUPABASE
+  // ==========================================================
+  const CONFIG_URL = "https://jcbqksnnuacfuryztqop.supabase.co";
+  const CONFIG_KEY = "sb_publishable_1kVwQ6XA470AC4P0mNYNKA_MI4ZyIQL";
+
+  let accessToken = null;
+
+  // ---------- LOGIN ----------
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    hideMsg('loginMsg');
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: { 'apikey': CONFIG_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error_description || data.msg || 'Credenciales inválidas');
+
+      accessToken = data.access_token;
+      sessionStorage.setItem('superadminToken', accessToken);
+
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('panelScreen').style.display = 'block';
+
+      await cargarPanel();
+
+    } catch (err) {
+      console.error(err);
+      showMsg('loginMsg', 'No pudimos iniciar sesión: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  });
+
+  function logout() {
+    accessToken = null;
+    sessionStorage.removeItem('superadminToken');
+    document.getElementById('panelScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('loginForm').reset();
+  }
+
+  // ---------- CARGAR TODO ----------
+  async function cargarPanel() {
+    const list = document.getElementById('negociosList');
+    list.innerHTML = '<p class="empty-state">Cargando...</p>';
+
+    try {
+      const [negociosResp, citasResp] = await Promise.all([
+        fetch(`${CONFIG_URL}/rest/v1/negocios?select=*&order=nombre.asc`, {
+          headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken }
+        }),
+        fetch(`${CONFIG_URL}/rest/v1/citas?select=*`, {
+          headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken }
+        })
+      ]);
+
+      if (!negociosResp.ok) throw new Error('Error consultando negocios');
+      if (!citasResp.ok) throw new Error('Error consultando citas (revisa que tu usuario esté en la tabla admins)');
+
+      const negocios = await negociosResp.json();
+      const citas = await citasResp.json();
+
+      renderResumenGlobal(negocios, citas);
+      renderNegocios(negocios, citas);
+
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = `<p class="empty-state">No pudimos cargar el panel: ${err.message}</p>`;
+    }
+  }
+
+  function renderResumenGlobal(negocios, citas) {
+    const totalNegocios = negocios.length;
+    const totalCitas = citas.length;
+    const ingresoEstimado = citas
+      .filter(c => c.estado === 'aprobada')
+      .reduce((sum, c) => sum + Number(c.monto_abono || 0) + Number(c.viatico_monto || 0), 0);
+
+    const grid = document.getElementById('summaryGrid');
+    grid.innerHTML = `
+      <div class="summary-card"><div class="num">${totalNegocios}</div><div class="lbl">Negocios</div></div>
+      <div class="summary-card"><div class="num">${totalCitas}</div><div class="lbl">Citas totales</div></div>
+      <div class="summary-card"><div class="num">$${ingresoEstimado.toLocaleString('es-CL')}</div><div class="lbl">Abonos aprobados</div></div>
+    `;
+  }
+
+  function calcularEstadoActividad(ultimaFecha) {
+    if (!ultimaFecha) return { clase: 'actividad-fria', texto: 'Sin actividad' };
+    const dias = Math.floor((new Date() - new Date(ultimaFecha)) / (1000 * 60 * 60 * 24));
+    if (dias <= 7) return { clase: 'actividad-activa', texto: 'Activa' };
+    if (dias <= 21) return { clase: 'actividad-tibia', texto: 'Tibia' };
+    return { clase: 'actividad-fria', texto: 'Inactiva' };
+  }
+
+  function renderNegocios(negocios, citas) {
+    const list = document.getElementById('negociosList');
+    list.innerHTML = '';
+
+    if (!negocios.length) {
+      list.innerHTML = '<p class="empty-state">Aún no hay negocios registrados.</p>';
+      return;
+    }
+
+    negocios.forEach(neg => {
+      const citasNegocio = citas.filter(c => c.negocio_id === neg.id);
+      const pendientes = citasNegocio.filter(c => c.estado === 'pendiente').length;
+      const aprobadas = citasNegocio.filter(c => c.estado === 'aprobada').length;
+      const rechazadas = citasNegocio.filter(c => c.estado === 'rechazada').length;
+      const noShow = citasNegocio.filter(c => c.estado === 'no_show').length;
+
+      const fechas = citasNegocio.map(c => c.created_at).filter(Boolean).sort();
+      const ultimaFecha = fechas.length ? fechas[fechas.length - 1] : null;
+      const estadoActividad = calcularEstadoActividad(ultimaFecha);
+
+      const ultimaTexto = ultimaFecha
+        ? `Última actividad: ${new Date(ultimaFecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}`
+        : 'Sin citas registradas todavía';
+
+      const card = document.createElement('div');
+      card.className = 'negocio-card';
+      card.innerHTML = `
+        <div class="negocio-top">
+          <div>
+            <div class="negocio-nombre">${escapeHtml(neg.nombre)}</div>
+            <div class="negocio-slug">/${escapeHtml(neg.slug)}</div>
+          </div>
+          <span class="actividad-tag ${estadoActividad.clase}">${estadoActividad.texto}</span>
+        </div>
+        <div class="stats-row">
+          <span class="stat-mini"><strong>${citasNegocio.length}</strong> citas totales</span>
+          <span class="stat-mini"><strong>${pendientes}</strong> pendientes</span>
+          <span class="stat-mini"><strong>${aprobadas}</strong> aprobadas</span>
+          <span class="stat-mini"><strong>${rechazadas + noShow}</strong> rechazadas/no llegó</span>
+        </div>
+        <div class="ultima-actividad">${ultimaTexto}</div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  // ---------- HELPERS ----------
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg ' + type;
+    el.style.display = 'block';
+  }
+  function hideMsg(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- RECUPERAR SESIÓN ----------
+  (async function init() {
+    const savedToken = sessionStorage.getItem('superadminToken');
+    if (!savedToken) return;
+
+    try {
+      const resp = await fetch(`${CONFIG_URL}/auth/v1/user`, {
+        headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + savedToken }
+      });
+      if (!resp.ok) { sessionStorage.removeItem('superadminToken'); return; }
+
+      accessToken = savedToken;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('panelScreen').style.display = 'block';
+      await cargarPanel();
+
+    } catch (err) {
+      console.error(err);
+      sessionStorage.removeItem('superadminToken');
+    }
+  })();
+</script>
+
+</body>
+</html>
