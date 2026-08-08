@@ -122,16 +122,16 @@
 
             const leadItem = document.createElement('div');
             leadItem.className = 'lead-item';
-            leadItem.innerHTML = `
-                <div>
-                    <div class="lead-name">${name}</div>
-                    <div class="lead-phone">📱 +${cleanPhone}</div>
-                </div>
-                <div class="actions">
-                    <button class="btn-copy" onclick="copyToClipboard('${waLink}')">📋 Link</button>
-                    <a href="${waLink}" target="_blank" class="btn-wa">💬 Enviar</a>
-                </div>`;
-            leadsListDiv.appendChild(leadItem);
+                        leadItem.innerHTML = 
+                '<div>' +
+                    '<div class="lead-name">' + name + '</div>' +
+                    '<div class="lead-phone">📱 +' + cleanPhone + '</div>' +
+                '</div>' +
+                '<div class="actions">' +
+                    '<button class="btn-copy" onclick="copyToClipboard(\'' + waLink + '\')">📋 Link</button>' +
+                    '<a href="' + waLink + '" target="_blank" class="btn-wa">💬 Enviar</a>' +
+                '</div>';
+
         });
 
         document.getElementById('countValid').innerText = `✅ Válidos: ${validCount}`;
