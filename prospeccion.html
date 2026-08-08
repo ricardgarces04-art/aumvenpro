@@ -117,7 +117,8 @@
             validCount++;
 
             const customizedMessage = template.replace(/\[NOMBRE\]/g, name);
-            const waLink = `https://wa.me{cleanPhone}?text=${encodeURIComponent(customizedMessage)}`;
+          const waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
+
 
             const leadItem = document.createElement('div');
             leadItem.className = 'lead-item';
