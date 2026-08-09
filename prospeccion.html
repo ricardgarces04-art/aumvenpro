@@ -68,6 +68,22 @@
         </div>
         <div class="card">
             <h3>📋 Paso 2 — Negocios</h3>
+            <!-- 🟢 BOTÓN TUTORIAL INTELIGENTE -->
+<div style="margin: 10px 0;">
+    <button type="button" onclick="openVideoModal()" style="background: #e74c3c; color: white; padding: 10px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background 0.2s;">
+        📺 Tutorial: ¿Cómo conseguir números en 1 minuto?
+    </button>
+</div>
+
+<!-- VENTANA FLOTANTE DEL VIDEO (MODAL) -->
+<div id="videoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: #1e1e1e; padding: 20px; border-radius: 10px; width: 90%; max-width: 560px; text-align: right; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button type="button" onclick="closeVideoModal()" style="color: #95a5a6; background: none; border: none; font-size: 20px; cursor: pointer; margin-bottom: 8px; font-weight: bold;">✕ Cerrar</button>
+        <!-- Cuando tengas tu video de YouTube, cambias las letras finales (dQw4w9WgXcQ) por el código de tu video -->
+        <iframe id="tutorialVideo" width="100%" height="315" src="https://youtube.com" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 6px; border: 1px solid #333;"></iframe>
+    </div>
+</div>
+
             <p style="font-size: 0.8rem; color: var(--muted); margin: 0 0 10px 0;">Formatos aceptados: Nombre | Teléfono o Nombre / Teléfono o Nombre , Teléfono</p>
             <textarea id="rawLeads" rows="12" placeholder="Almacén Don Pedro | 56912345678&#10;Fijo a descartar | 56322554433"></textarea>
             <button onclick="processLeads()">⚡ Generar links</button>
@@ -83,6 +99,24 @@
 </div>
 
 <script>
+    // Funciones para abrir y cerrar el video tutorial sin salir de la web
+function openVideoModal() {
+    const modal = document.getElementById('videoModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('videoModal');
+    if (modal) {
+        modal.style.display = 'none';
+        const iframe = document.getElementById('tutorialVideo');
+        if (iframe) {
+            const currentSrc = iframe.src;
+            iframe.src = currentSrc;
+        }
+    }
+}
+
    const defaultMessage = `Hola, ¿hablo con el dueño/a de [NOMBRE]? 👋\n\nLos encontré en Google Maps buscando negocios de la zona y quise escribirles directamente.\n\nDesarrollé una herramienta 100% chilena que ayuda a almacenes como el suyo a que sus clientes compren un poco más cada visita — sin bajar precios ni invertir en publicidad.\n\nFunciona así: el cliente compra sobre un monto que ustedes definen, recibe un código y juega desde su celular 🎮 Gana un premio al instante y eso lo hace volver más seguido.\n\nEstoy buscando 5 negocios en la zona para probarlo GRATIS por 30 días, sin costo ni compromiso.\n\n¿Le envío un video de 1 minuto mostrando cómo funciona? 📱`;
 
 // Carga el mensaje inicial en la pantalla
