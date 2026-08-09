@@ -73,25 +73,57 @@
 </div>
 
 <script>
-    const defaultMessage = `Hola, ¿hablo con el dueño/a de [NOMBRE]? 👋\n\nLos encontré en Google Maps buscando negocios de la zona y quise escribirles directamente.\n\nDesarrollé una herramienta 100% chilena que ayuda a almacenes como el suyo a que sus clientes compren un poco más cada visita — sin bajar precios ni invertir en publicidad.\n\nFunciona así: el cliente compra sobre un monto que ustedes definen, recibe un código y juega desde su celular 🎮 Gana un premio al instante y eso lo hace volver más seguido.\n\nEstoy buscando 5 negocios en la zona para probarlo GRATIS por 30 días, sin costo ni compromiso.\n\n¿Le envío un video de 1 minuto mostrando cómo funciona? 📱`;
-    
-    document.getElementById('messageTemplate').value = defaultMessage;
-    function restoreDefaultMessage() { document.getElementById('messageTemplate').value = defaultMessage; }
+   const defaultMessage = `Hola, ¿hablo con el dueño/a de [NOMBRE]? 👋\n\nLos encontré en Google Maps buscando negocios de la zona y quise escribirles directamente.\n\nDesarrollé una herramienta 100% chilena que ayuda a almacenes como el suyo a que sus clientes compren un poco más cada visita — sin bajar precios ni invertir en publicidad.\n\nFunciona así: el cliente compra sobre un monto que ustedes definen, recibe un código y juega desde su celular 🎮 Gana un premio al instante y eso lo hace volver más seguido.\n\nEstoy buscando 5 negocios en la zona para probarlo GRATIS por 30 días, sin costo ni compromiso.\n\n¿Le envío un video de 1 minuto mostrando cómo funciona? 📱`;
 
-    function cleanPhoneNumber(phoneStr) {
-        let clean = phoneStr.replace(/\D/g, '');
-        if (clean.length === 9 && clean.startsWith('9')) clean = '56' + clean;
-        return clean;
+document.getElementById('messageTemplate').value = defaultMessage;
+
+// Restaura el mensaje base original
+function restoreDefaultMessage() { 
+    document.getElementById('messageTemplate').value = defaultMessage; 
+    const selector = document.getElementById('businessType') || document.querySelector('select');
+    if (selector) selector.value = 'almacen';
+}
+
+// FUNCIÓN AUTOMÁTICA: Cambia el texto según el tipo de negocio seleccionado
+function updateTemplateByBusiness() {
+    const selector = document.getElementById('businessType') || document.querySelector('select');
+    const txtArea = document.getElementById('messageTemplate');
+    if (!selector || !txtArea) return;
+
+    const businessType = selector.value;
+    let newMessage = defaultMessage;
+
+    if (businessType === 'botilleria') {
+        newMessage = defaultMessage.replace('almacenes como el suyo', 'botillerías como la suya');
+    } else if (businessType === 'minimarket') {
+        newMessage = defaultMessage.replace('almacenes como el suyo', 'minimarkets como el suyo');
+    } else if (businessType === 'restaurante') {
+        newMessage = defaultMessage.replace('almacenes como el suyo', 'restaurantes como el suyo');
     }
 
-    function isFixedLine(phoneStr) {
-        if (phoneStr.startsWith('56')) {
-            if (phoneStr.charAt(2) !== '9') return true;
-        }
-        return false;
-    }
+    txtArea.value = newMessage;
+}
 
-   function processLeads() {
+// Escucha cuando cambias el menú desplegable en la pantalla
+const businessSelect = document.getElementById('businessType') || document.querySelector('select');
+if (businessSelect) {
+    businessSelect.addEventListener('change', updateTemplateByBusiness);
+}
+
+function cleanPhoneNumber(phoneStr) {
+    let clean = phoneStr.replace(/\D/g, '');
+    if (clean.length === 9 && clean.startsWith('9')) clean = '56' + clean;
+    return clean;
+}
+
+function isFixedLine(phoneStr) {
+    if (phoneStr.startsWith('56')) {
+        if (phoneStr.charAt(2) !== '9') return true;
+    }
+    return false;
+}
+
+function processLeads() {
     const template = document.getElementById('messageTemplate').value;
     const lines = document.getElementById('rawLeads').value.split('\n');
     const leadsListDiv = document.getElementById('leadsList');
@@ -119,11 +151,9 @@
         }
         validCount++;
 
-        // Genera el mensaje y el enlace de WhatsApp
         const customizedMessage = template.replace(/\[NOMBRE\]/g, name);
-        const waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
+        const waLink = 'https://wa.me' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
 
-        // Crea el elemento visual del Lead
         const leadItem = document.createElement('div');
         leadItem.className = 'lead-item';
         leadItem.innerHTML = 
@@ -136,30 +166,19 @@
                 '<a href="' + waLink + '" target="_blank" class="btn-wa">💬 Enviar</a>' +
             '</div>';
 
-        // 🟢 CORRECCIÓN CRÍTICA: Inserta el botón creado dentro del panel visible de la web
         leadsListDiv.appendChild(leadItem);
     });
 
-    // Actualiza los contadores visuales de la interfaz
+    // Actualiza los números en los contadores de tu página
     const validCountDisplay = document.getElementById('validCountDisplay') || document.getElementById('validCount');
     if (validCountDisplay) validCountDisplay.textContent = validCount;
 
-    // Despliega el contenedor de resultados por si el CSS lo mantiene oculto
     const resultsPanel = document.getElementById('resultsPanel');
     if (resultsPanel) {
         resultsPanel.style.display = 'block';
     }
 }
 
-
-        document.getElementById('countValid').innerText = `✅ Válidos: ${validCount}`;
-        document.getElementById('countInvalid').innerText = `❌ Fijos descartados: ${invalidCount}`;
-        document.getElementById('resultsPanel').style.display = (validCount > 0 || invalidCount > 0) ? 'block' : 'none';
-    }
-
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => alert('¡Link copiado!'));
-    }
 </script>
 </body>
 </html>
