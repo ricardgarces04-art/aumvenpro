@@ -91,48 +91,66 @@
         return false;
     }
 
-    function processLeads() {
-        const template = document.getElementById('messageTemplate').value;
-        const lines = document.getElementById('rawLeads').value.split('\n');
-        const leadsListDiv = document.getElementById('leadsList');
-        leadsListDiv.innerHTML = '';
-        let validCount = 0, invalidCount = 0;
+   function processLeads() {
+    const template = document.getElementById('messageTemplate').value;
+    const lines = document.getElementById('rawLeads').value.split('\n');
+    const leadsListDiv = document.getElementById('leadsList');
+    leadsListDiv.innerHTML = '';
+    let validCount = 0, invalidCount = 0;
 
-        lines.forEach(line => {
-            if (!line.trim()) return;
-            
-            let separator = '';
-            if (line.includes('|')) separator = '|';
-            else if (line.includes('/')) separator = '/';
-            else if (line.includes(',')) separator = ',';
-            else return;
+    lines.forEach(line => {
+        if (!line.trim()) return;
+        
+        let separator = '';
+        if (line.includes('|')) separator = '|';
+        else if (line.includes('/')) separator = '/';
+        else if (line.includes(',')) separator = ',';
+        else return;
 
-            const parts = line.split(separator);
-            const name = parts[0].trim();
-            const cleanPhone = cleanPhoneNumber(parts[1].trim());
+        const parts = line.split(separator);
+        if (parts.length < 2) return;
 
-            if (isFixedLine(cleanPhone) || cleanPhone.length < 11) {
-                invalidCount++; return;
-            }
-            validCount++;
+        const name = parts[0].trim();
+        const cleanPhone = cleanPhoneNumber(parts[1].trim());
 
-            const customizedMessage = template.replace(/\[NOMBRE\]/g, name);
-          const waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
+        if (isFixedLine(cleanPhone) || cleanPhone.length < 11) {
+            invalidCount++; 
+            return;
+        }
+        validCount++;
 
+        // Genera el mensaje y el enlace de WhatsApp
+        const customizedMessage = template.replace(/\[NOMBRE\]/g, name);
+        const waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
 
-            const leadItem = document.createElement('div');
-            leadItem.className = 'lead-item';
-                        leadItem.innerHTML = 
-                '<div>' +
-                    '<div class="lead-name">' + name + '</div>' +
-                    '<div class="lead-phone">📱 +' + cleanPhone + '</div>' +
-                '</div>' +
-                '<div class="actions">' +
-                    '<button class="btn-copy" onclick="copyToClipboard(\'' + waLink + '\')">📋 Link</button>' +
-                    '<a href="' + waLink + '" target="_blank" class="btn-wa">💬 Enviar</a>' +
-                '</div>';
+        // Crea el elemento visual del Lead
+        const leadItem = document.createElement('div');
+        leadItem.className = 'lead-item';
+        leadItem.innerHTML = 
+            '<div>' +
+                '<div class="lead-name">' + name + '</div>' +
+                '<div class="lead-phone">📱 +' + cleanPhone + '</div>' +
+            '</div>' +
+            '<div class="actions">' +
+                '<button class="btn-copy" onclick="copyToClipboard(\'' + waLink + '\')">📋 Link</button>' +
+                '<a href="' + waLink + '" target="_blank" class="btn-wa">💬 Enviar</a>' +
+            '</div>';
 
-        });
+        // 🟢 CORRECCIÓN CRÍTICA: Inserta el botón creado dentro del panel visible de la web
+        leadsListDiv.appendChild(leadItem);
+    });
+
+    // Actualiza los contadores visuales de la interfaz
+    const validCountDisplay = document.getElementById('validCountDisplay') || document.getElementById('validCount');
+    if (validCountDisplay) validCountDisplay.textContent = validCount;
+
+    // Despliega el contenedor de resultados por si el CSS lo mantiene oculto
+    const resultsPanel = document.getElementById('resultsPanel');
+    if (resultsPanel) {
+        resultsPanel.style.display = 'block';
+    }
+}
+
 
         document.getElementById('countValid').innerText = `✅ Válidos: ${validCount}`;
         document.getElementById('countInvalid').innerText = `❌ Fijos descartados: ${invalidCount}`;
