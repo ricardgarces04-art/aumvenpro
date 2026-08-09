@@ -160,7 +160,7 @@ function processLeads() {
         validCount++;
 
         const customizedMessage = template.replace(/\[NOMBRE\]/g, name);
-        const waLink = 'https://wa.me' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
+        const waLink = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage);
 
         const leadItem = document.createElement('div');
         leadItem.className = 'lead-item';
@@ -171,15 +171,18 @@ function processLeads() {
             '</div>' +
             '<div class="actions">' +
                 '<button class="btn-copy" onclick="copyToClipboard(\'' + waLink + '\')">📋 Link</button>' +
-                '<a href="' + waLink + '" target="_blank" class="btn-wa">💬 Enviar</a>' +
+                '<a href="https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(customizedMessage) + '" target="_blank" class="btn-wa">💬 Enviar</a>'
+
             '</div>';
 
         leadsListDiv.appendChild(leadItem);
     });
 
     // Actualiza los números en tus contadores visuales
-    const validCountDisplay = document.getElementById('validCountDisplay') || document.getElementById('validCount');
-    if (validCountDisplay) validCountDisplay.textContent = validCount;
+       const validCountDisplay = document.getElementById('countValid');
+    if (validCountDisplay) {
+        validCountDisplay.textContent = '✅ Válidos: ' + validCount;
+    }
 
     const resultsPanel = document.getElementById('resultsPanel');
     if (resultsPanel) {
