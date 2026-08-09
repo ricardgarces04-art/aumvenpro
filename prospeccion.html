@@ -47,11 +47,21 @@
         <div class="card">
             <h3>✍️ Paso 1 — Mensaje</h3>
             <label>Tipo de negocio</label>
-            <select id="businessType">
-                <option value="Almacén">🏪 Almacén / Minimarket</option>
-                <option value="Botillería">🍾 Botillería</option>
-                <option value="Verdulería">🥬 Verdulería</option>
-            </select>
+       <select id="businessType">
+    <option value="almacen" data-cambio="almacenes como el suyo">🏪 Almacén / Minimarket</option>
+    <option value="botilleria" data-cambio="botillerías como la suya">🍾 Botillería</option>
+    <option value="verduleria" data-cambio="verdulerías como la suya">🍎 Verdulería</option>
+    <option value="comida_paso" data-cambio="locales de comida como el suyo">🍔 Comida al paso</option>
+    <option value="manicurista" data-cambio="centros de estética como el suyo">💅 Manicuristas / Esteticistas</option>
+    <option value="mascotas" data-cambio="tiendas de mascotas como la suya">🐾 Alimentos para mascotas</option>
+    <option value="farmacia" data-cambio="farmacias como la suya">💊 Farmacias</option>
+    <!-- 🟢 Tus nuevos rubros agregados a continuación: -->
+    <option value="panaderia" data-cambio="panaderías como la suya">🍞 Panadería</option>
+    <option value="pasteleria" data-cambio="pastelerías como la suya">🍰 Pastelería</option>
+    <option value="cafeteria" data-cambio="cafeterías como la suya">☕ Cafetería</option>
+</select>
+
+
             <label>Mensaje personalizado</label>
             <textarea id="messageTemplate" rows="10"></textarea>
             <button class="btn-restore" onclick="restoreDefaultMessage()">↺ Restaurar plantilla</button>
@@ -75,6 +85,7 @@
 <script>
    const defaultMessage = `Hola, ¿hablo con el dueño/a de [NOMBRE]? 👋\n\nLos encontré en Google Maps buscando negocios de la zona y quise escribirles directamente.\n\nDesarrollé una herramienta 100% chilena que ayuda a almacenes como el suyo a que sus clientes compren un poco más cada visita — sin bajar precios ni invertir en publicidad.\n\nFunciona así: el cliente compra sobre un monto que ustedes definen, recibe un código y juega desde su celular 🎮 Gana un premio al instante y eso lo hace volver más seguido.\n\nEstoy buscando 5 negocios en la zona para probarlo GRATIS por 30 días, sin costo ni compromiso.\n\n¿Le envío un video de 1 minuto mostrando cómo funciona? 📱`;
 
+// Carga el mensaje inicial en la pantalla
 document.getElementById('messageTemplate').value = defaultMessage;
 
 // Restaura el mensaje base original
@@ -84,24 +95,19 @@ function restoreDefaultMessage() {
     if (selector) selector.value = 'almacen';
 }
 
-// FUNCIÓN AUTOMÁTICA: Cambia el texto según el tipo de negocio seleccionado
+// FUNCIÓN INTELIGENTE: Lee el "data-cambio" y adapta el texto al instante
 function updateTemplateByBusiness() {
     const selector = document.getElementById('businessType') || document.querySelector('select');
     const txtArea = document.getElementById('messageTemplate');
     if (!selector || !txtArea) return;
 
-    const businessType = selector.value;
-    let newMessage = defaultMessage;
+    // Obtiene la opción seleccionada y lee su propiedad de cambio de texto
+    const opcionSeleccionada = selector.options[selector.selectedIndex];
+    const textoReemplazo = opcionSeleccionada.getAttribute('data-cambio');
 
-    if (businessType === 'botilleria') {
-        newMessage = defaultMessage.replace('almacenes como el suyo', 'botillerías como la suya');
-    } else if (businessType === 'minimarket') {
-        newMessage = defaultMessage.replace('almacenes como el suyo', 'minimarkets como el suyo');
-    } else if (businessType === 'restaurante') {
-        newMessage = defaultMessage.replace('almacenes como el suyo', 'restaurantes como el suyo');
+    if (textoReemplazo) {
+        txtArea.value = defaultMessage.replace('almacenes como el suyo', textoReemplazo);
     }
-
-    txtArea.value = newMessage;
 }
 
 // Escucha cuando cambias el menú desplegable en la pantalla
@@ -127,6 +133,8 @@ function processLeads() {
     const template = document.getElementById('messageTemplate').value;
     const lines = document.getElementById('rawLeads').value.split('\n');
     const leadsListDiv = document.getElementById('leadsList');
+    if (!leadsListDiv) return;
+    
     leadsListDiv.innerHTML = '';
     let validCount = 0, invalidCount = 0;
 
@@ -169,7 +177,7 @@ function processLeads() {
         leadsListDiv.appendChild(leadItem);
     });
 
-    // Actualiza los números en los contadores de tu página
+    // Actualiza los números en tus contadores visuales
     const validCountDisplay = document.getElementById('validCountDisplay') || document.getElementById('validCount');
     if (validCountDisplay) validCountDisplay.textContent = validCount;
 
@@ -178,6 +186,7 @@ function processLeads() {
         resultsPanel.style.display = 'block';
     }
 }
+
 
 </script>
 </body>
