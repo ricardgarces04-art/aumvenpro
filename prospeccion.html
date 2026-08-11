@@ -119,6 +119,10 @@ function closeVideoModal() {
 }
 
    const defaultMessage = `Hola, ¿hablo con el dueño/a de [NOMBRE]? 👋\n\nLos encontré en Google Maps buscando negocios de la zona y quise escribirles directamente.\n\nDesarrollé una herramienta 100% chilena que ayuda a almacenes como el suyo a que sus clientes compren un poco más cada visita — sin bajar precios ni invertir en publicidad.\n\nFunciona así: el cliente compra sobre un monto que ustedes definen, recibe un código y juega desde su celular 🎮 Gana un premio al instante y eso lo hace volver más seguido.\n\nEstoy buscando 5 negocios en la zona para probarlo GRATIS por 30 días, sin costo ni compromiso.\n\n¿Le envío un video de 1 minuto mostrando cómo funciona? 📱`;
+   const manicureMessage = `Hola, ¿hablo con la dueña o encargada de [NOMBRE]? 👋\n\nVi su perfil en Google Maps buscando servicios de la zona y me encantó su trabajo ✨\n\nLe escribo cortito: desarrollé una herramienta chilena diseñada para que profesionales de la manicure y estética automaticen su agendamiento de horas y suban su nivel profesional en internet.\n\nEl sistema les entrega su propio sitio web de reservas profesional para que sus clientas agenden solas las 24 horas del día. Además, la plataforma les envía recordatorios automáticos por WhatsApp para asegurarse de que confirmen su asistencia y nunca más pierdan dinero por una clienta que olvidó su cita o faltó a última hora 🗓️💖\n\nEstoy buscando a 5 profesionales del área para regalarles el sistema GRATIS por 30 días y me den su opinión.\n\n¿Le puedo enviar un link de 5 segundos para que usted misma simule tomar una hora de prueba y vea lo lindo y profesional que se ve el sistema? 📱✨`;
+
+// Carga el mensaje inicial en la pantalla
+
 
 // Carga el mensaje inicial en la pantalla
 document.getElementById('messageTemplate').value = defaultMessage;
@@ -136,14 +140,22 @@ function updateTemplateByBusiness() {
     const txtArea = document.getElementById('messageTemplate');
     if (!selector || !txtArea) return;
 
-    // Obtiene la opción seleccionada y lee su propiedad de cambio de texto
     const opcionSeleccionada = selector.options[selector.selectedIndex];
-    const textoReemplazo = opcionSeleccionada.getAttribute('data-cambio');
-
-    if (textoReemplazo) {
-        txtArea.value = defaultMessage.replace('almacenes como el suyo', textoReemplazo);
+    
+    // Si la opción elegida es manicurista, inyecta la plantilla de agenda
+    if (opcionSeleccionada.value === 'manicurista') {
+        txtArea.value = manicureMessage;
+    } else {
+        // Lógica original de la gamificación para los demás rubros
+        const textoReemplazo = opcionSeleccionada.getAttribute('data-cambio');
+        if (textoReemplazo) {
+            txtArea.value = defaultMessage.replace('almacenes como el suyo', textoReemplazo);
+        } else {
+            txtArea.value = defaultMessage;
+        }
     }
 }
+
 
 // Escucha cuando cambias el menú desplegable en la pantalla
 const businessSelect = document.getElementById('businessType') || document.querySelector('select');
