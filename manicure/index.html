@@ -477,8 +477,7 @@
 
       <a href="#precios" class="btn btn-primary">Asegurar mi agenda gratis</a>
 
-      <p class="hero-note">Sin tarjeta de crédito · Configuras tu primera agenda en 5 minutos</p>
-
+      <p class="hero-note">Sin tarjeta de crédito · Configuras tu primer bloqueo en 5 minutos</p>
     </div>
   </section>
 
@@ -524,7 +523,7 @@
         <div class="plan">
           <p class="plan-eyebrow">Home Studio</p>
           <h3>Plan Emprendedora</h3>
-          <p class="plan-price">$5.990 <span>CLP / mes</span></p>
+          <p class="plan-price">$7.990 <span>CLP / mes</span></p>
           <div class="plan-divider"></div>
           <ul class="plan-list">
             <li>Agenda digital móvil</li>
@@ -540,13 +539,13 @@
           <span class="plan-badge">MÁS ELEGIDO</span>
           <p class="plan-eyebrow">A domicilio</p>
           <h3>Plan Pro</h3>
-          <p class="plan-price">$8.990 <span>CLP / mes</span></p>
+          <p class="plan-price">$11.990 <span>CLP / mes</span></p>
           <div class="plan-divider"></div>
           <ul class="plan-list">
             <li>Todo lo anterior</li>
             <li>Calculadora automática de viáticos (costo de traslado según dirección/Google Maps)</li>
             <li>Alertas de geolocalización de la clienta</li>
-            <li>Recordatorios automáticos 24 hrs antes</li>
+            <li>Confirmación por WhatsApp con 1 clic</li>
           </ul>
           <button type="button" class="btn btn-primary contratar-btn">Contratar Plan Pro</button>
         </div>
@@ -557,7 +556,7 @@
 
   <!-- FOOTER -->
   <footer>
-    <p>Agenda protegida · Confirmación por WhatsApp · Seña automática</p>
+    <p>Agenda protegida · Confirmación por WhatsApp · Abono automático</p>
   </footer>
 
   <!-- MODAL LISTA DE ESPERA -->
@@ -567,7 +566,7 @@
 
       <h3>¡Estamos afinando los últimos detalles para el lanzamiento oficial! 🚀</h3>
       <p class="modal-desc">
-        Para agradecer tu interés, estamos seleccionando a las primeras 10 emprendedoras para probar la herramienta con un <strong>50% de descuento por 3 meses</strong>. Deja tu correo y WhatsApp para reservar tu lugar en la lista de espera prioritaria.
+        Para agradecer tu interés, estamos seleccionando a las primeras 10 emprendedoras para probar la herramienta con un <strong>50% de descuento de por vida</strong>. Deja tu correo y WhatsApp para reservar tu lugar en la lista de espera prioritaria.
       </p>
 
       <p id="waitlistError" class="modal-error"></p>
@@ -597,9 +596,10 @@
     // Project Settings > API > Project URL / anon public key
     // La URL debe verse así: https://xxxxxxxxxxxx.supabase.co (SIN /rest/v1 al final, eso se agrega solo)
     // ==========================================================
-   const CONFIG_URL = "https://wfosczhszouukypsvasx.supabase.co"; 
+    const CONFIG_URL = "https://wfosczhszouukypsvasx.supabase.co";
     const CONFIG_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
-// ==========================================================
+
+    // ==========================================================
     // TELEGRAM: avisa a Ric cada vez que alguien se registra
     // ==========================================================
     const TELEGRAM_TOKEN = "8831948564:AAE_XL1e3j8bF3w_guXwRfvm3tU7WFpGh1c";
@@ -614,9 +614,11 @@
           body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: texto })
         });
       } catch (err) {
+        // Si Telegram falla, no bloqueamos el registro del lead — solo lo registramos en consola
         console.error('No se pudo avisar por Telegram:', err);
       }
     }
+
     // Abrir modal
     function openModal() {
       document.getElementById('waitlistModal').style.display = 'flex';
@@ -674,7 +676,9 @@
           const errorBody = await response.text();
           throw new Error('Supabase respondió ' + response.status + ': ' + errorBody);
         }
+
         avisarPorTelegram(email, phone);
+
         alert('¡Registro exitoso! Te contactaremos muy pronto por WhatsApp.');
         closeModal();
         document.getElementById('waitlistForm').reset();
