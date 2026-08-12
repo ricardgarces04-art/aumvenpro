@@ -449,6 +449,7 @@
   }
 
   // ---------- VIÁTICOS ----------
+
   async function cargarViaticos() {
     const list = document.getElementById('viaticosList');
     list.innerHTML = '<p class="empty-state">Cargando...</p>';
@@ -786,12 +787,24 @@
       const yaPaso = cita.fecha < hoy;
       const mostrarBotonNoShow = cita.estado === 'aprobada' && yaPaso;
 
+      const montoTotal = Number(cita.monto_abono) + Number(cita.viatico_monto || 0);
+      const desgloseViatico = Number(cita.viatico_monto || 0) > 0
+        ? ` <span style="font-weight:400;font-size:11px;">(Abono $${Number(cita.monto_abono).toLocaleString('es-CL')} + Viático $${Number(cita.viatico_monto).toLocaleString('es-CL')})</span>`
+        : '';
+
+      const nombreNegocioTexto = negocio ? negocio.nombre : 'tu negocio';
+      const fechaHoraWa = `${fechaFormateada}, ${cita.hora.substring(0,5)}`;
+      const mensajeWa = `Hola ${cita.nombre_clienta}! Tu hora en ${nombreNegocioTexto} quedó confirmada para el ${fechaHoraWa}. ¡Te esperamos! 💅`;
+      const telefonoWa = cita.telefono.replace(/[^0-9]/g, '');
+      const linkWa = `https://wa.me/${telefonoWa}?text=${encodeURIComponent(mensajeWa)}`;
+
       card.innerHTML = `
         <span class="estado-tag ${estadoClase}">${estadoTexto}</span>${badgeRiesgo}
         <div class="cita-top">
           <span class="cita-fecha">${fechaFormateada}, ${cita.hora.substring(0,5)}</span>
-          <span class="cita-monto">$${Number(cita.monto_abono).toLocaleString('es-CL')}</span>
+          <span class="cita-monto">$${montoTotal.toLocaleString('es-CL')}</span>
         </div>
+        ${desgloseViatico ? `<p class="cita-info">${desgloseViatico}</p>` : ''}
         <p class="cita-info"><strong>Clienta:</strong> ${escapeHtml(cita.nombre_clienta)}</p>
         <p class="cita-info"><strong>WhatsApp:</strong> ${escapeHtml(cita.telefono)}</p>
         ${cita.servicio ? `<p class="cita-info"><strong>Servicio:</strong> ${escapeHtml(cita.servicio)}</p>` : ''}
@@ -800,6 +813,11 @@
           <div class="cita-actions">
             <button class="btn-approve" onclick="actualizarEstado('${cita.id}', 'aprobada', this)">Aprobar</button>
             <button class="btn-reject" onclick="actualizarEstado('${cita.id}', 'rechazada', this)">Rechazar</button>
+          </div>
+        ` : ''}
+        ${cita.estado === 'aprobada' ? `
+          <div class="cita-actions">
+            <a href="${linkWa}" target="_blank" class="btn-approve" style="display:block;text-align:center;text-decoration:none;">📱 Enviar confirmación por WhatsApp</a>
           </div>
         ` : ''}
         ${mostrarBotonNoShow ? `
