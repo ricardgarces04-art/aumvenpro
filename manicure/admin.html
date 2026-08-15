@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de aprobación · Agenda</title>
+<title>Panel General · AUMVEN Manicure</title>
 
 <style>
   :root {
@@ -16,6 +16,7 @@
     --white: #FFFFFF;
     --green: #3A7D44;
     --red: #B3261E;
+    --amber: #93650B;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -25,9 +26,8 @@
     line-height: 1.5;
   }
   h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
-  .container { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
+  .container { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
 
-  /* ---- LOGIN ---- */
   #loginScreen {
     max-width: 360px;
     margin: 60px auto;
@@ -90,7 +90,6 @@
   .msg.error { background: #FDECEC; color: var(--red); }
   .msg.success { background: #E6F4E8; color: var(--green); }
 
-  /* ---- PANEL ---- */
   #panelScreen { display: none; }
 
   .panel-header {
@@ -109,23 +108,21 @@
     border: none;
   }
 
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
   }
-  .tab-btn {
-    flex: 1;
-    background: var(--blush);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    color: var(--coffee);
+  .summary-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 14px 10px;
+    text-align: center;
   }
-  .tab-btn.active { border-color: var(--siena); background: var(--white); }
+  .summary-card .num { font-size: 22px; font-weight: 700; font-family: Georgia, serif; color: var(--sienadark); }
+  .summary-card .lbl { font-size: 10px; color: var(--coffeesoft); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
 
   .empty-state {
     text-align: center;
@@ -134,32 +131,23 @@
     padding: 40px 10px;
   }
 
-  .cita-card {
+  .negocio-card {
     background: var(--white);
     border-radius: 18px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     padding: 18px;
     margin-bottom: 14px;
   }
-  .cita-top {
+  .negocio-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 10px;
   }
-  .cita-fecha {
-    font-size: 15px;
-    font-weight: 700;
-  }
-  .cita-monto {
-    font-size: 13px;
-    color: var(--sienadark);
-    font-weight: 700;
-  }
-  .cita-info { font-size: 13px; color: var(--coffeesoft); margin-bottom: 4px; }
-  .cita-info strong { color: var(--coffee); }
+  .negocio-nombre { font-size: 17px; font-weight: 700; font-family: Georgia, serif; }
+  .negocio-slug { font-size: 11px; color: var(--coffeesoft); }
 
-  .estado-tag {
+  .actividad-tag {
     display: inline-block;
     font-size: 10px;
     font-weight: 700;
@@ -167,66 +155,21 @@
     letter-spacing: 0.05em;
     padding: 3px 10px;
     border-radius: 999px;
-    margin-bottom: 10px;
   }
-  .estado-pendiente { background: #FCEFD8; color: #93650B; }
-  .estado-aprobada { background: #E6F4E8; color: var(--green); }
-  .estado-rechazada { background: #FDECEC; color: var(--red); }
-  .estado-no_show { background: #F0E6F6; color: #6B3FA0; }
+  .actividad-activa { background: #E6F4E8; color: var(--green); }
+  .actividad-tibia { background: #FCEFD8; color: var(--amber); }
+  .actividad-fria { background: #FDECEC; color: var(--red); }
 
-  .riesgo-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    background: #FDECEC;
-    color: var(--red);
-    padding: 4px 10px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-    margin-left: 6px;
-  }
-
-  .btn-noshow {
-    flex: 1;
-    padding: 10px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--white);
-    background: #6B3FA0;
-  }
-  .btn-noshow:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .comprobante-thumb {
-    width: 100%;
-    max-width: 220px;
-    border-radius: 12px;
-    display: block;
-    margin: 10px 0;
-    cursor: pointer;
-    border: 1px solid #E5D9D3;
-  }
-
-  .cita-actions {
+  .stats-row {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 14px;
+    margin: 12px 0;
+    flex-wrap: wrap;
   }
-  .btn-approve, .btn-reject {
-    flex: 1;
-    padding: 10px;
-    border-radius: 999px;
-    border: none;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--white);
-  }
-  .btn-approve { background: var(--green); }
-  .btn-reject { background: var(--red); }
-  .btn-approve:disabled, .btn-reject:disabled { opacity: 0.6; cursor: not-allowed; }
+  .stat-mini { font-size: 12px; color: var(--coffeesoft); }
+  .stat-mini strong { color: var(--coffee); font-size: 13px; }
+
+  .ultima-actividad { font-size: 12px; color: var(--coffeesoft); margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -235,8 +178,8 @@
 
   <!-- LOGIN -->
   <div id="loginScreen">
-    <h1>Panel de aprobación</h1>
-    <p class="hint">Entra con tu cuenta para revisar tus reservas.</p>
+    <h1>Panel General</h1>
+    <p class="hint">Acceso solo para administración AUMVEN.</p>
 
     <p id="loginMsg" class="msg"></p>
 
@@ -256,74 +199,15 @@
   <!-- PANEL -->
   <div id="panelScreen">
     <div class="panel-header">
-      <h1 id="negocioNombre">Mi negocio</h1>
+      <h1>Panel General · Todos los negocios</h1>
       <button class="logout-link" onclick="logout()">Cerrar sesión</button>
     </div>
 
     <p id="panelMsg" class="msg"></p>
 
-    <div class="tabs" style="margin-bottom:10px;">
-      <button class="tab-btn active" data-vista="citas" onclick="cambiarVista('citas')">📋 Citas</button>
-      <button class="tab-btn" data-vista="viaticos" onclick="cambiarVista('viaticos')">🗺️ Viáticos</button>
-      <button class="tab-btn" data-vista="perfil" onclick="cambiarVista('perfil')">🎨 Mi Perfil</button>
-    </div>
+    <div class="summary-grid" id="summaryGrid"></div>
 
-    <div id="vistaCitas">
-      <div class="tabs">
-        <button class="tab-btn active" data-estado="pendiente" onclick="cambiarTab('pendiente')">Pendientes</button>
-        <button class="tab-btn" data-estado="aprobada" onclick="cambiarTab('aprobada')">Aprobadas</button>
-        <button class="tab-btn" data-estado="rechazada" onclick="cambiarTab('rechazada')">Rechazadas</button>
-        <button class="tab-btn" data-estado="no_show" onclick="cambiarTab('no_show')">No llegó</button>
-      </div>
-
-      <div id="citasList"></div>
-    </div>
-
-    <div id="vistaViaticos" style="display:none;">
-      <div class="cita-card">
-        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Agregar comuna con viático</p>
-        <div class="form-group">
-          <label for="comunaInput">Comuna (cualquier comuna de Chile)</label>
-          <input id="comunaInput" type="text" placeholder="Ej: Valparaíso, Viña del Mar, Concepción">
-        </div>
-        <div class="form-group">
-          <label for="montoViatico">Monto del viático (CLP)</label>
-          <input id="montoViatico" type="number" min="0" step="500" placeholder="Ej: 3000">
-        </div>
-        <button id="agregarViaticoBtn" class="btn" onclick="agregarViatico()">Agregar comuna</button>
-        <p class="file-hint" style="margin-top:8px;">Escribe el nombre tal cual se conoce (ej: "Viña del Mar", no "viña"). Buscamos su ubicación automáticamente.</p>
-      </div>
-
-      <div id="viaticosList"></div>
-    </div>
-
-    <div id="vistaPerfil" style="display:none;">
-      <div class="cita-card">
-        <p class="step-label" style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sienadark);margin-bottom:12px;">Personaliza tu marca</p>
-
-        <div class="form-group">
-          <label for="nombreNegocioInput">Nombre de tu negocio</label>
-          <input id="nombreNegocioInput" type="text" placeholder="Ej: Valeria Nails">
-        </div>
-
-        <div class="form-group">
-          <label for="logoUrlInput">URL de tu logo (pega un link de imagen)</label>
-          <input id="logoUrlInput" type="text" placeholder="https://...">
-        </div>
-
-        <div class="form-group">
-          <label for="logoFileInput">O sube una imagen desde tu celular/PC</label>
-          <input id="logoFileInput" type="file" accept="image/*">
-          <p class="file-hint" style="font-size:12px;color:var(--coffeesoft);margin-top:6px;">JPG o PNG, máximo 2 MB.</p>
-        </div>
-
-        <div id="logoPreviewBox" style="display:none;margin:14px 0;text-align:center;">
-          <img id="logoPreview" style="max-height:80px;max-width:100%;border-radius:12px;">
-        </div>
-
-        <button id="guardarPerfilBtn" class="btn" onclick="guardarPerfil()">Guardar cambios</button>
-      </div>
-    </div>
+    <div id="negociosList"></div>
   </div>
 
 </div>
@@ -336,17 +220,6 @@
   const CONFIG_KEY = "sb_publishable_1kVwQ6XA470AC4P0mNYNKA_MI4ZyIQL";
 
   let accessToken = null;
-  let negocio = null;
-  let tabActual = 'pendiente';
-  let vistaActual = 'citas';
-  let historialRiesgo = {}; // { "nombre|telefono": cantidad de rechazadas/no_show }
-
-  // ==========================================================
-  // Nota: ya no usamos un listado fijo de comunas.
-  // Cada comuna se busca dinámicamente con Nominatim (OpenStreetMap),
-  // un servicio gratuito de geocodificación, sin API key.
-  // ==========================================================
-  let viaticosActuales = []; // lista de comunas ya configuradas para este negocio
 
   // ---------- LOGIN ----------
   document.getElementById('loginForm').addEventListener('submit', async function (event) {
@@ -363,25 +236,20 @@
     try {
       const resp = await fetch(`${CONFIG_URL}/auth/v1/token?grant_type=password`, {
         method: 'POST',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'apikey': CONFIG_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
 
       const data = await resp.json();
-
-      if (!resp.ok) {
-        throw new Error(data.error_description || data.msg || 'Credenciales inválidas');
-      }
+      if (!resp.ok) throw new Error(data.error_description || data.msg || 'Credenciales inválidas');
 
       accessToken = data.access_token;
-      const userId = data.user.id;
+      sessionStorage.setItem('superadminToken', accessToken);
 
-      sessionStorage.setItem('accessToken', accessToken);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('panelScreen').style.display = 'block';
 
-      await cargarNegocioDelUsuario(userId);
+      await cargarPanel();
 
     } catch (err) {
       console.error(err);
@@ -392,476 +260,111 @@
     }
   });
 
-  async function cargarNegocioDelUsuario(userId) {
-    const resp = await fetch(
-      `${CONFIG_URL}/rest/v1/negocios?owner_user_id=eq.${userId}&select=*`,
-      { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-    );
-    const data = await resp.json();
-
-    if (!resp.ok || !data.length) {
-      showMsg('loginMsg', 'Tu usuario no tiene un negocio asociado todavía. Pide que te lo configuren.', 'error');
-      return;
-    }
-
-    negocio = data[0];
-    document.getElementById('negocioNombre').textContent = negocio.nombre;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('panelScreen').style.display = 'block';
-
-    await cargarCitas();
-  }
-
   function logout() {
     accessToken = null;
-    negocio = null;
-    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('superadminToken');
     document.getElementById('panelScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'block';
     document.getElementById('loginForm').reset();
   }
 
-  // ---------- TABS ----------
-  function cambiarTab(estado) {
-    tabActual = estado;
-    document.querySelectorAll('#vistaCitas .tab-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.estado === estado);
-    });
-    cargarCitas();
-  }
-
-  // ---------- CAMBIO DE VISTA (Citas / Viáticos / Perfil) ----------
-  function cambiarVista(vista) {
-    vistaActual = vista;
-    document.querySelectorAll('[data-vista]').forEach(b => {
-      b.classList.toggle('active', b.dataset.vista === vista);
-    });
-    document.getElementById('vistaCitas').style.display = vista === 'citas' ? 'block' : 'none';
-    document.getElementById('vistaViaticos').style.display = vista === 'viaticos' ? 'block' : 'none';
-    document.getElementById('vistaPerfil').style.display = vista === 'perfil' ? 'block' : 'none';
-
-    if (vista === 'viaticos') {
-      cargarViaticos();
-    }
-    if (vista === 'perfil') {
-      cargarPerfil();
-    }
-  }
-
-  // ---------- VIÁTICOS ----------
-
-  async function cargarViaticos() {
-    const list = document.getElementById('viaticosList');
+  // ---------- CARGAR TODO ----------
+  async function cargarPanel() {
+    const list = document.getElementById('negociosList');
     list.innerHTML = '<p class="empty-state">Cargando...</p>';
 
     try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/viaticos_comuna?negocio_id=eq.${negocio.id}&order=comuna.asc&select=*`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-      if (!resp.ok) throw new Error('Error consultando viáticos');
-      viaticosActuales = await resp.json();
+      const [negociosResp, citasResp] = await Promise.all([
+        fetch(`${CONFIG_URL}/rest/v1/negocios?select=*&order=nombre.asc`, {
+          headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken }
+        }),
+        fetch(`${CONFIG_URL}/rest/v1/citas?select=*`, {
+          headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken }
+        })
+      ]);
 
-      renderViaticos();
+      if (!negociosResp.ok) throw new Error('Error consultando negocios');
+      if (!citasResp.ok) throw new Error('Error consultando citas (revisa que tu usuario esté en la tabla admins)');
+
+      const negocios = await negociosResp.json();
+      const citas = await citasResp.json();
+
+      renderResumenGlobal(negocios, citas);
+      renderNegocios(negocios, citas);
 
     } catch (err) {
       console.error(err);
-      list.innerHTML = '<p class="empty-state">No pudimos cargar los viáticos. Intenta refrescar.</p>';
+      list.innerHTML = `<p class="empty-state">No pudimos cargar el panel: ${err.message}</p>`;
     }
   }
 
-  function renderViaticos() {
-    const list = document.getElementById('viaticosList');
+  function renderResumenGlobal(negocios, citas) {
+    const totalNegocios = negocios.length;
+    const totalCitas = citas.length;
+    const ingresoEstimado = citas
+      .filter(c => c.estado === 'aprobada')
+      .reduce((sum, c) => sum + Number(c.monto_abono || 0) + Number(c.viatico_monto || 0), 0);
+
+    const grid = document.getElementById('summaryGrid');
+    grid.innerHTML = `
+      <div class="summary-card"><div class="num">${totalNegocios}</div><div class="lbl">Negocios</div></div>
+      <div class="summary-card"><div class="num">${totalCitas}</div><div class="lbl">Citas totales</div></div>
+      <div class="summary-card"><div class="num">$${ingresoEstimado.toLocaleString('es-CL')}</div><div class="lbl">Abonos aprobados</div></div>
+    `;
+  }
+
+  function calcularEstadoActividad(ultimaFecha) {
+    if (!ultimaFecha) return { clase: 'actividad-fria', texto: 'Sin actividad' };
+    const dias = Math.floor((new Date() - new Date(ultimaFecha)) / (1000 * 60 * 60 * 24));
+    if (dias <= 7) return { clase: 'actividad-activa', texto: 'Activa' };
+    if (dias <= 21) return { clase: 'actividad-tibia', texto: 'Tibia' };
+    return { clase: 'actividad-fria', texto: 'Inactiva' };
+  }
+
+  function renderNegocios(negocios, citas) {
+    const list = document.getElementById('negociosList');
     list.innerHTML = '';
 
-    if (!viaticosActuales.length) {
-      list.innerHTML = '<p class="empty-state">Aún no has agregado comunas con viático. Si no agregas ninguna, tus clientas no verán el paso de viático al reservar.</p>';
+    if (!negocios.length) {
+      list.innerHTML = '<p class="empty-state">Aún no hay negocios registrados.</p>';
       return;
     }
 
-    viaticosActuales.forEach(v => {
+    negocios.forEach(neg => {
+      const citasNegocio = citas.filter(c => c.negocio_id === neg.id);
+      const pendientes = citasNegocio.filter(c => c.estado === 'pendiente').length;
+      const aprobadas = citasNegocio.filter(c => c.estado === 'aprobada').length;
+      const rechazadas = citasNegocio.filter(c => c.estado === 'rechazada').length;
+      const noShow = citasNegocio.filter(c => c.estado === 'no_show').length;
+
+      const fechas = citasNegocio.map(c => c.created_at).filter(Boolean).sort();
+      const ultimaFecha = fechas.length ? fechas[fechas.length - 1] : null;
+      const estadoActividad = calcularEstadoActividad(ultimaFecha);
+
+      const ultimaTexto = ultimaFecha
+        ? `Última actividad: ${new Date(ultimaFecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}`
+        : 'Sin citas registradas todavía';
+
       const card = document.createElement('div');
-      card.className = 'cita-card';
+      card.className = 'negocio-card';
       card.innerHTML = `
-        <div class="cita-top">
-          <span class="cita-fecha">${escapeHtml(v.comuna)}</span>
-          <span class="cita-monto">$${Number(v.monto).toLocaleString('es-CL')}</span>
+        <div class="negocio-top">
+          <div>
+            <div class="negocio-nombre">${escapeHtml(neg.nombre)}</div>
+            <div class="negocio-slug">/${escapeHtml(neg.slug)}</div>
+          </div>
+          <span class="actividad-tag ${estadoActividad.clase}">${estadoActividad.texto}</span>
         </div>
-        <div class="cita-actions">
-          <button class="btn-reject" onclick="eliminarViatico('${v.id}', this)">Eliminar</button>
+        <div class="stats-row">
+          <span class="stat-mini"><strong>${citasNegocio.length}</strong> citas totales</span>
+          <span class="stat-mini"><strong>${pendientes}</strong> pendientes</span>
+          <span class="stat-mini"><strong>${aprobadas}</strong> aprobadas</span>
+          <span class="stat-mini"><strong>${rechazadas + noShow}</strong> rechazadas/no llegó</span>
         </div>
+        <div class="ultima-actividad">${ultimaTexto}</div>
       `;
       list.appendChild(card);
     });
-  }
-
-  async function agregarViatico() {
-    const comunaInput = document.getElementById('comunaInput');
-    const comuna = comunaInput.value.trim();
-    const monto = document.getElementById('montoViatico').value;
-    const btn = document.getElementById('agregarViaticoBtn');
-
-    if (!comuna) {
-      showMsg('panelMsg', 'Escribe el nombre de la comuna.', 'error');
-      return;
-    }
-    if (!monto || Number(monto) < 0) {
-      showMsg('panelMsg', 'Ingresa un monto válido.', 'error');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Buscando ubicación...';
-
-    try {
-      // 1. Geocodificar la comuna con Nominatim (OpenStreetMap, gratis, sin API key)
-      const geoResp = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(comuna + ', Chile')}&format=json&limit=1`,
-        { headers: { 'Accept-Language': 'es' } }
-      );
-
-      if (!geoResp.ok) throw new Error('No pudimos buscar la ubicación.');
-      const geoData = await geoResp.json();
-
-      if (!geoData.length) {
-        showMsg('panelMsg', `No encontramos "${comuna}" en el mapa. Revisa cómo lo escribiste (ej: "Viña del Mar").`, 'error');
-        btn.disabled = false;
-        btn.textContent = 'Agregar comuna';
-        return;
-      }
-
-      const lat = Number(geoData[0].lat);
-      const lng = Number(geoData[0].lon);
-
-      // 2. Guardar la comuna con sus coordenadas
-      btn.textContent = 'Guardando...';
-
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna`, {
-        method: 'POST',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ negocio_id: negocio.id, comuna: comuna, monto: Number(monto), lat: lat, lng: lng })
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
-      }
-
-      comunaInput.value = '';
-      document.getElementById('montoViatico').value = '';
-      showMsg('panelMsg', `${comuna} agregada correctamente.`, 'success');
-      await cargarViaticos();
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos agregar la comuna. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Agregar comuna';
-    }
-  }
-
-  async function eliminarViatico(viaticoId, btnEl) {
-    btnEl.disabled = true;
-    try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/viaticos_comuna?id=eq.${viaticoId}`, {
-        method: 'DELETE',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Prefer': 'return=minimal'
-        }
-      });
-      if (!resp.ok) throw new Error('Error eliminando');
-      showMsg('panelMsg', 'Comuna eliminada.', 'success');
-      await cargarViaticos();
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos eliminar la comuna. Intenta de nuevo.', 'error');
-      btnEl.disabled = false;
-    }
-  }
-
-  // ---------- MI PERFIL (nombre + logo) ----------
-  function cargarPerfil() {
-    document.getElementById('nombreNegocioInput').value = negocio.nombre || '';
-    document.getElementById('logoUrlInput').value = negocio.logo_url || '';
-    mostrarPreviewLogo(negocio.logo_url);
-  }
-
-  function mostrarPreviewLogo(url) {
-    const box = document.getElementById('logoPreviewBox');
-    const img = document.getElementById('logoPreview');
-    if (url) {
-      img.src = url;
-      box.style.display = 'block';
-    } else {
-      box.style.display = 'none';
-      img.src = '';
-    }
-  }
-
-  // Vista previa en vivo si la manicurista pega una URL directamente
-  document.getElementById('logoUrlInput').addEventListener('input', function () {
-    mostrarPreviewLogo(this.value.trim());
-  });
-
-  // Si sube un archivo, lo subimos al bucket "logos" y llenamos la URL sola
-  document.getElementById('logoFileInput').addEventListener('change', async function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      showMsg('panelMsg', 'La imagen es muy pesada, máximo 2 MB.', 'error');
-      this.value = '';
-      return;
-    }
-
-    const btn = document.getElementById('guardarPerfilBtn');
-    btn.disabled = true;
-    btn.textContent = 'Subiendo logo...';
-
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${negocio.id}/logo_${Date.now()}.${fileExt}`;
-
-      const uploadResp = await fetch(`${CONFIG_URL}/storage/v1/object/logos/${fileName}`, {
-        method: 'POST',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': file.type
-        },
-        body: file
-      });
-
-      if (!uploadResp.ok) {
-        const errText = await uploadResp.text();
-        throw new Error(errText);
-      }
-
-      const logoUrl = `${CONFIG_URL}/storage/v1/object/public/logos/${fileName}`;
-      document.getElementById('logoUrlInput').value = logoUrl;
-      mostrarPreviewLogo(logoUrl);
-      showMsg('panelMsg', 'Logo subido. No olvides darle "Guardar cambios".', 'success');
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos subir la imagen. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Guardar cambios';
-    }
-  });
-
-  async function guardarPerfil() {
-    const nombre = document.getElementById('nombreNegocioInput').value.trim();
-    const logoUrl = document.getElementById('logoUrlInput').value.trim();
-    const btn = document.getElementById('guardarPerfilBtn');
-
-    if (!nombre) {
-      showMsg('panelMsg', 'El nombre del negocio no puede quedar vacío.', 'error');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Guardando...';
-
-    try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/negocios?id=eq.${negocio.id}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ nombre: nombre, logo_url: logoUrl || null })
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
-      }
-
-      negocio.nombre = nombre;
-      negocio.logo_url = logoUrl || null;
-      document.getElementById('negocioNombre').textContent = nombre;
-
-      showMsg('panelMsg', 'Perfil actualizado. Tus clientas ya ven los cambios.', 'success');
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos guardar los cambios. Intenta de nuevo.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Guardar cambios';
-    }
-  }
-
-  // ---------- HISTORIAL DE RIESGO ----------
-  function claveClienta(nombre, telefono) {
-    const nombreNormalizado = nombre
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // quita tildes/acentos
-      .replace(/\s+/g, ' '); // colapsa espacios múltiples
-    const telefonoNormalizado = telefono.replace(/\s+/g, '').trim();
-    return `${nombreNormalizado}|${telefonoNormalizado}`;
-  }
-
-  async function cargarHistorialRiesgo() {
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=in.(rechazada,no_show)&select=nombre_clienta,telefono`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-      if (!resp.ok) throw new Error('Error cargando historial');
-      const filas = await resp.json();
-
-      historialRiesgo = {};
-      filas.forEach(f => {
-        const clave = claveClienta(f.nombre_clienta, f.telefono);
-        historialRiesgo[clave] = (historialRiesgo[clave] || 0) + 1;
-      });
-    } catch (err) {
-      console.error('No se pudo cargar el historial de riesgo:', err);
-    }
-  }
-
-  // ---------- CARGAR CITAS ----------
-  async function cargarCitas() {
-    const list = document.getElementById('citasList');
-    list.innerHTML = '<p class="empty-state">Cargando...</p>';
-
-    try {
-      const resp = await fetch(
-        `${CONFIG_URL}/rest/v1/citas?negocio_id=eq.${negocio.id}&estado=eq.${tabActual}&order=fecha.asc,hora.asc&select=*`,
-        { headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + accessToken } }
-      );
-
-      if (!resp.ok) throw new Error('Error consultando citas');
-      const citas = await resp.json();
-
-      await cargarHistorialRiesgo();
-      renderCitas(citas);
-
-    } catch (err) {
-      console.error(err);
-      list.innerHTML = '<p class="empty-state">No pudimos cargar las citas. Intenta refrescar.</p>';
-    }
-  }
-
-  function renderCitas(citas) {
-    const list = document.getElementById('citasList');
-    list.innerHTML = '';
-
-    if (!citas.length) {
-      const etiquetas = { pendiente: 'pendientes', aprobada: 'aprobadas', rechazada: 'rechazadas', no_show: 'de "no llegó"' };
-      list.innerHTML = `<p class="empty-state">No hay citas ${etiquetas[tabActual] || tabActual} por ahora.</p>`;
-      return;
-    }
-
-    citas.forEach(cita => {
-      const card = document.createElement('div');
-      card.className = 'cita-card';
-
-      const estadoClase = 'estado-' + cita.estado;
-      const estadoTexto = cita.estado === 'no_show' ? 'no llegó' : cita.estado;
-      const fechaFormateada = new Date(cita.fecha + 'T00:00:00').toLocaleDateString('es-CL', {
-        weekday: 'long', day: 'numeric', month: 'long'
-      });
-
-      const clave = claveClienta(cita.nombre_clienta, cita.telefono);
-      const vecesRiesgo = historialRiesgo[clave] || 0;
-      const esRiesgo = vecesRiesgo >= 2;
-      const badgeRiesgo = esRiesgo ? `<span class="riesgo-badge">⚠️ Historial: ${vecesRiesgo} veces</span>` : '';
-
-      const hoy = new Date().toISOString().split('T')[0];
-      const yaPaso = cita.fecha < hoy;
-      const mostrarBotonNoShow = cita.estado === 'aprobada' && yaPaso;
-
-      const montoTotal = Number(cita.monto_abono) + Number(cita.viatico_monto || 0);
-      const desgloseViatico = Number(cita.viatico_monto || 0) > 0
-        ? ` <span style="font-weight:400;font-size:11px;">(Abono $${Number(cita.monto_abono).toLocaleString('es-CL')} + Viático $${Number(cita.viatico_monto).toLocaleString('es-CL')})</span>`
-        : '';
-
-      const nombreNegocioTexto = negocio ? negocio.nombre : 'tu negocio';
-      const fechaHoraWa = `${fechaFormateada}, ${cita.hora.substring(0,5)}`;
-      const mensajeWa = `Hola ${cita.nombre_clienta}! Tu hora en ${nombreNegocioTexto} quedó confirmada para el ${fechaHoraWa}. ¡Te esperamos! 💅`;
-      const telefonoWa = cita.telefono.replace(/[^0-9]/g, '');
-      const linkWa = `https://wa.me/${telefonoWa}?text=${encodeURIComponent(mensajeWa)}`;
-
-      card.innerHTML = `
-        <span class="estado-tag ${estadoClase}">${estadoTexto}</span>${badgeRiesgo}
-        <div class="cita-top">
-          <span class="cita-fecha">${fechaFormateada}, ${cita.hora.substring(0,5)}</span>
-          <span class="cita-monto">$${montoTotal.toLocaleString('es-CL')}</span>
-        </div>
-        ${desgloseViatico ? `<p class="cita-info">${desgloseViatico}</p>` : ''}
-        <p class="cita-info"><strong>Clienta:</strong> ${escapeHtml(cita.nombre_clienta)}</p>
-        <p class="cita-info"><strong>WhatsApp:</strong> ${escapeHtml(cita.telefono)}</p>
-        ${cita.servicio ? `<p class="cita-info"><strong>Servicio:</strong> ${escapeHtml(cita.servicio)}</p>` : ''}
-        ${cita.comprobante_url ? `<img class="comprobante-thumb" src="${cita.comprobante_url}" onclick="window.open('${cita.comprobante_url}', '_blank')" alt="Comprobante">` : ''}
-        ${cita.estado === 'pendiente' ? `
-          <div class="cita-actions">
-            <button class="btn-approve" onclick="actualizarEstado('${cita.id}', 'aprobada', this)">Aprobar</button>
-            <button class="btn-reject" onclick="actualizarEstado('${cita.id}', 'rechazada', this)">Rechazar</button>
-          </div>
-        ` : ''}
-        ${cita.estado === 'aprobada' ? `
-          <div class="cita-actions">
-            <a href="${linkWa}" target="_blank" class="btn-approve" style="display:block;text-align:center;text-decoration:none;">📱 Enviar confirmación por WhatsApp</a>
-          </div>
-        ` : ''}
-        ${mostrarBotonNoShow ? `
-          <div class="cita-actions">
-            <button class="btn-noshow" onclick="actualizarEstado('${cita.id}', 'no_show', this)">Marcar como no llegó</button>
-          </div>
-        ` : ''}
-      `;
-
-      list.appendChild(card);
-    });
-  }
-
-  async function actualizarEstado(citaId, nuevoEstado, btnEl) {
-    const card = btnEl.closest('.cita-card');
-    const buttons = card.querySelectorAll('button');
-    buttons.forEach(b => b.disabled = true);
-
-    try {
-      const resp = await fetch(`${CONFIG_URL}/rest/v1/citas?id=eq.${citaId}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': CONFIG_KEY,
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ estado: nuevoEstado })
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error(errText);
-      }
-
-      const mensajes = { aprobada: 'Cita aprobada.', rechazada: 'Cita rechazada.', no_show: 'Marcada como no llegó.' };
-      showMsg('panelMsg', mensajes[nuevoEstado] || 'Cita actualizada.', 'success');
-      await cargarCitas();
-
-    } catch (err) {
-      console.error(err);
-      showMsg('panelMsg', 'No pudimos actualizar la cita. Intenta de nuevo.', 'error');
-      buttons.forEach(b => b.disabled = false);
-    }
   }
 
   // ---------- HELPERS ----------
@@ -880,24 +383,25 @@
     return div.innerHTML;
   }
 
-  // ---------- RECUPERAR SESIÓN SI YA HABÍA LOGIN ----------
+  // ---------- RECUPERAR SESIÓN ----------
   (async function init() {
-    const savedToken = sessionStorage.getItem('accessToken');
+    const savedToken = sessionStorage.getItem('superadminToken');
     if (!savedToken) return;
 
     try {
       const resp = await fetch(`${CONFIG_URL}/auth/v1/user`, {
         headers: { 'apikey': CONFIG_KEY, 'Authorization': 'Bearer ' + savedToken }
       });
-      if (!resp.ok) { sessionStorage.removeItem('accessToken'); return; }
+      if (!resp.ok) { sessionStorage.removeItem('superadminToken'); return; }
 
-      const user = await resp.json();
       accessToken = savedToken;
-      await cargarNegocioDelUsuario(user.id);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('panelScreen').style.display = 'block';
+      await cargarPanel();
 
     } catch (err) {
       console.error(err);
-      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('superadminToken');
     }
   })();
 </script>
