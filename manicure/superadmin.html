@@ -344,7 +344,7 @@
 
       const esPlanPro = negociosConViaticos.has(neg.id);
       const planTexto = esPlanPro ? 'Plan Pro (a domicilio)' : 'Plan Emprendedora (home studio)';
-      const planPrecio = esPlanPro ? '$8.990' : '$5.990';
+      const planPrecio = esPlanPro ? '$9.990' : '$6.990';
 
       const fechas = citasNegocio.map(c => c.created_at).filter(Boolean).sort();
       const ultimaFecha = fechas.length ? fechas[fechas.length - 1] : null;
