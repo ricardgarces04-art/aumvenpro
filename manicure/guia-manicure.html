@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUMVEN Manicure — Guía y Preguntas Frecuentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF3EE;
+    --blush: #F5DFD9;
+    --coffee: #4A342E;
+    --coffeesoft: #6B5049;
+    --siena: #AD6B5F;
+    --sienadark: #8F4F45;
+    --white: #FFFFFF;
+    --green: #3A7D44;
+    --red: #B3261E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Nunito, sans-serif;
+    background: var(--cream);
+    color: var(--coffee);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 1.5rem 1rem 3rem;
+  }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  .hdr { text-align: center; padding: 1rem 0 1.5rem; }
+  .badge {
+    display: inline-block;
+    background: var(--white);
+    color: var(--sienadark);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 14px;
+  }
+  .hdr h1 { font-size: 26px; margin-bottom: 8px; }
+  .hdr p { color: var(--coffeesoft); font-size: 14px; max-width: 480px; margin: 0 auto; }
+
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .sec-title {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    color: var(--sienadark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .link-box {
+    background: var(--blush);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    word-break: break-all;
+  }
+  .link-box strong { display: block; margin-bottom: 4px; color: var(--sienadark); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .faq-cat {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sienadark);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .faq-cat:first-child { margin-top: 0; }
+
+  .faq-item {
+    border: 1px solid #E5D9D3;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: var(--cream);
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    user-select: none;
+  }
+  .faq-q:hover { background: var(--blush); }
+  .faq-q .arrow { flex-shrink: 0; transition: transform 0.25s; color: var(--sienadark); font-size: 12px; }
+  .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+  .faq-a { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a-inner { padding: 0 16px 14px; color: var(--coffeesoft); font-size: 13px; line-height: 1.65; }
+  .faq-a-inner strong { color: var(--coffee); }
+
+  .cta-card {
+    background: var(--blush);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .cta-card h3 { font-size: 17px; margin-bottom: 6px; }
+  .cta-card p { color: var(--coffeesoft); font-size: 13px; margin-bottom: 14px; }
+  .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #25D366;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 22px;
+    border-radius: 999px;
+  }
+
+  .foot { text-align: center; color: var(--coffeesoft); font-size: 11px; margin-top: 20px; opacity: 0.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <span class="badge">AUMVEN Manicure</span>
+    <h1>Guía y Preguntas Frecuentes</h1>
+    <p>Todo lo que necesitas saber para usar tu agenda — sin tener que escribirle a Ric cada vez.</p>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">🔗 Tus links</div>
+    <div class="link-box">
+      <strong>Tu agenda (compártela con tus clientas)</strong>
+      https://aumven.cl/manicure/agenda.html?neg=tu-negocio
+    </div>
+    <div class="link-box">
+      <strong>Tu panel de administración</strong>
+      https://aumven.cl/manicure/admin.html
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="faq-cat">💳 Pagos y planes</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cuál es la diferencia entre el Plan Emprendedora y el Plan Pro? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">El <strong>Plan Emprendedora</strong> ($5.990/mes) es para quienes atienden en su Home Studio, sin necesidad de calcular traslados. El <strong>Plan Pro</strong> ($8.990/mes) agrega la calculadora automática de viáticos, pensada para quienes atienden a domicilio. Tú decides cuál plan tienes simplemente configurando (o no) comunas en la pestaña "🗺️ Viáticos" de tu panel.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo pago mi suscripción? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Cuando se cumpla tu período de prueba o descuento, Ric te va a enviar un link de pago seguro por WhatsApp. No necesitas hacer nada hasta ese momento.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si no pago a tiempo? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Escríbele a Ric por WhatsApp para conversarlo — no hay corte automático ni penalidades ocultas.</div></div>
+    </div>
+
+    <div class="faq-cat">📅 Agenda y reservas</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa si una clienta no llega a su hora? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Entra a tu panel → pestaña "📋 Citas" → busca la cita ya aprobada y vencida, y presiona <strong>"Marcar como no llegó"</strong>. Si esa clienta acumula 2 o más de estos, el sistema te muestra una alerta ⚠️ la próxima vez que intente reservar.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo apruebo o rechazo una reserva nueva? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">En la pestaña "📋 Citas" → "Pendientes", revisa el comprobante de pago que subió la clienta y presiona <strong>Aprobar</strong> o <strong>Rechazar</strong>.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo confirmo la hora a mi clienta? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Al aprobar una cita, aparece un botón <strong>"📱 Enviar confirmación por WhatsApp"</strong> — se abre WhatsApp con el mensaje ya escrito, solo tienes que darle enviar.</div></div>
+    </div>
+
+    <div class="faq-cat">💰 Abonos y viáticos</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo cambio el monto del abono? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Por ahora este dato lo configura Ric al crear tu cuenta. Si necesitas cambiarlo, escríbele por WhatsApp.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo agrego o elimino una comuna con viático? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Panel → pestaña "🗺️ Viáticos" → escribe el nombre de la comuna y el monto → <strong>Agregar comuna</strong>. El sistema busca su ubicación automáticamente. Para eliminarla, presiona <strong>Eliminar</strong> en su tarjeta.</div></div>
+    </div>
+
+    <div class="faq-cat">🎨 Mi perfil</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo cambio mi logo o el nombre de mi negocio? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Panel → pestaña "🎨 Mi Perfil" → sube tu imagen (o pega una URL) y edita el nombre → <strong>Guardar cambios</strong>. Tus clientas ven el cambio de inmediato.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">¿Cómo agrego mi WhatsApp de contacto? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Panel → "🎨 Mi Perfil" → completa el campo "WhatsApp de contacto" → Guardar. Va a aparecer un botón para que tus clientas te escriban directo desde la agenda.</div></div>
+    </div>
+
+    <div class="faq-cat">🔧 Problemas técnicos</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Mi clienta dice que la agenda no carga <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Pídele que recargue la página. Verifica que el link que compartiste tenga tu identificador correcto después de <strong>?neg=</strong>.</div></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Olvidé mi contraseña, ¿cómo la recupero? <span class="arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Escríbele a Ric por WhatsApp indicando tu correo registrado, y te ayuda a restablecerla.</div></div>
+    </div>
+  </div>
+
+  <div class="cta-card">
+    <h3>¿Tu duda no está aquí?</h3>
+    <p>Escríbenos y te respondemos apenas podamos.</p>
+    <a class="btn-wa" href="https://wa.me/56926221935?text=Hola%2C%20tengo%20una%20consulta%20sobre%20mi%20agenda%20AUMVEN" target="_blank">💬 Escribir por WhatsApp</a>
+  </div>
+
+  <div class="foot">AUMVEN Manicure © 2026 · Hecho con ❤️ en Chile</div>
+
+</div>
+
+<script>
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i){ i.classList.remove('open'); });
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
