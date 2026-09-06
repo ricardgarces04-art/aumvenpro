@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arriendo Seguro — Arrienda con confianza. Sin sorpresas.</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--sf:#ffffff;--sf2:#f8fafc;
+  --ac:#0e7490;--ac2:#0891b2;--ac3:#06b6d4;
+  --gr:#059669;--rd:#dc2626;--am:#d97706;
+  --tx:#0f172a;--mt:#64748b;--dim:#94a3b8;
+  --r:16px;--rs:10px;--gb:rgba(14,116,144,.15);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;min-height:100dvh}
+
+/* NAV */
+.nav{background:#fff;border-bottom:2px solid var(--gb);padding:.85rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(14,116,144,.08)}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--ac);
+  display:flex;align-items:center;gap:.4rem}
+.nav-logo span{font-size:.72rem;font-weight:700;color:var(--mt);display:block;font-family:'Nunito',sans-serif}
+.nav-btns{display:flex;gap:.5rem;flex-wrap:wrap}
+.nav-btn{border:1.5px solid var(--ac);border-radius:100px;background:transparent;color:var(--ac);
+  cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;padding:.35rem .9rem;transition:all .2s}
+.nav-btn:hover,.nav-btn.active{background:var(--ac);color:#fff}
+.nav-btn.cta{background:var(--ac);color:#fff}
+.nav-btn.cta:hover{background:var(--ac2)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0e7490 0%,#0891b2 50%,#14b8a6 100%);
+  padding:4rem 1.5rem 5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-badge{display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  border-radius:100px;color:#fff;font-size:.75rem;font-weight:800;
+  padding:.3rem .9rem;margin-bottom:1.2rem;letter-spacing:.04em}
+.hero-title{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#fff;
+  line-height:1.1;margin-bottom:.8rem}
+.hero-title em{color:#a5f3fc;font-style:normal}
+.hero-sub{color:rgba(255,255,255,.85);font-size:1rem;font-weight:600;
+  max-width:560px;margin:0 auto 2rem;line-height:1.65}
+.hero-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.hero-btn{border:none;border-radius:100px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:900;padding:.85rem 2rem;font-size:.95rem;transition:all .2s}
+.hero-btn.primary{background:#fff;color:var(--ac)}
+.hero-btn.primary:hover{background:#f0f9ff;transform:translateY(-2px)}
+.hero-btn.secondary{background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.4)}
+.hero-btn.secondary:hover{background:rgba(255,255,255,.25)}
+.hero-stats{display:flex;gap:2rem;justify-content:center;margin-top:3rem;flex-wrap:wrap}
+.hero-stat{text-align:center;color:#fff}
+.hero-stat-v{font-family:'Fredoka One',cursive;font-size:2rem;color:#a5f3fc}
+.hero-stat-l{font-size:.78rem;font-weight:700;opacity:.8}
+
+/* SECTION */
+.section{padding:3.5rem 1.5rem;max-width:980px;margin:0 auto}
+.section-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--tx);
+  margin-bottom:.4rem;text-align:center}
+.section-sub{color:var(--mt);font-size:.92rem;text-align:center;margin-bottom:2.5rem;font-weight:600}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.card{background:var(--sf);border:1.5px solid rgba(14,116,144,.12);border-radius:var(--r);
+  padding:1.5rem;box-shadow:0 2px 16px rgba(14,116,144,.08);transition:all .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(14,116,144,.15);border-color:var(--ac)}
+.card-icon{width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,#0e7490,#14b8a6);
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:.85rem}
+.card-title{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--tx);margin-bottom:.4rem}
+.card-desc{font-size:.85rem;color:var(--mt);line-height:1.65}
+
+/* ROL SELECTOR */
+.rol-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:700px;margin:0 auto 2rem}
+@media(max-width:480px){.rol-wrap{grid-template-columns:1fr}}
+.rol-card{background:var(--sf);border:2.5px solid rgba(14,116,144,.18);border-radius:var(--r);
+  padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .25s;
+  display:flex;flex-direction:column;align-items:center;gap:.65rem}
+.rol-card:hover{border-color:var(--ac);box-shadow:0 6px 24px rgba(14,116,144,.18)}
+.rol-card.selected{border-color:var(--ac);background:linear-gradient(135deg,rgba(14,116,144,.06),rgba(20,184,166,.06))}
+.rol-icon{font-size:2.5rem}
+.rol-title{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--tx)}
+.rol-desc{font-size:.82rem;color:var(--mt);line-height:1.55}
+
+/* FORM */
+.form-card{background:var(--sf);border:1.5px solid rgba(14,116,144,.15);border-radius:var(--r);
+  padding:2rem;max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(14,116,144,.1)}
+.form-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ac);
+  margin-bottom:1.2rem;display:flex;align-items:center;gap:.4rem}
+label{display:block;font-size:.72rem;font-weight:800;color:var(--mt);
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:.25rem}
+input,select,textarea{width:100%;background:#f8fafc;border:1.5px solid rgba(14,116,144,.2);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;font-size:.9rem;
+  font-weight:600;padding:.65rem .95rem;outline:none;transition:border-color .2s;margin-bottom:.85rem}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);background:#fff}
+select{cursor:pointer}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:480px){.row2{grid-template-columns:1fr}}
+.form-hint{font-size:.75rem;color:var(--dim);margin-top:-.6rem;margin-bottom:.75rem;line-height:1.5}
+
+/* BTNS */
+.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:800;padding:.75rem 1.4rem;font-size:.9rem;transition:all .2s;
+  display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#0e7490,#0891b2);color:#fff;width:100%;
+  box-shadow:0 3px 14px rgba(14,116,144,.35)}
+.btn-secondary{background:transparent;border:1.5px solid var(--ac);color:var(--ac)}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+.btn-sm{padding:.4rem .8rem;font-size:.78rem}
+
+/* TABS */
+.tabs{display:flex;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap;border-bottom:2px solid rgba(14,116,144,.12);padding-bottom:.75rem}
+.tab{border:none;background:transparent;color:var(--mt);cursor:pointer;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;
+  padding:.45rem .9rem;border-radius:var(--rs);transition:all .2s}
+.tab:hover{background:rgba(14,116,144,.08);color:var(--ac)}
+.tab.active{background:var(--ac);color:#fff}
+
+/* PROPIEDAD CARD */
+.prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.prop-card{background:var(--sf);border:1.5px solid rgba(14,116,144,.12);border-radius:var(--r);
+  overflow:hidden;box-shadow:0 2px 12px rgba(14,116,144,.08);transition:all .2s;cursor:pointer}
+.prop-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(14,116,144,.18)}
+.prop-img{background:linear-gradient(135deg,#0e7490,#14b8a6);height:160px;
+  display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.prop-badge{position:absolute;top:.6rem;right:.6rem;background:#fff;color:var(--ac);
+  font-size:.65rem;font-weight:800;padding:.18rem .55rem;border-radius:100px;
+  letter-spacing:.04em}
+.prop-badge.veraneo{background:#fef3c7;color:#d97706}
+.prop-badge.verificado{background:#d1fae5;color:#059669}
+.prop-info{padding:1rem}
+.prop-precio{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ac);margin-bottom:.2rem}
+.prop-titulo{font-weight:800;font-size:.92rem;color:var(--tx);margin-bottom:.2rem}
+.prop-loc{font-size:.78rem;color:var(--mt);margin-bottom:.6rem}
+.prop-tags{display:flex;gap:.3rem;flex-wrap:wrap}
+.prop-tag{background:rgba(14,116,144,.08);border-radius:100px;color:var(--ac);
+  font-size:.65rem;font-weight:700;padding:.1rem .45rem}
+
+/* REPORTE */
+.reporte-card{background:var(--sf);border:1.5px solid rgba(220,38,38,.15);border-radius:var(--rs);
+  padding:1rem 1.2rem;margin-bottom:.75rem;border-left:4px solid var(--rd)}
+.rep-tipo{font-size:.68rem;font-weight:800;color:var(--rd);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.rep-desc{font-size:.85rem;color:var(--mt);line-height:1.6;margin-bottom:.4rem}
+.rep-fecha{font-size:.72rem;color:var(--dim)}
+
+/* BADGE ESTADOS */
+.badge{display:inline-block;border-radius:100px;font-size:.65rem;font-weight:800;padding:.15rem .55rem;letter-spacing:.04em}
+.badge-pendiente{background:#fef3c7;color:#d97706}
+.badge-verificado{background:#d1fae5;color:#059669}
+.badge-rechazado{background:#fee2e2;color:#dc2626}
+
+/* ALERT */
+.alert{border-radius:var(--rs);padding:.75rem 1rem;font-size:.84rem;margin-bottom:.85rem;font-weight:600}
+.alert-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.alert-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.alert-info{background:#e0f2fe;color:#075985;border:1px solid #7dd3fc}
+
+/* LOADING */
+.spinner{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);
+  border-radius:50%;border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* VERIFICACION */
+.verify-box{background:linear-gradient(135deg,rgba(14,116,144,.06),rgba(20,184,166,.06));
+  border:1.5px solid rgba(14,116,144,.2);border-radius:var(--r);padding:1.5rem;
+  text-align:center;margin-bottom:1.2rem}
+.verify-icon{font-size:2.5rem;margin-bottom:.5rem}
+.verify-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac);margin-bottom:.3rem}
+.verify-desc{font-size:.82rem;color:var(--mt);line-height:1.6;margin-bottom:1rem}
+
+/* PRECIO PLAN */
+.planes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;max-width:700px;margin:0 auto}
+.plan-card{background:var(--sf);border:2px solid rgba(14,116,144,.18);border-radius:var(--r);
+  padding:1.8rem 1.4rem;text-align:center;transition:all .2s}
+.plan-card.destacado{border-color:var(--ac);background:linear-gradient(135deg,rgba(14,116,144,.05),rgba(20,184,166,.05))}
+.plan-nombre{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--tx);margin-bottom:.4rem}
+.plan-precio{font-family:'Fredoka One',cursive;font-size:2rem;color:var(--ac);margin-bottom:.2rem}
+.plan-periodo{font-size:.75rem;color:var(--mt);margin-bottom:1rem}
+.plan-feature{font-size:.82rem;color:var(--mt);padding:.3rem 0;border-bottom:1px solid rgba(14,116,144,.08);text-align:left}
+.plan-feature::before{content:'✅ ';font-size:.75rem}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+/* FOOTER */
+.footer{background:#0e7490;color:rgba(255,255,255,.75);text-align:center;
+  padding:2rem 1.5rem;font-size:.8rem;line-height:1.8}
+.footer strong{color:#fff}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">🏠 Arriendo Seguro
+    <span>Arrienda con confianza. Sin sorpresas.</span>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="mostrarScreen('buscar')">🔍 Buscar</button>
+    <button class="nav-btn" onclick="mostrarScreen('reportes')">🚨 Reportes</button>
+    <button class="nav-btn" onclick="mostrarScreen('publicar')">📋 Publicar</button>
+    <button class="nav-btn" onclick="mostrarScreen('planes')">💳 Planes</button>
+    <button class="nav-btn cta" onclick="mostrarScreen('registro')">Registrarse</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: INICIO -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen active" id="screen-inicio">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🆕 Lanzamiento 2026 — Todo Chile 🇨🇱</div>
+    <h1 class="hero-title">Arrienda con confianza.<br><em>Sin sorpresas.</em></h1>
+    <p class="hero-sub">La plataforma chilena que conecta arrendadores y arrendatarios con verificación real, contratos digitales y protección anti-estafas.</p>
+    <div class="hero-btns">
+      <button class="hero-btn primary" onclick="mostrarScreen('registro')">🏠 Publicar mi propiedad</button>
+      <button class="hero-btn secondary" onclick="mostrarScreen('buscar')">🔍 Buscar arriendo</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-v">100%</div><div class="hero-stat-l">Verificado</div></div>
+      <div class="hero-stat"><div class="hero-stat-v">$0</div><div class="hero-stat-l">Para comenzar</div></div>
+      <div class="hero-stat"><div class="hero-stat-v">Chile</div><div class="hero-stat-l">Cobertura nacional</div></div>
+    </div>
+  </div>
+
+  <!-- COMO FUNCIONA -->
+  <div class="section">
+    <h2 class="section-title">¿Cómo funciona?</h2>
+    <p class="section-sub">Tres pasos para arrendar o publicar con total seguridad</p>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">1️⃣</div>
+        <div class="card-title">Regístrate y elige tu rol</div>
+        <div class="card-desc">Crea tu cuenta como arrendador o arrendatario. El proceso toma menos de 3 minutos.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">2️⃣</div>
+        <div class="card-title">Verifica tu identidad</div>
+        <div class="card-desc">Sube tu carnet o documento de propiedad. Lo revisamos en menos de 24 horas y te damos el sello de verificado.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">3️⃣</div>
+        <div class="card-title">Publica o busca con confianza</div>
+        <div class="card-desc">Solo usuarios verificados publican. Solo contactos reales. Sin estafas, sin sorpresas, sin letras chicas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POR QUE -->
+  <div style="background:var(--sf);padding:3rem 1.5rem">
+    <div class="section" style="padding:0">
+      <h2 class="section-title">¿Por qué Arriendo Seguro?</h2>
+      <p class="section-sub">El mercado de arriendos en Chile tiene un problema enorme que nadie resuelve</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <div class="card-title">Comunidad verificada</div>
+          <div class="card-desc">Solo usuarios con identidad verificada pueden publicar y contactar. Cero anónimos, cero fantasmas.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚨</div>
+          <div class="card-title">Reporte de estafas</div>
+          <div class="card-desc">Si detectas una publicación falsa o un fraude, repórtala en segundos. La comunidad te protege.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">☀️</div>
+          <div class="card-title">Veraneo seguro</div>
+          <div class="card-desc">Especial temporada de verano en la V Región. Arriendos de veraneo verificados en Viña, Valparaíso y alrededores.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💰</div>
+          <div class="card-title">Precio justo</div>
+          <div class="card-desc">Publicar es gratis. El acceso a datos de contacto cuesta una suscripción económica mensual. Sin comisiones.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA LISTA ESPERA -->
+  <div class="section" style="max-width:640px">
+    <h2 class="section-title">🚀 Únete a la lista de espera</h2>
+    <p class="section-sub">Sé de los primeros en acceder. Precio especial para los primeros 20 usuarios.</p>
+    <div class="form-card" style="margin-top:1.5rem">
+      <div id="espera-alert"></div>
+      <div class="row2">
+        <div>
+          <label>Tu nombre</label>
+          <input type="text" id="esp-nombre" placeholder="María González">
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="text" id="esp-email" placeholder="maria@email.com">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>Teléfono (opcional)</label>
+          <input type="text" id="esp-tel" placeholder="+56 9 1234 5678">
+        </div>
+        <div>
+          <label>Soy</label>
+          <select id="esp-rol">
+            <option value="arrendador">🏠 Arrendador</option>
+            <option value="arrendatario">🔍 Arrendatario</option>
+            <option value="ambos">🤝 Ambos</option>
+          </select>
+        </div>
+      </div>
+      <label>Región</label>
+      <select id="esp-region" style="margin-bottom:.85rem">
+        <option value="V Region">V Región de Valparaíso</option>
+        <option value="RM">Región Metropolitana</option>
+        <option value="VI Region">VI Región O'Higgins</option>
+        <option value="Otra">Otra región</option>
+      </select>
+      <button class="btn btn-primary" id="esp-btn" onclick="registrarEspera()">
+        ✉️ Quiero ser de los primeros
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: REGISTRO -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-registro">
+  <div class="section" style="max-width:680px">
+    <h2 class="section-title">Crear cuenta</h2>
+    <p class="section-sub">Primero dinos qué eres</p>
+
+    <!-- ROL -->
+    <div class="rol-wrap" id="rol-selector">
+      <div class="rol-card" id="rol-arrendador" onclick="selRol('arrendador')">
+        <div class="rol-icon">🏠</div>
+        <div class="rol-title">Soy Arrendador</div>
+        <div class="rol-desc">Tengo una propiedad que quiero arrendar de forma segura y rápida</div>
+      </div>
+      <div class="rol-card" id="rol-arrendatario" onclick="selRol('arrendatario')">
+        <div class="rol-icon">🔍</div>
+        <div class="rol-title">Soy Arrendatario</div>
+        <div class="rol-desc">Busco un arriendo confiable sin riesgo de estafa ni sorpresas</div>
+      </div>
+    </div>
+
+    <div class="form-card" id="form-registro" style="display:none">
+      <div class="form-title" id="form-reg-title">🏠 Registro como Arrendador</div>
+      <div id="reg-alert"></div>
+
+      <div class="row2">
+        <div>
+          <label>Nombre completo</label>
+          <input type="text" id="reg-nombre" placeholder="María González">
+        </div>
+        <div>
+          <label>Teléfono</label>
+          <input type="text" id="reg-tel" placeholder="+56 9 1234 5678">
+        </div>
+      </div>
+      <label>Email</label>
+      <input type="text" id="reg-email" placeholder="maria@email.com">
+      <label>Crear contraseña</label>
+      <input type="text" id="reg-pass" placeholder="Mínimo 6 caracteres">
+
+      <!-- Verificacion -->
+      <div class="verify-box" id="box-arrendador" style="display:none">
+        <div class="verify-icon">🛡️</div>
+        <div class="verify-title">Verificación de Arrendador</div>
+        <div class="verify-desc">Para publicar propiedades necesitas verificar tu identidad y titularidad. Revisamos en menos de 24 horas.<br><br>
+        <strong>Documentos requeridos:</strong><br>
+        📄 Carnet de identidad (ambos lados)<br>
+        🤳 Selfie sosteniendo tu carnet<br>
+        🏠 Certificado de Dominio Vigente o Rol de la propiedad (SII o CBR)</div>
+
+        <div style="background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:.85rem;margin-bottom:.85rem;font-size:.78rem;color:#065f46;line-height:1.65">
+          <strong>⚖️ Aviso Legal:</strong> AUMVEN, a través de Arriendo Seguro, actúa exclusivamente como plataforma intermediaria. La documentación solicitada se utiliza <strong>únicamente para verificar tu identidad</strong> y no es compartida con terceros. AUMVEN no es parte del contrato de arriendo ni asume responsabilidad por disputas entre usuarios.
+        </div>
+
+        <label>📤 Link a tus documentos (Google Drive o Dropbox)</label>
+        <input type="text" id="reg-doc" placeholder="https://drive.google.com/... (carpeta con los 3 documentos)">
+        <p class="form-hint">Sube los 3 documentos a una carpeta de Google Drive compartida y pega el link aquí. Tus documentos son confidenciales y solo los ve el equipo de verificación de Arriendo Seguro.</p>
+      </div>
+
+      <div class="verify-box" id="box-arrendatario" style="display:none;background:linear-gradient(135deg,rgba(8,145,178,.06),rgba(20,184,166,.06));border-color:rgba(8,145,178,.2)">
+        <div class="verify-icon">🆔</div>
+        <div class="verify-title">Verificación de Arrendatario</div>
+        <div class="verify-desc">Para contactar arrendadores verificados necesitas confirmar tu identidad.<br><br>
+        <strong>Documentos requeridos:</strong><br>
+        📄 Carnet de identidad (ambos lados)<br>
+        🤳 Selfie sosteniendo tu carnet</div>
+
+        <div style="background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:.85rem;margin-bottom:.85rem;font-size:.78rem;color:#065f46;line-height:1.65">
+          <strong>⚖️ Aviso Legal:</strong> Tu documentación se usa <strong>exclusivamente para verificación de identidad</strong>. AUMVEN es un puente entre arrendadores y arrendatarios — no somos parte del contrato de arriendo ni garantizamos el cumplimiento de ninguna de las partes.
+        </div>
+
+        <label>📤 Link a tus documentos (Google Drive o Dropbox)</label>
+        <input type="text" id="reg-doc-arr" placeholder="https://drive.google.com/... (carnet + selfie)">
+        <p class="form-hint">Solo carnet (ambos lados) y selfie con el carnet. Completamente confidencial.</p>
+      </div>
+
+      <button class="btn btn-primary" id="reg-btn" onclick="registrarUsuario()">
+        ✅ Crear mi cuenta
+      </button>
+      <p style="text-align:center;font-size:.8rem;color:var(--mt);margin-top:.75rem">
+        Al registrarte aceptas nuestros <a href="#" style="color:var(--ac)">Términos y Condiciones</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: BUSCAR -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-buscar">
+  <div class="section">
+    <h2 class="section-title">🔍 Buscar Arriendo</h2>
+    <p class="section-sub">Solo propiedades de arrendadores verificados</p>
+
+    <!-- FILTROS -->
+    <div class="form-card" style="margin-bottom:1.5rem;padding:1.2rem 1.5rem">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem">
+        <div>
+          <label>Modalidad</label>
+          <select id="f-modalidad" onchange="filtrarPropiedades()">
+            <option value="">Todas</option>
+            <option value="arriendo">Arriendo mensual</option>
+            <option value="veraneo">🌊 Veraneo</option>
+          </select>
+        </div>
+        <div>
+          <label>Tipo</label>
+          <select id="f-tipo" onchange="filtrarPropiedades()">
+            <option value="">Todos</option>
+            <option value="departamento">Departamento</option>
+            <option value="casa">Casa</option>
+            <option value="pieza">Pieza</option>
+          </select>
+        </div>
+        <div>
+          <label>Región</label>
+          <select id="f-region" onchange="filtrarPropiedades()">
+            <option value="">Todo Chile</option>
+            <option value="V Region">V Región</option>
+            <option value="RM">Región Metropolitana</option>
+          </select>
+        </div>
+        <div>
+          <label>Precio máx.</label>
+          <select id="f-precio" onchange="filtrarPropiedades()">
+            <option value="">Sin límite</option>
+            <option value="300000">$300.000/mes</option>
+            <option value="500000">$500.000/mes</option>
+            <option value="800000">$800.000/mes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('todas',this)">Todas</button>
+      <button class="tab" onclick="switchTab('veraneo',this)">🌊 Veraneo</button>
+      <button class="tab" onclick="switchTab('arriendo',this)">🏠 Arriendo mensual</button>
+      <button class="tab" onclick="switchTab('verificadas',this)">✅ Solo verificadas</button>
+    </div>
+
+    <div class="prop-grid" id="props-grid">
+      <!-- Loading state -->
+      <div style="grid-column:1/-1;text-align:center;color:var(--mt);padding:2rem;font-weight:700">
+        ⏳ Cargando propiedades...
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: PUBLICAR -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-publicar">
+  <div class="section" style="max-width:680px">
+    <h2 class="section-title">📋 Publicar Propiedad</h2>
+    <p class="section-sub">Solo arrendadores verificados pueden publicar</p>
+
+    <div class="form-card">
+      <div class="form-title">🏠 Datos de la propiedad</div>
+      <div id="pub-alert"></div>
+
+      <label>Título del anuncio</label>
+      <input type="text" id="pub-titulo" placeholder="Ej: Depto 2D2B Viña del Mar, amoblado, cercano al metro">
+
+      <label>Descripción</label>
+      <textarea id="pub-desc" rows="4" placeholder="Describe tu propiedad: características, cercanías, condiciones..."></textarea>
+
+      <div class="row2">
+        <div>
+          <label>Tipo de propiedad</label>
+          <select id="pub-tipo">
+            <option value="departamento">Departamento</option>
+            <option value="casa">Casa</option>
+            <option value="pieza">Pieza</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label>Modalidad</label>
+          <select id="pub-modalidad" onchange="togglePrecios()">
+            <option value="arriendo">Arriendo mensual</option>
+            <option value="veraneo">🌊 Veraneo temporada</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div id="precio-mensual-wrap">
+          <label>Precio mensual ($)</label>
+          <input type="text" id="pub-precio-mes" placeholder="450000">
+        </div>
+        <div id="precio-diario-wrap" style="display:none">
+          <label>Precio por día ($)</label>
+          <input type="text" id="pub-precio-dia" placeholder="50000">
+        </div>
+        <div>
+          <label>Región</label>
+          <select id="pub-region">
+            <option value="RM">Región Metropolitana</option>
+            <option value="V Region">V Región de Valparaíso</option>
+            <option value="VI Region">VI Región O'Higgins</option>
+            <option value="VII Region">VII Región del Maule</option>
+            <option value="VIII Region">VIII Región del Biobío</option>
+            <option value="IX Region">IX Región de La Araucanía</option>
+            <option value="X Region">X Región de Los Lagos</option>
+            <option value="I Region">I Región de Tarapacá</option>
+            <option value="II Region">II Región de Antofagasta</option>
+            <option value="III Region">III Región de Atacama</option>
+            <option value="IV Region">IV Región de Coquimbo</option>
+            <option value="XIV Region">XIV Región de Los Ríos</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Comuna</label>
+      <input type="text" id="pub-comuna" placeholder="Ej: Viña del Mar, Quilpué, Valparaíso...">
+
+      <div class="row2">
+        <div>
+          <label>Dormitorios</label>
+          <select id="pub-dorm">
+            <option value="1">1 dormitorio</option>
+            <option value="2">2 dormitorios</option>
+            <option value="3">3 dormitorios</option>
+            <option value="4">4+ dormitorios</option>
+          </select>
+        </div>
+        <div>
+          <label>Baños</label>
+          <select id="pub-banos">
+            <option value="1">1 baño</option>
+            <option value="2">2 baños</option>
+            <option value="3">3+ baños</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1.2rem;margin-bottom:.85rem">
+        <label style="display:flex;align-items:center;gap:.4rem;text-transform:none;letter-spacing:0;font-size:.88rem;cursor:pointer;font-weight:700">
+          <input type="checkbox" id="pub-mascotas" style="width:auto;margin-bottom:0"> 🐾 Permite mascotas
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;text-transform:none;letter-spacing:0;font-size:.88rem;cursor:pointer;font-weight:700">
+          <input type="checkbox" id="pub-amoblado" style="width:auto;margin-bottom:0"> 🛋️ Amoblado
+        </label>
+      </div>
+
+      <button class="btn btn-primary" id="pub-btn" onclick="publicarPropiedad()">
+        📋 Publicar propiedad
+      </button>
+      <p class="form-hint" style="text-align:center;margin-top:.5rem">Solo arrendadores verificados pueden publicar. Si aún no estás verificado, tu publicación quedará en revisión.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: REPORTES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-reportes">
+  <div class="section">
+    <h2 class="section-title">🚨 Reportes de Estafa</h2>
+    <p class="section-sub">La comunidad se protege. Si detectas algo sospechoso, repórtalo aquí.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:900px;margin:0 auto">
+
+      <!-- FORM REPORTE -->
+      <div class="form-card">
+        <div class="form-title">📢 Reportar una estafa</div>
+        <div id="rep-alert"></div>
+
+        <label>Tipo de problema</label>
+        <select id="rep-tipo">
+          <option value="estafa">💸 Estafa de dinero</option>
+          <option value="falsa_publicacion">📷 Publicación falsa o clonada</option>
+          <option value="fraude_pago">💳 Fraude en el pago</option>
+          <option value="otro">⚠️ Otro problema</option>
+        </select>
+
+        <label>Descripción del problema</label>
+        <textarea id="rep-desc" rows="5" placeholder="Describe lo que pasó con el mayor detalle posible. ¿Qué te ofrecieron? ¿Cómo intentaron estafarte? ¿Qué números o cuentas usaron?"></textarea>
+
+        <label>Tu nombre</label>
+        <input type="text" id="rep-nombre" placeholder="María González">
+
+        <button class="btn btn-danger" id="rep-btn" onclick="reportarEstafa()">
+          🚨 Enviar reporte
+        </button>
+        <p class="form-hint" style="text-align:center;margin-top:.5rem">Tu reporte es anónimo para el resto de la comunidad. Solo el equipo de Arriendo Seguro lo verá completo.</p>
+      </div>
+
+      <!-- LISTA REPORTES -->
+      <div>
+        <h3 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--rd);margin-bottom:.85rem">
+          🔴 Alertas recientes de la comunidad
+        </h3>
+        <div id="lista-reportes">
+          <div style="text-align:center;color:var(--mt);padding:2rem;font-weight:700">⏳ Cargando reportes...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: PLANES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-planes">
+  <div class="section">
+    <h2 class="section-title">💳 Planes y Precios</h2>
+    <p class="section-sub">Publicar es gratis. El acceso a contactos verificados tiene un precio justo.</p>
+
+    <div class="planes-grid" style="margin-bottom:2rem">
+      <div class="plan-card">
+        <div class="plan-nombre">Gratuito</div>
+        <div class="plan-precio">$0</div>
+        <div class="plan-periodo">para siempre</div>
+        <div class="plan-feature">Buscar propiedades</div>
+        <div class="plan-feature">Ver fotos y descripción</div>
+        <div class="plan-feature">Ver precio de arriendos</div>
+        <div class="plan-feature">Reportar estafas</div>
+        <div class="plan-feature" style="opacity:.4;text-decoration:line-through">Ver datos de contacto</div>
+        <div style="margin-top:1rem">
+          <button class="btn btn-secondary" style="width:100%" onclick="mostrarScreen('registro')">Comenzar gratis</button>
+        </div>
+      </div>
+
+      <div class="plan-card destacado">
+        <div style="background:var(--ac);color:#fff;font-size:.68rem;font-weight:800;
+          border-radius:100px;padding:.15rem .6rem;display:inline-block;margin-bottom:.5rem">⭐ RECOMENDADO</div>
+        <div class="plan-nombre">Arrendatario Pro</div>
+        <div class="plan-precio">$4.990</div>
+        <div class="plan-periodo">por mes</div>
+        <div class="plan-feature">Todo lo gratuito</div>
+        <div class="plan-feature">Ver datos de contacto</div>
+        <div class="plan-feature">Contacto directo verificado</div>
+        <div class="plan-feature">Alerta de nuevas propiedades</div>
+        <div class="plan-feature">Soporte prioritario</div>
+        <div style="margin-top:1rem">
+          <button class="btn btn-primary" style="width:100%">Suscribirme</button>
+        </div>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-nombre">Arrendador Pro</div>
+        <div class="plan-precio">$7.990</div>
+        <div class="plan-periodo">por mes</div>
+        <div class="plan-feature">Publicar hasta 5 propiedades</div>
+        <div class="plan-feature">Sello de verificado destacado</div>
+        <div class="plan-feature">Propiedad destacada en búsqueda</div>
+        <div class="plan-feature">Estadísticas de visitas</div>
+        <div class="plan-feature">Soporte prioritario</div>
+        <div style="margin-top:1rem">
+          <button class="btn btn-primary" style="width:100%">Suscribirme</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="max-width:600px;margin:0 auto;text-align:center">
+      🎁 <strong>Lanzamiento especial:</strong> Los primeros 20 usuarios obtienen 3 meses gratis del plan que elijan.
+      <a href="#" onclick="mostrarScreen('inicio');document.getElementById('esp-nombre').focus()" style="color:var(--ac);font-weight:800"> Únete a la lista de espera →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <strong>🏠 Arriendo Seguro</strong> · Arrienda con confianza. Sin sorpresas.<br>
+  Un producto de <strong>AUMVEN</strong> · V Región de Chile 🇨🇱<br>
+  <span style="opacity:.6">Cobertura nacional · arriendoseguro.cl</span>
+</footer>
+
+<script>
+// ================================================================
+// CONFIG SUPABASE
+// ================================================================
+// ⚠️ REEMPLAZA CON TUS CREDENCIALES DE SUPABASE
+var SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+var SUPABASE_KEY = 'TU_ANON_KEY';
+var sb = null;
+try {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch(e) {
+  console.log('Supabase no configurado — modo demo');
+}
+
+// ================================================================
+// NAVEGACION
+// ================================================================
+var rolSeleccionado = '';
+
+function mostrarScreen(nombre) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var target = document.getElementById('screen-' + nombre);
+  if(target) {
+    target.classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  if(nombre === 'buscar') cargarPropiedades();
+  if(nombre === 'reportes') cargarReportes();
+}
+
+function switchTab(tipo, btn) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  filtrarPorTab(tipo);
+}
+
+// ================================================================
+// ROL SELECTOR
+// ================================================================
+function selRol(rol) {
+  rolSeleccionado = rol;
+  document.getElementById('rol-arrendador').classList.toggle('selected', rol === 'arrendador');
+  document.getElementById('rol-arrendatario').classList.toggle('selected', rol === 'arrendatario');
+  document.getElementById('form-reg-title').textContent = rol === 'arrendador' ? '🏠 Registro como Arrendador' : '🔍 Registro como Arrendatario';
+  document.getElementById('box-arrendador').style.display = rol === 'arrendador' ? 'block' : 'none';
+  var boxArr = document.getElementById('box-arrendatario');
+  if(boxArr) boxArr.style.display = rol === 'arrendatario' ? 'block' : 'none';
+  document.getElementById('form-registro').style.display = 'block';
+}
+
+// ================================================================
+// LISTA DE ESPERA
+// ================================================================
+async function registrarEspera() {
+  var nombre = document.getElementById('esp-nombre').value.trim();
+  var email = document.getElementById('esp-email').value.trim();
+  if(!nombre || !email) { showAlert('espera-alert', 'Por favor ingresa tu nombre y email.', 'error'); return; }
+
+  var btn = document.getElementById('esp-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Registrando...';
+
+  if(sb) {
+    try {
+      await sb.from('lista_espera').insert({
+        nombre: nombre,
+        email: email,
+        telefono: document.getElementById('esp-tel').value,
+        rol: document.getElementById('esp-rol').value,
+        region: document.getElementById('esp-region').value
+      });
+      showAlert('espera-alert', '✅ ¡Listo! Estás en la lista. Te avisamos cuando lancemos.', 'success');
+      btn.innerHTML = '✅ ¡Ya estás en la lista!';
+    } catch(e) {
+      showAlert('espera-alert', 'Error: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '✉️ Quiero ser de los primeros';
+    }
+  } else {
+    // Demo mode
+    setTimeout(function(){
+      showAlert('espera-alert', '✅ ¡Listo! Estás en la lista de espera. Te notificaremos al lanzamiento.', 'success');
+      btn.innerHTML = '✅ ¡Ya estás en la lista!';
+    }, 1000);
+  }
+}
+
+// ================================================================
+// REGISTRO DE USUARIO
+// ================================================================
+async function registrarUsuario() {
+  if(!rolSeleccionado) { showAlert('reg-alert', 'Por favor selecciona tu rol primero.', 'error'); return; }
+  var nombre = document.getElementById('reg-nombre').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  if(!nombre || !email) { showAlert('reg-alert', 'Nombre y email son obligatorios.', 'error'); return; }
+
+  var btn = document.getElementById('reg-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
+
+  var id = 'u_' + Date.now().toString(36);
+  var datos = {
+    id: id,
+    nombre: nombre,
+    email: email,
+    telefono: document.getElementById('reg-tel').value,
+    rol: rolSeleccionado,
+    foto_documento: rolSeleccionado === 'arrendador' ? document.getElementById('reg-doc').value : null
+  };
+
+  if(sb) {
+    try {
+      var { error } = await sb.from('usuarios').insert(datos);
+      if(error) throw error;
+      showAlert('reg-alert', '✅ ¡Cuenta creada! ' + (rolSeleccionado === 'arrendador' ? 'Revisaremos tu documento en menos de 24 horas.' : 'Ya puedes buscar propiedades verificadas.'), 'success');
+      btn.innerHTML = '✅ ¡Cuenta creada!';
+      localStorage.setItem('as_user', JSON.stringify(datos));
+    } catch(e) {
+      showAlert('reg-alert', 'Error: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '✅ Crear mi cuenta';
+    }
+  } else {
+    setTimeout(function(){
+      localStorage.setItem('as_user', JSON.stringify(datos));
+      showAlert('reg-alert', '✅ ¡Cuenta creada en modo demo! ' + (rolSeleccionado === 'arrendador' ? 'Cuando conectes Supabase, tus datos se guardarán.' : 'Ahora puedes explorar la plataforma.'), 'success');
+      btn.innerHTML = '✅ ¡Cuenta creada!';
+    }, 1000);
+  }
+}
+
+// ================================================================
+// PROPIEDADES
+// ================================================================
+var propiedadesData = [];
+var tabActual = 'todas';
+
+// Datos demo mientras se conecta Supabase
+var PROPS_DEMO = [
+  {id:1, titulo:'Depto 2D1B Viña del Mar amoblado', tipo:'departamento', modalidad:'arriendo', region:'Chile', comuna:'Viña del Mar', precio_mensual:520000, dormitorios:2, banos:1, permite_mascotas:false, amoblado:true, activa:true, estado_verificacion:'verificado', descripcion:'Hermoso departamento en el corazón de Viña, a 5 min del metro y 10 min de la playa.'},
+  {id:2, titulo:'Casa veraneo Zapallar 4D2B piscina', tipo:'casa', modalidad:'veraneo', region:'Chile', comuna:'Zapallar', precio_diario:85000, dormitorios:4, banos:2, permite_mascotas:true, amoblado:true, activa:true, estado_verificacion:'verificado', descripcion:'Casa de veraneo en Zapallar con piscina y jardín. Capacidad 8 personas.'},
+  {id:3, titulo:'Pieza amoblada Quilpué servicios incluidos', tipo:'pieza', modalidad:'arriendo', region:'Chile', comuna:'Quilpué', precio_mensual:180000, dormitorios:1, banos:1, permite_mascotas:false, amoblado:true, activa:true, estado_verificacion:'verificado', descripcion:'Pieza grande con servicios incluidos. Baño compartido con 1 persona.'},
+  {id:4, titulo:'Depto 3D2B Las Condes', tipo:'departamento', modalidad:'arriendo', region:'RM', comuna:'Las Condes', precio_mensual:950000, dormitorios:3, banos:2, permite_mascotas:false, amoblado:false, activa:true, estado_verificacion:'verificado', descripcion:'Amplio departamento en Las Condes, 2 estacionamientos, bodega.'},
+  {id:5, titulo:'Cabaña veraneo Algarrobo frente al mar', tipo:'otro', modalidad:'veraneo', region:'Chile', comuna:'Algarrobo', precio_diario:65000, dormitorios:2, banos:1, permite_mascotas:true, amoblado:true, activa:true, estado_verificacion:'verificado', descripcion:'Cabaña con vista al mar en Algarrobo. Perfecta para familia de 4.'},
+  {id:6, titulo:'Depto 1D1B Valparaíso centro', tipo:'departamento', modalidad:'arriendo', region:'Chile', comuna:'Valparaíso', precio_mensual:280000, dormitorios:1, banos:1, permite_mascotas:true, amoblado:false, activa:true, estado_verificacion:'pendiente', descripcion:'Depto en el centro de Valpo, cerca de todo. Verificación en proceso.'}
+];
+
+async function cargarPropiedades() {
+  propiedadesData = PROPS_DEMO;
+  if(sb) {
+    try {
+      var { data } = await sb.from('propiedades').select('*, usuarios(estado_verificacion)').eq('activa', true).order('created_at', {ascending:false});
+      if(data && data.length) propiedadesData = data;
+    } catch(e) { /* usa demo */ }
+  }
+  renderPropiedades(propiedadesData);
+}
+
+function renderPropiedades(props) {
+  var grid = document.getElementById('props-grid');
+  if(!props.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--mt);padding:3rem;font-weight:700">No se encontraron propiedades con esos filtros.</div>';
+    return;
+  }
+  grid.innerHTML = props.map(function(p){
+    var precio = p.modalidad === 'veraneo'
+      ? '$' + numFormat(p.precio_diario) + '/día'
+      : '$' + numFormat(p.precio_mensual) + '/mes';
+    var verif = (p.estado_verificacion === 'verificado' || (p.usuarios && p.usuarios.estado_verificacion === 'verificado'));
+    var emojis = {departamento:'🏢', casa:'🏠', pieza:'🛏️', otro:'🏡'};
+    return '<div class="prop-card" onclick="verPropiedad(' + p.id + ')">'
+      +'<div class="prop-img">' + (emojis[p.tipo]||'🏠')
+      +'<span class="prop-badge '+(p.modalidad==='veraneo'?'veraneo':'')+'">'+  (p.modalidad==='veraneo'?'☀️ Veraneo':'Arriendo')+'</span>'
+      +(verif?'<span class="prop-badge verificado" style="top:.6rem;left:.6rem;right:auto">✅ Verificado</span>':'')
+      +'</div>'
+      +'<div class="prop-info">'
+      +'<div class="prop-precio">'+precio+'</div>'
+      +'<div class="prop-titulo">'+esc(p.titulo)+'</div>'
+      +'<div class="prop-loc">📍 '+esc(p.comuna)+', '+esc(p.region)+'</div>'
+      +'<div class="prop-tags">'
+      +'<span class="prop-tag">'+p.dormitorios+'D '+p.banos+'B</span>'
+      +(p.permite_mascotas?'<span class="prop-tag">🐾 Mascotas</span>':'')
+      +(p.amoblado?'<span class="prop-tag">🛋️ Amoblado</span>':'')
+      +'</div></div></div>';
+  }).join('');
+}
+
+function verPropiedad(id) {
+  var p = propiedadesData.find(function(x){ return x.id == id; });
+  if(!p) return;
+  var precio = p.modalidad === 'veraneo'
+    ? '$' + numFormat(p.precio_diario) + ' por día'
+    : '$' + numFormat(p.precio_mensual) + ' por mes';
+  alert('🏠 ' + p.titulo
+    + '\n\n📍 ' + p.comuna + ', ' + p.region
+    + '\n💰 ' + precio
+    + '\n🛏️ ' + p.dormitorios + ' dorm · ' + p.banos + ' baños'
+    + (p.amoblado ? '\n🛋️ Amoblado' : '')
+    + (p.permite_mascotas ? '\n🐾 Permite mascotas' : '')
+    + '\n\n📝 ' + (p.descripcion || '')
+    + '\n\n📞 Para ver el contacto del arrendador suscríbete al plan Arrendatario Pro ($4.990/mes)');
+}
+
+function filtrarPropiedades() {
+  var modalidad = document.getElementById('f-modalidad').value;
+  var tipo = document.getElementById('f-tipo').value;
+  var region = document.getElementById('f-region').value;
+  var precio = parseInt(document.getElementById('f-precio').value) || 0;
+
+  var filtradas = propiedadesData.filter(function(p){
+    if(modalidad && p.modalidad !== modalidad) return false;
+    if(tipo && p.tipo !== tipo) return false;
+    if(region && p.region !== region) return false;
+    if(precio && p.modalidad === 'arriendo' && p.precio_mensual > precio) return false;
+    return true;
+  });
+  renderPropiedades(filtradas);
+}
+
+function filtrarPorTab(tipo) {
+  tabActual = tipo;
+  var filtradas = propiedadesData.filter(function(p){
+    if(tipo === 'veraneo') return p.modalidad === 'veraneo';
+    if(tipo === 'arriendo') return p.modalidad === 'arriendo';
+    if(tipo === 'verificadas') return p.estado_verificacion === 'verificado';
+    return true;
+  });
+  renderPropiedades(filtradas);
+}
+
+// ================================================================
+// PUBLICAR PROPIEDAD
+// ================================================================
+function togglePrecios() {
+  var modal = document.getElementById('pub-modalidad').value;
+  document.getElementById('precio-mensual-wrap').style.display = modal === 'arriendo' ? 'block' : 'none';
+  document.getElementById('precio-diario-wrap').style.display = modal === 'veraneo' ? 'block' : 'none';
+}
+
+async function publicarPropiedad() {
+  var titulo = document.getElementById('pub-titulo').value.trim();
+  var region = document.getElementById('pub-region').value;
+  var comuna = document.getElementById('pub-comuna').value.trim();
+  if(!titulo || !comuna) { showAlert('pub-alert', 'Título y comuna son obligatorios.', 'error'); return; }
+
+  var btn = document.getElementById('pub-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Publicando...';
+
+  var modal = document.getElementById('pub-modalidad').value;
+  var user = getUser();
+  var datos = {
+    usuario_id: user ? user.id : null,
+    titulo: titulo,
+    descripcion: document.getElementById('pub-desc').value,
+    tipo: document.getElementById('pub-tipo').value,
+    modalidad: modal,
+    region: region,
+    comuna: comuna,
+    precio_mensual: modal === 'arriendo' ? parseInt(document.getElementById('pub-precio-mes').value) || null : null,
+    precio_diario: modal === 'veraneo' ? parseInt(document.getElementById('pub-precio-dia').value) || null : null,
+    dormitorios: parseInt(document.getElementById('pub-dorm').value),
+    banos: parseInt(document.getElementById('pub-banos').value),
+    permite_mascotas: document.getElementById('pub-mascotas').checked,
+    amoblado: document.getElementById('pub-amoblado').checked
+  };
+
+  if(sb) {
+    try {
+      var { error } = await sb.from('propiedades').insert(datos);
+      if(error) throw error;
+      showAlert('pub-alert', '✅ ¡Propiedad publicada! Aparecerá en el buscador una vez verificada.', 'success');
+      btn.innerHTML = '✅ Publicada';
+    } catch(e) {
+      showAlert('pub-alert', 'Error: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '📋 Publicar propiedad';
+    }
+  } else {
+    setTimeout(function(){
+      propiedadesData.unshift(Object.assign({id: Date.now(), activa:true, estado_verificacion:'pendiente'}, datos));
+      showAlert('pub-alert', '✅ ¡Propiedad publicada en modo demo! Configura Supabase para guardar datos reales.', 'success');
+      btn.innerHTML = '✅ Publicada';
+    }, 1000);
+  }
+}
+
+// ================================================================
+// REPORTES
+// ================================================================
+var REPORTES_DEMO = [
+  {tipo_reporte:'estafa', descripcion:'Pedían depósito de $200.000 antes de ver la propiedad. Cuando pagué desaparecieron.', created_at:'2026-01-15'},
+  {tipo_reporte:'falsa_publicacion', descripcion:'Las fotos eran de otro lugar. La dirección no existía. Número de WhatsApp falso.', created_at:'2026-01-12'},
+  {tipo_reporte:'fraude_pago', descripcion:'Ofrecían arriendos muy baratos y pedían transferencia inmediata sin contrato.', created_at:'2026-01-10'}
+];
+
+async function cargarReportes() {
+  var lista = document.getElementById('lista-reportes');
+  var data = REPORTES_DEMO;
+  if(sb) {
+    try {
+      var res = await sb.from('reportes').select('*').order('created_at', {ascending:false}).limit(10);
+      if(res.data && res.data.length) data = res.data;
+    } catch(e) {}
+  }
+  var tipoLabel = {estafa:'💸 Estafa', falsa_publicacion:'📷 Publicación falsa', fraude_pago:'💳 Fraude en pago', otro:'⚠️ Otro'};
+  lista.innerHTML = data.map(function(r){
+    return '<div class="reporte-card">'
+      +'<div class="rep-tipo">'+(tipoLabel[r.tipo_reporte]||r.tipo_reporte)+'</div>'
+      +'<div class="rep-desc">'+esc(r.descripcion)+'</div>'
+      +'<div class="rep-fecha">'+formatFecha(r.created_at)+'</div>'
+      +'</div>';
+  }).join('') || '<div style="color:var(--mt);text-align:center;padding:1.5rem">No hay reportes aún.</div>';
+}
+
+async function reportarEstafa() {
+  var desc = document.getElementById('rep-desc').value.trim();
+  var nombre = document.getElementById('rep-nombre').value.trim();
+  if(!desc) { showAlert('rep-alert', 'Por favor describe el problema.', 'error'); return; }
+
+  var btn = document.getElementById('rep-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+  var datos = {
+    tipo_reporte: document.getElementById('rep-tipo').value,
+    descripcion: desc
+  };
+
+  if(sb) {
+    try {
+      await sb.from('reportes').insert(datos);
+      showAlert('rep-alert', '✅ Reporte enviado. Gracias por proteger a la comunidad.', 'success');
+      document.getElementById('rep-desc').value = '';
+      document.getElementById('rep-nombre').value = '';
+      btn.innerHTML = '✅ Reporte enviado';
+      cargarReportes();
+    } catch(e) {
+      showAlert('rep-alert', 'Error: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '🚨 Enviar reporte';
+    }
+  } else {
+    setTimeout(function(){
+      REPORTES_DEMO.unshift(Object.assign({created_at: new Date().toISOString()}, datos));
+      showAlert('rep-alert', '✅ Reporte guardado (modo demo). Configura Supabase para persistir datos.', 'success');
+      document.getElementById('rep-desc').value = '';
+      btn.innerHTML = '✅ Reporte enviado';
+      cargarReportes();
+    }, 800);
+  }
+}
+
+// ================================================================
+// UTILS
+// ================================================================
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function numFormat(n){ return Number(n||0).toLocaleString('es-CL'); }
+function formatFecha(f){ try{ return new Date(f).toLocaleDateString('es-CL'); }catch(e){ return f||''; } }
+function getUser(){ try{ return JSON.parse(localStorage.getItem('as_user')||'null'); }catch(e){ return null; } }
+
+function showAlert(id, msg, tipo) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = '<div class="alert alert-'+tipo+'">'+msg+'</div>';
+  setTimeout(function(){ el.innerHTML = ''; }, 6000);
+}
+</script>
+</body>
+</html>
