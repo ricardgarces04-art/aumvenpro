@@ -3,769 +3,873 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUMVEN Pro — Super Admin</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>AUMVEN — Super Admin CEO</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#060411;--sf:rgba(18,12,38,.88);--sf2:rgba(28,20,52,.95);
-  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
-  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;
-  --tx:#f1f0ff;--mt:#9e97c4;
-  --r:18px;--rs:12px;
-  --gb:rgba(168,85,247,.20);--gs:0 8px 32px rgba(124,58,237,.20);
+  --bg:#08060f;--sf:rgba(20,15,40,.90);--sf2:rgba(15,10,30,.70);
+  --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--teal:#14b8a6;
+  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;--bl:#3b82f6;
+  --tx:#f1f0ff;--mt:#9e97c4;--dim:rgba(158,151,196,.4);
+  --r:14px;--rs:9px;
+  --gb1:rgba(124,58,237,.18);--gb2:rgba(20,184,166,.15);--gb3:rgba(236,72,153,.15);
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;
-  min-height:100dvh;padding:0;overflow-x:hidden}
+body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;min-height:100dvh}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 60% 45% at 5% 0%,rgba(124,58,237,.28) 0%,transparent 60%),
-    radial-gradient(ellipse 45% 50% at 95% 100%,rgba(168,85,247,.20) 0%,transparent 60%)}
+  background:radial-gradient(ellipse 50% 40% at 10% 5%,rgba(124,58,237,.2) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 35% at 90% 95%,rgba(20,184,166,.12) 0%,transparent 50%)}
 
-/* ── LOGIN ── */
-#sc-login{position:relative;z-index:1;min-height:100dvh;
-  display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.login-wrap{width:100%;max-width:360px;text-align:center}
-.sa-brand{font-family:'Fredoka One',cursive;font-size:2.4rem;
-  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:.2rem}
-.sa-sub{color:var(--mt);font-size:.78rem;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;margin-bottom:2rem}
-.login-card{background:var(--sf);backdrop-filter:blur(20px);
-  border:1px solid rgba(168,85,247,.28);border-radius:var(--r);
-  padding:2rem 1.75rem;box-shadow:0 0 60px rgba(124,58,237,.22)}
-.login-card p{color:var(--mt);font-size:.85rem;margin-bottom:1.2rem}
-.pin-in{width:100%;background:rgba(6,4,17,.80);border:1.5px solid rgba(124,58,237,.32);
-  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
-  font-size:1.2rem;font-weight:800;letter-spacing:.18em;padding:1rem 1.1rem;
-  text-align:center;text-transform:uppercase;outline:none;
-  transition:border-color .2s,box-shadow .2s;margin-bottom:1rem}
-.pin-in:focus{border-color:var(--pk2);box-shadow:0 0 0 3px rgba(244,114,182,.20)}
-.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
-  font-weight:800;padding:.78rem 1.1rem;font-size:.93rem;
-  display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
-  transition:transform .15s,filter .15s,box-shadow .15s;width:100%}
-.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.btn:active{transform:scale(.97)}
-.btn-pk{background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
-  box-shadow:0 4px 20px rgba(236,72,153,.45)}
-.btn-gr{background:linear-gradient(135deg,#059669,#10b981);color:#fff;
-  box-shadow:0 4px 16px rgba(16,185,129,.35)}
-.btn-rd{background:rgba(239,68,68,.14);border:1.5px solid rgba(239,68,68,.30);color:#fca5a5}
-.btn-gh{background:transparent;border:1.5px solid rgba(124,58,237,.35);color:var(--mt)}
-.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
-.btn-sm{width:auto;padding:.45rem .85rem;font-size:.78rem}
-.err{background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.28);
-  border-radius:var(--rs);color:#fca5a5;font-size:.83rem;font-weight:600;
-  padding:.6rem .9rem;margin-bottom:.75rem;display:none}
-.err.show{display:block}
+/* LOGIN */
+.login-wrap{position:fixed;inset:0;z-index:999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:var(--sf);border:1px solid var(--gb1);border-radius:var(--r);
+  padding:2.5rem;width:100%;max-width:380px;text-align:center}
+.login-logo{font-family:'Fredoka One',cursive;font-size:2rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.login-sub{color:var(--mt);font-size:.82rem;margin-bottom:1.5rem}
+.login-input{width:100%;background:rgba(10,7,20,.8);border:1.5px solid rgba(124,58,237,.3);
+  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;font-size:1rem;
+  font-weight:700;padding:.75rem 1rem;outline:none;text-align:center;letter-spacing:.15em;margin-bottom:1rem}
+.login-btn{width:100%;border:none;border-radius:var(--rs);cursor:pointer;
+  font-family:'Nunito',sans-serif;font-weight:900;padding:.8rem;font-size:.95rem;
+  background:linear-gradient(135deg,var(--ac),var(--pk));color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.4)}
+.login-err{color:#fca5a5;font-size:.8rem;margin-top:.5rem;display:none}
 
-/* ── MAIN APP ── */
-#sc-app{display:none;position:relative;z-index:1;padding:1rem}
-.app-wrap{max-width:1100px;margin:0 auto}
+/* APP */
+.app{display:none;position:relative;z-index:1}
 
-/* TOP BAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:1.25rem;gap:.75rem;flex-wrap:wrap}
-.topbar-brand{font-family:'Fredoka One',cursive;font-size:1.4rem;
-  background:linear-gradient(135deg,var(--ac2),var(--pk2));
+/* TOPBAR */
+.topbar{background:rgba(8,6,15,.95);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(124,58,237,.15);
+  padding:.75rem 1.2rem;display:flex;align-items:center;justify-content:space-between;
+  gap:.75rem;flex-wrap:wrap;position:sticky;top:0;z-index:50}
+.topbar-brand{font-family:'Fredoka One',cursive;font-size:1.1rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.topbar-badge{background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.30);
-  border-radius:100px;color:#fca5a5;font-size:.68rem;font-weight:800;
-  letter-spacing:.08em;padding:.18rem .55rem;text-transform:uppercase}
-.topbar-right{display:flex;align-items:center;gap:.6rem}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--gr);
-  animation:pulse 2s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.4)}
-  50%{opacity:.85;box-shadow:0 0 0 5px rgba(16,185,129,0)}}
-.live-lbl{font-size:.75rem;font-weight:700;color:var(--gr)}
+.topbar-sub{font-size:.65rem;color:var(--mt);font-weight:700;letter-spacing:.05em}
+.prod-tabs{display:flex;gap:.35rem;flex-wrap:wrap}
+.prod-tab{border:1.5px solid rgba(124,58,237,.2);border-radius:100px;background:transparent;
+  color:var(--mt);cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;
+  font-size:.72rem;padding:.3rem .75rem;transition:all .2s}
+.prod-tab:hover{border-color:var(--ac2);color:var(--tx)}
+.prod-tab.active{color:#fff;border-color:transparent}
+.prod-tab.game.active{background:linear-gradient(135deg,var(--ac),var(--pk))}
+.prod-tab.mani.active{background:linear-gradient(135deg,#db2777,#ec4899)}
+.prod-tab.arriendo.active{background:linear-gradient(135deg,#0e7490,#14b8a6)}
+.prod-tab.all.active{background:linear-gradient(135deg,#374151,#6b7280)}
+.refresh-btn{border:1px solid rgba(124,58,237,.25);border-radius:var(--rs);
+  background:transparent;color:var(--mt);cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.72rem;font-weight:800;padding:.3rem .7rem;transition:all .2s}
+.refresh-btn:hover{border-color:var(--ac2);color:var(--tx)}
 
-/* CARDS */
-.card{background:var(--sf);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--gb);border-radius:var(--r);padding:1.2rem 1.3rem;
-  margin-bottom:1rem;box-shadow:var(--gs)}
-.sec{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ac2);
-  margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+/* MAIN */
+.main{padding:1rem;max-width:1100px;margin:0 auto}
 
-/* GLOBAL KPIs */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:1rem}
-.kpi{background:rgba(18,12,38,.95);border:1px solid rgba(124,58,237,.20);
-  border-radius:var(--rs);padding:.85rem;text-align:center}
-.kpi-click{cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
-.kpi-click:hover{transform:translateY(-2px);border-color:rgba(168,85,247,.45);background:rgba(124,58,237,.10)}
-.buscar-in{width:100%;background:rgba(6,4,17,.75);border:1.5px solid rgba(124,58,237,.25);
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:1.2rem}
+.kpi{background:var(--sf);border:1px solid rgba(124,58,237,.15);border-radius:var(--rs);
+  padding:.85rem;text-align:center}
+.kpi-v{font-family:'Fredoka One',cursive;font-size:1.8rem;line-height:1;margin-bottom:.18rem}
+.kpi-l{color:var(--mt);font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.kpi-game .kpi-v{color:var(--ac2)}
+.kpi-mani .kpi-v{color:var(--pk)}
+.kpi-arriendo .kpi-v{color:var(--teal)}
+.kpi-total .kpi-v{color:var(--gd)}
+.kpi-espera .kpi-v{color:var(--bl)}
+.kpi-verif .kpi-v{color:var(--gr)}
+
+/* SECTION */
+.section{background:var(--sf);border:1px solid rgba(124,58,237,.15);border-radius:var(--r);
+  margin-bottom:1rem;overflow:hidden}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.1rem;border-bottom:1px solid rgba(124,58,237,.1);flex-wrap:wrap;gap:.5rem}
+.section-title{font-family:'Fredoka One',cursive;font-size:.95rem;display:flex;align-items:center;gap:.4rem}
+.section-body{padding:.75rem}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.tbl th{padding:.5rem .7rem;text-align:left;font-size:.62rem;font-weight:800;
+  color:var(--mt);letter-spacing:.05em;text-transform:uppercase;
+  border-bottom:1px solid rgba(124,58,237,.12)}
+.tbl td{padding:.55rem .7rem;border-bottom:1px solid rgba(124,58,237,.07);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(124,58,237,.04)}
+.tbl-empty{text-align:center;color:var(--mt);padding:2rem;font-weight:700}
+
+/* BADGES */
+.badge{display:inline-block;border-radius:100px;font-size:.62rem;font-weight:800;
+  padding:.12rem .52rem;white-space:nowrap}
+.b-pend{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.b-verif{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.22);color:#6ee7b7}
+.b-rech{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.b-activo{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#93c5fd}
+.b-piloto{background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);color:#f9a8d4}
+.b-espera{background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2);color:#5eead4}
+
+/* ACTION BTNS */
+.abtn{border:none;border-radius:6px;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:.65rem;font-weight:800;padding:.22rem .55rem;transition:all .2s;white-space:nowrap}
+.abtn-gr{background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.abtn-gr:hover{background:rgba(16,185,129,.25)}
+.abtn-rd{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.22);color:#fca5a5}
+.abtn-rd:hover{background:rgba(239,68,68,.22)}
+.abtn-bl{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.22);color:#93c5fd}
+.abtn-bl:hover{background:rgba(59,130,246,.22)}
+.abtn-am{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22);color:#fcd34d}
+.abtn-am:hover{background:rgba(245,158,11,.22)}
+.abtn-tl{background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.22);color:#5eead4}
+.abtn-tl:hover{background:rgba(20,184,166,.22)}
+.abtn-gap{display:flex;gap:.3rem;flex-wrap:wrap}
+
+/* RUT VALIDATOR */
+.rut-validator{background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.18);
+  border-radius:var(--rs);padding:.85rem 1rem;margin-bottom:.75rem}
+.rut-title{font-size:.72rem;font-weight:800;color:var(--teal);margin-bottom:.6rem;letter-spacing:.04em}
+.rut-row{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
+.rut-inp{background:rgba(10,7,20,.8);border:1.5px solid rgba(20,184,166,.25);border-radius:var(--rs);
+  color:var(--tx);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;
+  padding:.5rem .8rem;outline:none;flex:1;min-width:120px}
+.rut-inp:focus{border-color:var(--teal)}
+.rut-link{display:inline-flex;align-items:center;gap:.3rem;background:var(--teal);
+  border:none;border-radius:var(--rs);color:#fff;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;
+  padding:.5rem .9rem;text-decoration:none;white-space:nowrap;transition:filter .2s}
+.rut-link:hover{filter:brightness(1.1)}
+.rut-result{margin-top:.5rem;font-size:.75rem;border-radius:6px;padding:.4rem .7rem;display:none}
+.rut-ok{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2)}
+.rut-err{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
+
+/* NOTA */
+.nota{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);
+  border-radius:var(--rs);padding:.65rem .9rem;font-size:.76rem;color:var(--mt);
+  line-height:1.6;margin-bottom:.75rem}
+.nota strong{color:var(--gd)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:#120e28;border:1px solid rgba(124,58,237,.3);border-radius:var(--r);
+  padding:1.5rem;width:100%;max-width:500px;max-height:90dvh;overflow-y:auto}
+.modal-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--ac2);margin-bottom:1rem}
+.modal-close{float:right;background:none;border:none;color:var(--mt);cursor:pointer;font-size:1.1rem}
+.modal-field{margin-bottom:.65rem}
+.modal-field label{display:block;font-size:.65rem;font-weight:800;color:var(--mt);
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:.2rem}
+.modal-field .val{font-size:.85rem;color:var(--tx);font-weight:600;line-height:1.5}
+.modal-field a{color:var(--teal);text-decoration:none;font-size:.82rem}
+.modal-field a:hover{text-decoration:underline}
+.modal-btns{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;
+  background:#1e1a3a;border:1px solid rgba(124,58,237,.3);border-radius:var(--rs);
+  padding:.75rem 1.1rem;font-size:.82rem;font-weight:700;color:var(--tx);
+  box-shadow:0 8px 28px rgba(0,0,0,.4);display:none;max-width:320px}
+.toast.show{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SEARCH */
+.search-inp{background:rgba(10,7,20,.7);border:1.5px solid rgba(124,58,237,.2);
   border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
-  font-size:.85rem;font-weight:600;padding:.6rem .9rem;outline:none;margin-bottom:.9rem}
-.buscar-in:focus{border-color:var(--ac2)}
-.highlight-flash{animation:flashBorder 1.2s ease-out}
-@keyframes flashBorder{
-  0%{box-shadow:0 0 0 3px rgba(236,72,153,.55)}
-  100%{box-shadow:0 0 0 0 rgba(236,72,153,0)}
-}
-.kpi-v{font-family:'Fredoka One',cursive;font-size:1.75rem;color:var(--gd);line-height:1.1;margin-bottom:.15rem}
-.kpi-l{color:var(--mt);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  font-size:.82rem;font-weight:600;padding:.42rem .85rem;outline:none;width:200px;transition:border-color .2s}
+.search-inp:focus{border-color:var(--ac2)}
 
-/* NEGOCIOS TABLE */
-.neg-list{display:flex;flex-direction:column;gap:.55rem}
-.neg-row{background:rgba(18,12,38,.90);border:1px solid rgba(124,58,237,.18);
-  border-radius:var(--rs);padding:.85rem 1rem;
-  display:grid;grid-template-columns:1fr auto;gap:.75rem;align-items:center}
-.neg-row.inactivo{opacity:.5;border-color:rgba(239,68,68,.18)}
-.neg-info{min-width:0}
-.neg-name{font-weight:800;font-size:.92rem;margin-bottom:.2rem;
-  display:flex;align-items:center;gap:.5rem}
-.neg-slug{color:var(--mt);font-size:.72rem;font-weight:600;font-family:monospace}
-.neg-stats{display:flex;gap:.85rem;flex-wrap:wrap;margin-top:.3rem}
-.neg-stat{font-size:.75rem;color:var(--mt);font-weight:700}
-.neg-stat span{color:var(--tx);font-weight:800}
-.neg-actions{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
-.badge-activo{background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);
-  border-radius:100px;color:#6ee7b7;font-size:.66rem;font-weight:800;padding:.12rem .5rem}
-.badge-inactivo{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.24);
-  border-radius:100px;color:#fca5a5;font-size:.66rem;font-weight:800;padding:.12rem .5rem}
-
-/* HISTORIAL GLOBAL */
-.h-list{list-style:none;display:flex;flex-direction:column;gap:.28rem;
-  max-height:260px;overflow-y:auto;padding-right:.2rem}
-.h-list::-webkit-scrollbar{width:4px}
-.h-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.35);border-radius:2px}
-.h-item{background:rgba(18,12,38,.85);border-radius:8px;
-  display:grid;grid-template-columns:auto 1fr auto auto;
-  gap:.4rem;align-items:center;font-size:.77rem;font-weight:600;padding:.38rem .65rem}
-.h-neg{color:var(--ac2);font-size:.68rem;font-weight:800;white-space:nowrap}
-.h-premio{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.h-date{color:var(--mt);font-size:.66rem;white-space:nowrap}
-.empty{color:var(--mt);font-size:.82rem;text-align:center;padding:.85rem}
-
-/* REFRESH */
-.refresh-bar{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
-.refresh-bar select{background:rgba(6,4,17,.75);border:1.5px solid rgba(124,58,237,.25);
-  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
-  font-size:.82rem;font-weight:700;padding:.48rem .75rem;outline:none}
-.last-upd{color:var(--mt);font-size:.72rem;font-weight:600;margin-left:auto}
-
-@media(max-width:600px){
-  .neg-row{grid-template-columns:1fr}
-  .neg-actions{justify-content:flex-start}
-  .h-item{grid-template-columns:auto 1fr auto}
-  .h-date{display:none}
-}
+.foot{text-align:center;color:var(--dim);font-size:.7rem;padding:1.5rem;line-height:1.8}
 </style>
 </head>
 <body>
 
-<!-- ========== LOGIN ========== -->
-<div id="sc-login">
-  <div class="login-wrap">
-    <div class="sa-brand">⚡ AUMVEN</div>
-    <div class="sa-sub">Super Admin · Acceso restringido</div>
-    <div class="login-card">
-      <p>Solo el administrador de la plataforma puede acceder aquí.</p>
-      <div class="err" id="err-login">Clave incorrecta. Intenta de nuevo.</div>
-      <input class="pin-in" type="password" id="pin-in"
-        placeholder="Clave de acceso" autocomplete="off" maxlength="20">
-      <button class="btn btn-pk" onclick="loginSuperAdmin()">🔐 Entrar al Panel</button>
-    </div>
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">⚡ AUMVEN</div>
+    <div class="login-sub">Super Admin CEO — Panel Unificado</div>
+    <input class="login-input" type="password" id="login-pass" placeholder="••••••••••••"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-err" id="login-err">Clave incorrecta</div>
   </div>
 </div>
 
-<!-- ========== APP ========== -->
-<div id="sc-app">
-  <div class="app-wrap">
+<!-- APP -->
+<div class="app" id="app">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div>
-        <div class="topbar-brand">⚡ Super Admin</div>
-        <span class="topbar-badge">AUMVEN PRO</span>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-brand">⚡ AUMVEN — Super Admin</div>
+      <div class="topbar-sub">Panel CEO Unificado · <span id="hora-actual"></span></div>
+    </div>
+    <div class="prod-tabs">
+      <button class="prod-tab all active" onclick="setView('all',this)">🌐 Todo</button>
+      <button class="prod-tab game" onclick="setView('game',this)">🎮 Pro</button>
+      <button class="prod-tab mani" onclick="setView('mani',this)">💅 Manicure</button>
+      <button class="prod-tab arriendo" onclick="setView('arriendo',this)">🏠 Arriendo</button>
+    </div>
+    <button class="refresh-btn" onclick="cargarTodo()">↺ Actualizar</button>
+  </div>
+
+  <div class="main">
+
+    <!-- KPIs -->
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi kpi-total"><div class="kpi-v" id="k-total">—</div><div class="kpi-l">Total registros</div></div>
+      <div class="kpi kpi-game"><div class="kpi-v" id="k-game">—</div><div class="kpi-l">Negocios Pro</div></div>
+      <div class="kpi kpi-mani"><div class="kpi-v" id="k-mani">—</div><div class="kpi-l">Manicuristas</div></div>
+      <div class="kpi kpi-arriendo"><div class="kpi-v" id="k-arriendo">—</div><div class="kpi-l">Arriendo usuarios</div></div>
+      <div class="kpi kpi-espera"><div class="kpi-v" id="k-espera">—</div><div class="kpi-l">Lista espera</div></div>
+      <div class="kpi kpi-verif"><div class="kpi-v" id="k-verif">—</div><div class="kpi-l">Verificados</div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: AUMVEN PRO -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-game">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--ac2)">🎮 AUMVEN Pro — Negocios activos</div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input class="search-inp" type="text" placeholder="Buscar negocio..." oninput="filtrarTabla('tbl-game',this.value)">
+          <span id="cnt-game" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+        </div>
       </div>
-      <div class="topbar-right">
-        <div class="live-dot"></div>
-        <div class="live-lbl">En vivo</div>
-        <button class="btn btn-gh btn-sm" onclick="cargarTodo()">↺ Actualizar</button>
-        <button class="btn btn-rd btn-sm" onclick="cerrarSesion()">Salir</button>
+      <div class="section-body" style="overflow-x:auto">
+        <table class="tbl" id="tbl-game">
+          <thead><tr>
+            <th>Negocio</th><th>Slug</th><th>WhatsApp</th><th>Juego</th>
+            <th>Suscripción</th><th>Estado</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="tbody-game"><tr><td colspan="7" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- GLOBAL KPIs -->
-    <div class="card">
-      <div class="sec">📊 Resumen Global de la Plataforma</div>
-      <div class="kpi-row">
-        <div class="kpi kpi-click" onclick="irANegociosYBuscar()" title="Ver lista de negocios">
-          <div class="kpi-v" id="g-negocios">—</div><div class="kpi-l">Negocios activos</div>
-        </div>
-        <div class="kpi kpi-click" onclick="irAHistorial('todo')" title="Ver historial completo">
-          <div class="kpi-v" id="g-juegos">—</div><div class="kpi-l">Juegos totales</div>
-        </div>
-        <div class="kpi kpi-click" onclick="irAHistorial('hoy')" title="Ver juegos de hoy">
-          <div class="kpi-v" id="g-hoy">—</div><div class="kpi-l">Juegos hoy</div>
-        </div>
-        <div class="kpi kpi-click" onclick="irAHistorial('semana')" title="Ver juegos de la semana">
-          <div class="kpi-v" id="g-semana">—</div><div class="kpi-l">Juegos esta semana</div>
-        </div>
-        <div class="kpi"><div class="kpi-v" id="g-utilidad">—</div><div class="kpi-l">Utilidad global estimada</div></div>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: HISTORIAL JUEGOS -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-historial">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--ac2)">📊 Historial de juegos (últimos 20)</div>
+        <span id="cnt-hist" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+      </div>
+      <div class="section-body" style="overflow-x:auto">
+        <table class="tbl" id="tbl-hist">
+          <thead><tr>
+            <th>Negocio</th><th>Código</th><th>Premio</th><th>Tipo</th><th>Ganó</th><th>Fecha</th>
+          </tr></thead>
+          <tbody id="tbody-hist"><tr><td colspan="6" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- NEGOCIOS -->
-    <div class="card" id="card-negocios">
-      <div class="sec">🏪 Negocios en la Plataforma</div>
-      <input type="text" id="buscar-neg" class="buscar-in" placeholder="🔎 Buscar negocio por nombre o id..." oninput="renderNegocios()">
-      <div class="neg-list" id="neg-list">
-        <div class="empty">Cargando negocios...</div>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: ARRIENDO SEGURO -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-arriendo">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--teal)">🏠 Arriendo Seguro — Verificación de usuarios</div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input class="search-inp" type="text" placeholder="Buscar usuario..." oninput="filtrarTabla('tbl-arriendo',this.value)">
+          <span id="cnt-arriendo" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <!-- VALIDADOR RUT-ROL -->
+        <div class="rut-validator">
+          <div class="rut-title">🔍 Validador RUT + Rol de Propiedad (SII)</div>
+          <div class="nota">
+            <strong>¿Cómo funciona?</strong> Ingresa el RUT del arrendador y el Rol de la propiedad que declaró.
+            El sistema genera el link directo al SII y al CBR para que verifiques con un clic que ese RUT es efectivamente dueño de ese rol.
+            También valida el dígito verificador del RUT automáticamente.
+          </div>
+          <div class="rut-row">
+            <div style="flex:1;min-width:130px">
+              <div style="font-size:.65rem;color:var(--mt);font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.2rem">RUT (ej: 12.345.678-9)</div>
+              <input class="rut-inp" type="text" id="rut-input" placeholder="12.345.678-9" oninput="formatRut(this)" onblur="validarRut()">
+            </div>
+            <div style="flex:1;min-width:130px">
+              <div style="font-size:.65rem;color:var(--mt);font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.2rem">Rol propiedad (ej: 1234-5)</div>
+              <input class="rut-inp" type="text" id="rol-input" placeholder="1234-5">
+            </div>
+            <div style="flex:1;min-width:130px">
+              <div style="font-size:.65rem;color:var(--mt);font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.2rem">Comuna</div>
+              <input class="rut-inp" type="text" id="comuna-input" placeholder="Viña del Mar">
+            </div>
+            <button class="rut-link" onclick="verificarRutRol()">🔍 Verificar en SII</button>
+          </div>
+          <div id="rut-result" class="rut-result"></div>
+          <div id="rut-links" style="display:none;margin-top:.6rem;display:flex;gap:.5rem;flex-wrap:wrap"></div>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="tbl" id="tbl-arriendo">
+            <thead><tr>
+              <th>Nombre</th><th>Email</th><th>Rol</th><th>RUT declarado</th>
+              <th>Rol propiedad</th><th>Docs</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-arriendo"><tr><td colspan="8" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- ROADMAP CEO -->
-    <div class="card" id="card-roadmap">
-      <div class="sec">🗺️ Roadmap AUMVEN — Solo visible para el CEO</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.75rem">
-
-        <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🎮</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Pro</span>
-            <span style="background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.30);border-radius:100px;color:#6ee7b7;font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">✅ ACTIVO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Gamificación para aumentar ticket promedio. Juegos de globos, cofres y raspe digital. Premios configurables, métricas en tiempo real, historial centralizado en Supabase.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--gr);font-weight:700">💰 $9.990/mes por negocio</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🛒</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Tiendas</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Catálogo digital express para ventas por WhatsApp. El cliente elige productos desde su celular, genera un carrito y el pedido llega formateado al WhatsApp del comerciante. Sin app, sin instalación.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: almacenes, botillerías, carros de comida</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">⚡</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Venta Veloz</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">POS táctil con botones visuales gigantes para productos sin código de barra (pan, cecinas, frutas). Funciona 100% offline y sincroniza automáticamente cuando vuelve la red. Ideal para comunas periféricas.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: almacenes, ferias libres, panaderías</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🤖</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN CaseroBot</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Bot automático para WhatsApp Business que responde precios del día al instante. El verdulero/almacenero actualiza su lista de precios desde el celular y el bot responde a los clientes 24/7 sin intervención humana.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: verdulerías, almacenes, pescaderías</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">💸</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN PagaFácil</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Genera hasta 50 links de cobro personalizados con un clic y los despacha automáticamente por WhatsApp. Panel visual de quién pagó (verde) y quién debe (rojo). Integrado con Flow/Mercado Pago.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: profesores, entrenadores, talleres, arriendos</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">⭐</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN StarBoost</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Automatiza la recolección de reseñas de Google. El negocio ingresa el WhatsApp del cliente, el sistema manda un mensaje automático con link directo a Google Maps. Si deja 5 estrellas, recibe un raspe digital de premio.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: restaurantes, barberías, dentistas, spas</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🚗</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Oscar Wash</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Sistema de turnos digitales para car wash y talleres. Ticket digital con número de turno y tiempo estimado calculado por IA. WhatsApp automático cuando el auto pasa a secado. Elimina filas y autos acumulados.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: car wash, talleres mecánicos, vulcanizaciones</div>
-        </div>
-
-        <div style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">📡</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Radar</span>
-            <span style="background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.25);border-radius:100px;color:var(--ac2);font-size:.62rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="font-size:.8rem;color:var(--mt);line-height:1.6">Comparador de precios de canasta básica por comuna. Los usuarios reportan precios sacando foto a la boleta. El sistema muestra dónde comprar más barato hoy. Modelo freemium: gratis para familias, suscripción para comercios que quieren aparecer destacados.</p>
-          <div style="margin-top:.5rem;font-size:.72rem;color:var(--ac2);font-weight:700">🎯 Target: familias + comercios locales que quieren visibilidad</div>
-        </div>
-
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: PROPIEDADES ARRIENDO -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-props">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--teal)">🏡 Propiedades publicadas</div>
+        <span id="cnt-props" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
       </div>
-
-      <!-- NOTAS PRIVADAS CEO -->
-      <div style="margin-top:1.1rem;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.20);border-radius:var(--rs);padding:.9rem">
-        <div style="font-size:.75rem;font-weight:800;color:var(--gd);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem">📝 Notas Estratégicas CEO</div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:.4rem">
-          <li style="font-size:.8rem;color:var(--mt)">✅ <strong style="color:var(--tx)">Slogan oficial:</strong> "Vende más a los clientes que ya tienes"</li>
-          <li style="font-size:.8rem;color:var(--mt)">🎯 <strong style="color:var(--tx)">Mercado prioritario:</strong> Comercio local Chile → LatAm en 12-18 meses</li>
-          <li style="font-size:.8rem;color:var(--mt)">💰 <strong style="color:var(--tx)">Modelo de cobro:</strong> $9.990/mes Plan Comercio · $24.990/mes Plan Cadena</li>
-          <li style="font-size:.8rem;color:var(--mt)">🚀 <strong style="color:var(--tx)">Meta corto plazo:</strong> 10 pilotos validados → video con datos reales → escalar</li>
-          <li style="font-size:.8rem;color:var(--mt)">🔗 <strong style="color:var(--tx)">Dominio:</strong> aumven.cl · Juego: aumven.cl/juego.html?neg=SLUG</li>
-          <li style="font-size:.8rem;color:var(--mt)">⚙️ <strong style="color:var(--tx)">Stack:</strong> GitHub Pages + Supabase (Brasil) + Cloudflare + Flow.cl</li>
-        </ul>
+      <div class="section-body" style="overflow-x:auto">
+        <table class="tbl" id="tbl-props">
+          <thead><tr>
+            <th>Título</th><th>Tipo</th><th>Modalidad</th><th>Comuna</th>
+            <th>Precio</th><th>Estado</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="tbody-props"><tr><td colspan="7" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- HISTORIAL GLOBAL -->
-    <div class="card" id="card-historial">
-      <div class="sec">🎮 Actividad Reciente (todos los negocios)</div>
-      <div class="refresh-bar">
-        <select id="fil-per" onchange="renderHistorialGlobal()">
-          <option value="hoy">Hoy</option>
-          <option value="semana">Esta semana</option>
-          <option value="mes" selected>Este mes</option>
-          <option value="todo">Todo el historial</option>
-        </select>
-        <span class="last-upd" id="last-upd">—</span>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: LISTA DE ESPERA -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-espera">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--bl)">📋 Lista de espera — Todos los productos</div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input class="search-inp" type="text" placeholder="Buscar..." oninput="filtrarTabla('tbl-espera',this.value)">
+          <span id="cnt-espera" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+        </div>
       </div>
-      <ul class="h-list" id="h-list-global">
-        <li class="empty">Cargando actividad...</li>
-      </ul>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════
-         🗺️ ROADMAP CEO — Solo visible para ti
-    ════════════════════════════════════════════════ -->
-    <div class="card" style="margin-top:1rem">
-      <div class="sec">🗺️ Roadmap CEO — Ecosistema AUMVEN</div>
-      <p style="color:var(--mt);font-size:.82rem;margin-bottom:1.1rem;line-height:1.6">
-        Vista privada del portafolio completo. Solo visible en este panel.
-      </p>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.75rem">
-
-        <!-- PRO -->
-        <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.28);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🎮</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Pro</span>
-            <span style="background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.30);border-radius:100px;color:#6ee7b7;font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">✅ ACTIVO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Gamificación para aumentar ticket promedio. Juegos de globos, cofres y raspe. Panel Admin, métricas en Supabase, multi-tenant por slug.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--gd);font-weight:700">💰 $9.990/mes · Plan Cadena $24.990/mes</div>
-        </div>
-
-        <!-- TIENDAS -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🛒</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Tiendas</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Catálogo digital express para ventas por WhatsApp. El cliente elige productos desde su celular y el pedido llega formateado al WhatsApp del comerciante listo para despachar.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: almacenes, botillerías, delivery</div>
-        </div>
-
-        <!-- VENTA VELOZ -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">⚡</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Venta Veloz</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">POS táctil con botones visuales para productos sin código de barra (pan, cecinas, frutas). Funciona sin internet y sincroniza automáticamente cuando vuelve la red.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: almacenes, fruterías, panaderías</div>
-        </div>
-
-        <!-- CASEROBOT -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🤖</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN CaseroBot</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Bot automático para WhatsApp Business que responde precios del día al instante. El verdulero/almacenero actualiza su lista desde un panel simple y el bot responde solo las 24 hrs.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: verdulerías, almacenes, ferias</div>
-        </div>
-
-        <!-- PAGAFACIL -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">💸</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN PagaFácil</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Genera 20 links de pago personalizados con un clic y los despacha por WhatsApp automáticamente. Panel verde/rojo de quién pagó y quién debe. Para profesores, entrenadores, talleres.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: profesores, gimnasios, prestadores</div>
-        </div>
-
-        <!-- STARBOOST -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">⭐</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN StarBoost</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Automatiza reseñas de Google. El negocio ingresa el WhatsApp del cliente, el sistema le manda un link directo a Google Maps para calificar. Si deja 5 estrellas, gana un raspe digital.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: restaurantes, barberías, dentistas</div>
-        </div>
-
-        <!-- OSCAR WASH -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">🚗</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Oscar Wash</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Gestión de turnos para car wash y talleres. Ticket digital con tiempo de espera calculado. El cliente recibe aviso por WhatsApp cuando es su turno — sin filas, sin espera presencial.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: car wash, talleres mecánicos</div>
-        </div>
-
-        <!-- RADAR -->
-        <div style="background:var(--sf);border:1px solid var(--gb);border-radius:var(--rs);padding:1rem">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-            <span style="font-size:1.3rem">📡</span>
-            <span style="font-weight:900;font-size:.92rem">AUMVEN Radar</span>
-            <span style="background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;padding:.1rem .5rem;margin-left:auto">🔒 PRÓXIMO</span>
-          </div>
-          <p style="color:var(--mt);font-size:.8rem;line-height:1.55">Comparador de precios de la canasta básica por comuna. Los usuarios reportan precios sacando foto a su boleta. Las familias ven dónde comprar más barato esta semana — ahorrando hasta 30%.</p>
-          <div style="margin-top:.6rem;font-size:.75rem;color:var(--mt);font-weight:700">🎯 Target: consumidores finales, comunas periféricas</div>
-        </div>
-
-      </div>
-
-      <!-- MÉTRICAS CEO -->
-      <div style="margin-top:1.2rem;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);border-radius:var(--rs);padding:1rem">
-        <div style="font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--ac2);margin-bottom:.65rem">📈 Proyección de ingresos (estimado)</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;font-size:.8rem">
-          <div style="text-align:center">
-            <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gd)" id="proy-10">$99.900</div>
-            <div style="color:var(--mt);font-size:.68rem;text-transform:uppercase;letter-spacing:.04em">10 clientes/mes</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gd)">$499.500</div>
-            <div style="color:var(--mt);font-size:.68rem;text-transform:uppercase;letter-spacing:.04em">50 clientes/mes</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gd)">$999.000</div>
-            <div style="color:var(--mt);font-size:.68rem;text-transform:uppercase;letter-spacing:.04em">100 clientes/mes</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:#10b981">$2.997.000</div>
-            <div style="color:#6ee7b7;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em">300 clientes/mes 🚀</div>
-          </div>
-        </div>
-        <p style="color:var(--mt);font-size:.72rem;margin-top:.65rem;line-height:1.5">
-          * Basado en Plan Comercio $9.990/mes. Con Plan Cadena y múltiples productos, el ingreso por cliente sube significativamente.
-        </p>
+      <div class="section-body" style="overflow-x:auto">
+        <table class="tbl" id="tbl-espera">
+          <thead><tr>
+            <th>Nombre</th><th>Email</th><th>Teléfono</th><th>Rol / Proyecto</th>
+            <th>Región</th><th>Fecha</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="tbody-espera"><tr><td colspan="7" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+        </table>
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: REPORTES ESTAFA -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-reportes">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--rd)">🚨 Reportes de estafa — Pendientes de revisión</div>
+        <span id="cnt-rep" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+      </div>
+      <div class="section-body" style="overflow-x:auto">
+        <table class="tbl" id="tbl-rep">
+          <thead><tr>
+            <th>Tipo</th><th>Descripción</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="tbody-rep"><tr><td colspan="5" class="tbl-empty">⏳ Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SECCIÓN: MANICURE -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="section" id="sec-mani">
+      <div class="section-hdr">
+        <div class="section-title" style="color:var(--pk)">💅 AUMVEN Manicure — Pilotos activos</div>
+        <span id="cnt-mani" style="font-size:.72rem;color:var(--mt);font-weight:700"></span>
+      </div>
+      <div class="section-body">
+        <div class="nota">
+          <strong>Supabase Manicure:</strong> Proyecto separado (<code>jcbqksnnuacfuryztqop</code>).
+          Configura las credenciales de Manicure en el código para ver los datos aquí.
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="tbl-mani">
+            <thead><tr>
+              <th>Manicurista</th><th>Negocio</th><th>WhatsApp</th><th>Estado</th><th>Suscripción</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-mani">
+              <tr><td colspan="6" class="tbl-empty">📌 Conecta el proyecto Supabase de Manicure para ver datos</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">AUMVEN Super Admin CEO · Panel Unificado · Acceso restringido · <span id="foot-fecha"></span></div>
   </div>
 </div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-bg" id="modal-bg" onclick="cerrarModalBg(event)">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
 // ================================================================
-//  SUPABASE
+// CONFIG
 // ================================================================
-const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var PASS = 'SUPERRIC2026';
+
+// Supabase AUMVEN Pro
+var SB_PRO_URL = 'https://wfosczhszouukypsvasx.supabase.co';
+var SB_PRO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY';
+
+// Supabase Arriendo Seguro — REEMPLAZA CON TUS CREDENCIALES
+var SB_AS_URL = 'TU_SUPABASE_ARRIENDO_URL';
+var SB_AS_KEY = 'TU_SUPABASE_ARRIENDO_KEY';
+
+var sbPro = supabase.createClient(SB_PRO_URL, SB_PRO_KEY);
+var sbAs = null;
+try {
+  if(SB_AS_URL !== 'TU_SUPABASE_ARRIENDO_URL') {
+    sbAs = supabase.createClient(SB_AS_URL, SB_AS_KEY);
+  }
+} catch(e) {}
 
 // ================================================================
-//  CLAVE SUPER ADMIN — cámbiala por la tuya
+// LOGIN
 // ================================================================
-var SUPER_KEY = 'SUPERRIC2026';
+function doLogin() {
+  var pass = document.getElementById('login-pass').value;
+  if(pass === PASS) {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    iniciarApp();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('login-pass').value = '';
+  }
+}
 
-// ================================================================
-//  DOMINIO BASE — cambia esto cuando aumvenpro.cl esté conectado
-// ================================================================
-window.AUMVEN_BASE_URL = 'https://aumven.cl/juego.html';
-
-// ================================================================
-//  LOGIN
-// ================================================================
-document.getElementById('pin-in').addEventListener('keydown', function(e){
-  if (e.key === 'Enter') loginSuperAdmin();
+document.getElementById('login-pass').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') doLogin();
 });
 
-function loginSuperAdmin() {
-  var val = document.getElementById('pin-in').value.trim().toUpperCase();
-  if (val === SUPER_KEY) {
-    document.getElementById('sc-login').style.display = 'none';
-    document.getElementById('sc-app').style.display = 'block';
-    sessionStorage.setItem('sa_auth', '1');
-    cargarTodo();
-    // Auto-refresh cada 60 segundos
-    setInterval(cargarTodo, 60000);
-  } else {
-    var err = document.getElementById('err-login');
-    err.classList.add('show');
-    setTimeout(function(){ err.classList.remove('show'); }, 3000);
-    document.getElementById('pin-in').value = '';
-  }
-}
-
-function cerrarSesion() {
-  sessionStorage.removeItem('sa_auth');
-  document.getElementById('sc-app').style.display = 'none';
-  document.getElementById('sc-login').style.display = 'flex';
-  document.getElementById('pin-in').value = '';
-}
-
-// Restaurar sesión si ya estaba autenticado
-if (sessionStorage.getItem('sa_auth') === '1') {
-  document.getElementById('sc-login').style.display = 'none';
-  document.getElementById('sc-app').style.display = 'block';
+// ================================================================
+// INIT
+// ================================================================
+function iniciarApp() {
+  actualizarHora();
+  setInterval(actualizarHora, 30000);
+  document.getElementById('foot-fecha').textContent = new Date().toLocaleDateString('es-CL');
   cargarTodo();
-  setInterval(cargarTodo, 60000);
+}
+
+function actualizarHora() {
+  var now = new Date();
+  document.getElementById('hora-actual').textContent =
+    now.toLocaleString('es-CL', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
 }
 
 // ================================================================
-//  DATOS GLOBALES
+// VISTA POR PRODUCTO
 // ================================================================
-var todosNegocios = [];
-var todoHistorial = [];
+var vistaActual = 'all';
+var SECCIONES = {
+  all: ['sec-game','sec-historial','sec-mani','sec-arriendo','sec-props','sec-espera','sec-reportes'],
+  game: ['sec-game','sec-historial'],
+  mani: ['sec-mani'],
+  arriendo: ['sec-arriendo','sec-props','sec-espera','sec-reportes']
+};
 
+function setView(view, btn) {
+  vistaActual = view;
+  document.querySelectorAll('.prod-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var visible = SECCIONES[view] || SECCIONES.all;
+  ['sec-game','sec-historial','sec-mani','sec-arriendo','sec-props','sec-espera','sec-reportes'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.style.display = visible.includes(id) ? 'block' : 'none';
+  });
+}
+
+// ================================================================
+// CARGAR DATOS
+// ================================================================
 async function cargarTodo() {
-  await Promise.all([cargarNegocios(), cargarHistorialGlobal()]);
-  await revisarVencimientos();
-  await cargarNegocios(); // recargar por si algún negocio fue desactivado por vencimiento
-  renderKPIsGlobales();
-  renderHistorialGlobal();
-  document.getElementById('last-upd').textContent =
-    'Actualizado: ' + new Date().toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  toast('↺ Actualizando datos...', 'info');
+  await Promise.all([
+    cargarNegocios(),
+    cargarHistorial(),
+    cargarUsuariosArriendo(),
+    cargarPropiedades(),
+    cargarListaEspera(),
+    cargarReportes()
+  ]);
+  actualizarKPIs();
+  toast('✅ Datos actualizados', 'ok');
 }
 
+// ── AUMVEN PRO ──────────────────────────────────────────────────
+var negociosData = [];
 async function cargarNegocios() {
-  var { data, error } = await sb.from('configuraciones').select('*');
-  if (!error && data) {
-    todosNegocios = data;
-    renderNegocios();
+  try {
+    var { data } = await sbPro.from('configuraciones').select('*').order('suscripcion_vence', {ascending:true});
+    negociosData = data || [];
+    renderNegocios(negociosData);
+    document.getElementById('cnt-game').textContent = negociosData.length + ' negocios';
+    document.getElementById('k-game').textContent = negociosData.length;
+  } catch(e) { renderError('tbody-game', 7, 'Error cargando negocios: ' + e.message); }
+}
+
+function renderNegocios(data) {
+  var tbody = document.getElementById('tbody-game');
+  if(!data.length){ tbody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Sin negocios registrados</td></tr>'; return; }
+  var hoy = new Date();
+  tbody.innerHTML = data.map(function(n){
+    var vence = n.suscripcion_vence ? new Date(n.suscripcion_vence) : null;
+    var activo = n.activo && vence && vence > hoy;
+    var diasRestantes = vence ? Math.ceil((vence - hoy) / 86400000) : 0;
+    var estadoBadge = !n.activo ? '<span class="badge b-rech">Inactivo</span>'
+      : diasRestantes <= 3 ? '<span class="badge b-pend">⚠️ Vence en '+diasRestantes+'d</span>'
+      : '<span class="badge b-verif">Activo</span>';
+    return '<tr>'
+      +'<td><strong>'+esc(n.nombre||n.id)+'</strong></td>'
+      +'<td style="color:var(--ac2);font-family:monospace;font-size:.75rem">'+esc(n.id)+'</td>'
+      +'<td><a href="https://wa.me/'+esc(n.wa||'')+'" target="_blank" style="color:var(--teal)">'+esc(n.wa||'—')+'</a></td>'
+      +'<td>'+esc(n.juego||'—')+'</td>'
+      +'<td style="font-size:.75rem;color:var(--mt)">'+formatFecha(n.suscripcion_vence)+'</td>'
+      +'<td>'+estadoBadge+'</td>'
+      +'<td><div class="abtn-gap">'
+      +'<button class="abtn abtn-gr" onclick="marcarPagadoPro(\''+n.id+'\')">+30d</button>'
+      +'<button class="abtn '+(n.activo?'abtn-rd':'abtn-gr')+'" onclick="toggleActivoPro(\''+n.id+'\','+n.activo+')">'+  (n.activo?'Desactivar':'Activar')+'</button>'
+      +'<button class="abtn abtn-bl" onclick="verNegocio(\''+n.id+'\')">Ver</button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+async function marcarPagadoPro(id) {
+  var vence = new Date();
+  vence.setDate(vence.getDate() + 30);
+  await sbPro.from('configuraciones').update({activo:true, suscripcion_vence: vence.toISOString().split('T')[0]}).eq('id',id);
+  toast('✅ Negocio '+id+' activado por 30 días', 'ok');
+  cargarNegocios();
+}
+
+async function toggleActivoPro(id, activo) {
+  await sbPro.from('configuraciones').update({activo: !activo}).eq('id',id);
+  toast((activo?'⛔ Negocio desactivado':'✅ Negocio activado')+': '+id, activo?'warn':'ok');
+  cargarNegocios();
+}
+
+function verNegocio(id) {
+  var n = negociosData.find(function(x){ return x.id === id; });
+  if(!n) return;
+  var link = 'https://aumven.cl/juego.html?neg='+n.id;
+  abrirModal('🏪 '+esc(n.nombre||n.id),
+    '<div class="modal-field"><label>Negocio ID</label><div class="val">'+esc(n.id)+'</div></div>'
+    +'<div class="modal-field"><label>WhatsApp</label><div class="val"><a href="https://wa.me/'+esc(n.wa||'')+'" target="_blank">+'+esc(n.wa||'')+'</a></div></div>'
+    +'<div class="modal-field"><label>Juego</label><div class="val">'+esc(n.juego||'—')+'</div></div>'
+    +'<div class="modal-field"><label>Premios</label><div class="val">'+esc(Array.isArray(n.premios)?n.premios.join(', '):(n.premios||'—'))+'</div></div>'
+    +'<div class="modal-field"><label>Prefijo códigos</label><div class="val">'+esc(n.prefijo||'—')+'</div></div>'
+    +'<div class="modal-field"><label>Meta adicional</label><div class="val">$'+numFmt(n.adicional||0)+'</div></div>'
+    +'<div class="modal-field"><label>Link del juego</label><div class="val"><a href="'+link+'" target="_blank">'+link+'</a></div></div>'
+    +'<div class="modal-field"><label>Vencimiento</label><div class="val">'+formatFecha(n.suscripcion_vence)+'</div></div>'
+  );
+}
+
+// ── HISTORIAL ───────────────────────────────────────────────────
+async function cargarHistorial() {
+  try {
+    var { data, count } = await sbPro.from('historial').select('*', {count:'exact'}).order('created_at',{ascending:false}).limit(20);
+    var tbody = document.getElementById('tbody-hist');
+    document.getElementById('cnt-hist').textContent = (count||0) + ' juegos totales';
+    if(!data||!data.length){ tbody.innerHTML='<tr><td colspan="6" class="tbl-empty">Sin historial</td></tr>'; return; }
+    tbody.innerHTML = data.map(function(h){
+      return '<tr>'
+        +'<td style="color:var(--ac2);font-family:monospace;font-size:.74rem">'+esc(h.negocio_id||'—')+'</td>'
+        +'<td style="font-family:monospace;font-size:.74rem">'+esc(h.codigo||'—')+'</td>'
+        +'<td>'+esc(h.premio||'—')+'</td>'
+        +'<td>'+esc(h.tipo||'—')+'</td>'
+        +'<td>'+(h.gano?'<span class="badge b-verif">✅ Ganó</span>':'<span class="badge b-rech">❌ Consolación</span>')+'</td>'
+        +'<td style="font-size:.74rem;color:var(--mt)">'+formatFecha(h.created_at)+'</td>'
+        +'</tr>';
+    }).join('');
+  } catch(e) { renderError('tbody-hist',6,'Error: '+e.message); }
+}
+
+// ── ARRIENDO — USUARIOS ─────────────────────────────────────────
+var usuariosData = [];
+async function cargarUsuariosArriendo() {
+  var tbody = document.getElementById('tbody-arriendo');
+  if(!sbAs){ tbody.innerHTML='<tr><td colspan="8" class="tbl-empty">📌 Configura Supabase de Arriendo Seguro</td></tr>'; return; }
+  try {
+    var { data } = await sbAs.from('usuarios').select('*').order('created_at',{ascending:false});
+    usuariosData = data || [];
+    document.getElementById('cnt-arriendo').textContent = usuariosData.length + ' usuarios';
+    document.getElementById('k-arriendo').textContent = usuariosData.length;
+    var verificados = usuariosData.filter(function(u){ return u.estado_verificacion === 'verificado'; }).length;
+    document.getElementById('k-verif').textContent = verificados;
+    if(!usuariosData.length){ tbody.innerHTML='<tr><td colspan="8" class="tbl-empty">Sin usuarios registrados</td></tr>'; return; }
+    tbody.innerHTML = usuariosData.map(function(u){
+      var badge = {pendiente:'b-pend',verificado:'b-verif',rechazado:'b-rech'}[u.estado_verificacion]||'b-pend';
+      var rolBadge = u.rol === 'arrendador' ? '<span class="badge b-activo">🏠 Arrendador</span>' : '<span class="badge b-espera">🔍 Arrendatario</span>';
+      return '<tr>'
+        +'<td><strong>'+esc(u.nombre)+'</strong></td>'
+        +'<td style="font-size:.74rem">'+esc(u.email)+'</td>'
+        +'<td>'+rolBadge+'</td>'
+        +'<td style="font-family:monospace;font-size:.74rem">'+esc(u.rut||'—')+'</td>'
+        +'<td style="font-family:monospace;font-size:.74rem">'+esc(u.rol_propiedad||'—')+'</td>'
+        +'<td>'+(u.foto_documento?'<a href="'+esc(u.foto_documento)+'" target="_blank" class="abtn abtn-bl" style="text-decoration:none">📄 Ver docs</a>':'<span style="color:var(--dim);font-size:.74rem">Sin docs</span>')+'</td>'
+        +'<td><span class="badge '+badge+'">'+esc(u.estado_verificacion)+'</span></td>'
+        +'<td><div class="abtn-gap">'
+        +'<button class="abtn abtn-gr" onclick="verificarUsuario(\''+u.id+'\',\'verificado\')">✅ Verificar</button>'
+        +'<button class="abtn abtn-rd" onclick="verificarUsuario(\''+u.id+'\',\'rechazado\')">❌ Rechazar</button>'
+        +(u.rut?'<button class="abtn abtn-tl" onclick="cargarEnValidador(\''+esc(u.rut)+'\',\''+esc(u.rol_propiedad||'')+'\',\''+esc(u.comuna||'')+'\')">🔍 Validar</button>':'')
+        +'</div></td>'
+        +'</tr>';
+    }).join('');
+  } catch(e) { renderError('tbody-arriendo',8,'Error: '+e.message); }
+}
+
+async function verificarUsuario(id, estado) {
+  if(!sbAs) return;
+  await sbAs.from('usuarios').update({estado_verificacion: estado}).eq('id', id);
+  toast((estado==='verificado'?'✅ Usuario verificado':'❌ Usuario rechazado'), estado==='verificado'?'ok':'warn');
+  cargarUsuariosArriendo();
+}
+
+// ── ARRIENDO — PROPIEDADES ──────────────────────────────────────
+var propsData = [];
+async function cargarPropiedades() {
+  var tbody = document.getElementById('tbody-props');
+  if(!sbAs){ tbody.innerHTML='<tr><td colspan="7" class="tbl-empty">📌 Configura Supabase de Arriendo Seguro</td></tr>'; return; }
+  try {
+    var { data } = await sbAs.from('propiedades').select('*').order('created_at',{ascending:false});
+    propsData = data || [];
+    document.getElementById('cnt-props').textContent = propsData.length + ' propiedades';
+    if(!propsData.length){ tbody.innerHTML='<tr><td colspan="7" class="tbl-empty">Sin propiedades</td></tr>'; return; }
+    tbody.innerHTML = propsData.map(function(p){
+      var precio = p.modalidad === 'veraneo' ? '$'+numFmt(p.precio_diario||0)+'/día' : '$'+numFmt(p.precio_mensual||0)+'/mes';
+      return '<tr>'
+        +'<td><strong>'+esc(p.titulo)+'</strong></td>'
+        +'<td>'+esc(p.tipo)+'</td>'
+        +'<td>'+(p.modalidad==='veraneo'?'<span class="badge b-am">☀️ Veraneo</span>':'<span class="badge b-activo">🏠 Arriendo</span>')+'</td>'
+        +'<td>'+esc(p.comuna)+', '+esc(p.region)+'</td>'
+        +'<td style="font-family:\'Fredoka One\',cursive;color:var(--teal)">'+precio+'</td>'
+        +'<td>'+(p.activa?'<span class="badge b-verif">Activa</span>':'<span class="badge b-rech">Inactiva</span>')+'</td>'
+        +'<td><div class="abtn-gap">'
+        +'<button class="abtn '+(p.activa?'abtn-rd':'abtn-gr')+'" onclick="toggleProp('+p.id+','+p.activa+')">'+(p.activa?'Desactivar':'Activar')+'</button>'
+        +'</div></td>'
+        +'</tr>';
+    }).join('');
+  } catch(e) { renderError('tbody-props',7,'Error: '+e.message); }
+}
+
+async function toggleProp(id, activa) {
+  if(!sbAs) return;
+  await sbAs.from('propiedades').update({activa: !activa}).eq('id', id);
+  toast((activa?'⛔ Propiedad desactivada':'✅ Propiedad activada'), activa?'warn':'ok');
+  cargarPropiedades();
+}
+
+// ── LISTA DE ESPERA ─────────────────────────────────────────────
+var esperaData = [];
+async function cargarListaEspera() {
+  var tbody = document.getElementById('tbody-espera');
+  if(!sbAs){ tbody.innerHTML='<tr><td colspan="7" class="tbl-empty">📌 Configura Supabase de Arriendo Seguro</td></tr>'; return; }
+  try {
+    var { data } = await sbAs.from('lista_espera').select('*').order('created_at',{ascending:false});
+    esperaData = data || [];
+    document.getElementById('cnt-espera').textContent = esperaData.length + ' en lista';
+    document.getElementById('k-espera').textContent = esperaData.length;
+    if(!esperaData.length){ tbody.innerHTML='<tr><td colspan="7" class="tbl-empty">Lista de espera vacía</td></tr>'; return; }
+    tbody.innerHTML = esperaData.map(function(e){
+      return '<tr>'
+        +'<td><strong>'+esc(e.nombre)+'</strong></td>'
+        +'<td style="font-size:.78rem">'+esc(e.email)+'</td>'
+        +'<td>'+esc(e.telefono||'—')+'</td>'
+        +'<td><span class="badge b-espera">'+esc(e.rol||'—')+'</span></td>'
+        +'<td>'+esc(e.region||'—')+'</td>'
+        +'<td style="font-size:.74rem;color:var(--mt)">'+formatFecha(e.created_at)+'</td>'
+        +'<td><div class="abtn-gap">'
+        +'<a href="https://wa.me/'+esc((e.telefono||'').replace(/\D/g,''))+'" target="_blank" class="abtn abtn-gr" style="text-decoration:none">💬 WA</a>'
+        +'<a href="mailto:'+esc(e.email)+'" class="abtn abtn-bl" style="text-decoration:none">✉️ Email</a>'
+        +'</div></td>'
+        +'</tr>';
+    }).join('');
+  } catch(e) { renderError('tbody-espera',7,'Error: '+e.message); }
+}
+
+// ── REPORTES ────────────────────────────────────────────────────
+async function cargarReportes() {
+  var tbody = document.getElementById('tbody-rep');
+  if(!sbAs){ tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">📌 Configura Supabase de Arriendo Seguro</td></tr>'; return; }
+  try {
+    var { data } = await sbAs.from('reportes').select('*').order('created_at',{ascending:false});
+    var reps = data || [];
+    document.getElementById('cnt-rep').textContent = reps.filter(function(r){return r.estado==='pendiente';}).length + ' pendientes';
+    if(!reps.length){ tbody.innerHTML='<tr><td colspan="5" class="tbl-empty">Sin reportes</td></tr>'; return; }
+    var tipoLabel = {estafa:'💸 Estafa',falsa_publicacion:'📷 Publicación falsa',fraude_pago:'💳 Fraude pago',otro:'⚠️ Otro'};
+    tbody.innerHTML = reps.map(function(r){
+      var badge = {pendiente:'b-pend',revisado:'b-activo',confirmado:'b-rech'}[r.estado]||'b-pend';
+      return '<tr>'
+        +'<td>'+esc(tipoLabel[r.tipo_reporte]||r.tipo_reporte)+'</td>'
+        +'<td style="font-size:.78rem;max-width:260px">'+esc((r.descripcion||'').substring(0,120))+(r.descripcion&&r.descripcion.length>120?'...':'')+'</td>'
+        +'<td><span class="badge '+badge+'">'+esc(r.estado)+'</span></td>'
+        +'<td style="font-size:.74rem;color:var(--mt)">'+formatFecha(r.created_at)+'</td>'
+        +'<td><div class="abtn-gap">'
+        +'<button class="abtn abtn-gr" onclick="actualizarReporte('+r.id+',\'revisado\')">Revisado</button>'
+        +'<button class="abtn abtn-rd" onclick="actualizarReporte('+r.id+',\'confirmado\')">Confirmar estafa</button>'
+        +'</div></td>'
+        +'</tr>';
+    }).join('');
+  } catch(e) { renderError('tbody-rep',5,'Error: '+e.message); }
+}
+
+async function actualizarReporte(id, estado) {
+  if(!sbAs) return;
+  await sbAs.from('reportes').update({estado:estado}).eq('id',id);
+  toast('✅ Reporte actualizado: '+estado, 'ok');
+  cargarReportes();
+}
+
+// ── KPIs ────────────────────────────────────────────────────────
+function actualizarKPIs() {
+  var total = negociosData.length + usuariosData.length;
+  document.getElementById('k-total').textContent = total;
+}
+
+// ================================================================
+// VALIDADOR RUT + ROL SII
+// ================================================================
+function formatRut(inp) {
+  var v = inp.value.replace(/[^0-9kK]/g,'');
+  if(v.length > 1) {
+    var dv = v.slice(-1);
+    var num = v.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    inp.value = num + '-' + dv.toUpperCase();
   }
 }
 
-async function cargarHistorialGlobal() {
-  var { data, error } = await sb.from('historial')
-    .select('*').order('ts', { ascending: false }).limit(500);
-  if (!error && data) todoHistorial = data;
-}
-
-// ================================================================
-//  RENDER KPIs GLOBALES
-// ================================================================
-function renderKPIsGlobales() {
-  var activos = todosNegocios.filter(function(n){ return n.activo !== false; });
-  document.getElementById('g-negocios').textContent = activos.length;
-  document.getElementById('g-juegos').textContent = todoHistorial.length;
-
-  var ahora = Date.now();
-  var hoyMs = new Date(new Date().setHours(0,0,0,0)).getTime();
-  var semMs = hoyMs - 6*86400000;
-
-  var hoy = todoHistorial.filter(function(h){ return (h.ts||0) >= hoyMs; }).length;
-  var sem = todoHistorial.filter(function(h){ return (h.ts||0) >= semMs; }).length;
-  document.getElementById('g-hoy').textContent = hoy;
-  document.getElementById('g-semana').textContent = sem;
-
-  // Utilidad estimada: suma adicional*0.8 de cada negocio × sus juegos
-  var utilTotal = 0;
-  todosNegocios.forEach(function(n){
-    var add = parseFloat(n.adicional) || 2500;
-    var util = Math.round(add * 0.8);
-    var juegosNeg = todoHistorial.filter(function(h){ return h.negocio_id === n.id; }).length;
-    utilTotal += juegosNeg * util;
-  });
-  document.getElementById('g-utilidad').textContent = '$' + utilTotal.toLocaleString('es-CL');
-}
-
-// ================================================================
-//  INTERACTIVIDAD: scroll suave desde las tarjetas KPI
-// ================================================================
-function irANegociosYBuscar() {
-  var card = document.getElementById('card-negocios');
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  card.classList.add('highlight-flash');
-  setTimeout(function(){ card.classList.remove('highlight-flash'); }, 1200);
-  setTimeout(function(){ document.getElementById('buscar-neg').focus(); }, 500);
-}
-
-function irAHistorial(periodo) {
-  var card = document.getElementById('card-historial');
-  document.getElementById('fil-per').value = periodo === 'todo' ? 'mes' : periodo;
-  renderHistorialGlobal();
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  card.classList.add('highlight-flash');
-  setTimeout(function(){ card.classList.remove('highlight-flash'); }, 1200);
-}
-
-// ================================================================
-//  RENDER NEGOCIOS
-// ================================================================
-function renderNegocios() {
-  var el = document.getElementById('neg-list');
-  if (!todosNegocios.length) {
-    el.innerHTML = '<div class="empty">No hay negocios registrados aún.</div>';
-    return;
-  }
-
-  var q = (document.getElementById('buscar-neg').value || '').trim().toLowerCase();
-  var lista = todosNegocios.filter(function(n){
-    if (!q) return true;
-    return (n.id||'').toLowerCase().indexOf(q) !== -1
-        || (n.nombre||'').toLowerCase().indexOf(q) !== -1;
-  });
-
-  if (!lista.length) {
-    el.innerHTML = '<div class="empty">Ningún negocio coincide con "' + q + '"</div>';
-    return;
-  }
-
-  var html = '';
-  lista.forEach(function(n){
-    var activo = n.activo !== false;
-    var juegosNeg = todoHistorial.filter(function(h){ return h.negocio_id === n.id; }).length;
-    var add = parseFloat(n.adicional) || 2500;
-    var utilNeg = (Math.round(add * 0.8) * juegosNeg).toLocaleString('es-CL');
-    // Dominio base: usa aumvenpro.cl cuando esté conectado, mientras tanto GitHub Pages real
-    var BASE_URL = window.AUMVEN_BASE_URL || 'https://aumven.cl/juego.html';
-    var link = BASE_URL + '?neg=' + n.id;
-
-    // Estado de suscripción
-    var venceTs = n.suscripcion_vence ? new Date(n.suscripcion_vence).getTime() : null;
-    var vencido = venceTs ? (venceTs < Date.now()) : false;
-    var estadoPago = !venceTs ? '⚪ Sin registro de pago'
-                    : (vencido ? '🔴 Suscripción vencida (' + n.suscripcion_vence + ')'
-                               : '🟢 Al día hasta ' + n.suscripcion_vence);
-
-    html += '<div class="neg-row' + (activo ? '' : ' inactivo') + '">'
-      + '<div class="neg-info">'
-        + '<div class="neg-name">'
-          + (activo ? '🟢' : '🔴') + ' '
-          + (n.nombre || n.id)
-          + ' <span class="' + (activo ? 'badge-activo' : 'badge-inactivo') + '">'
-          + (activo ? 'Activo' : 'Inactivo') + '</span>'
-        + '</div>'
-        + '<div class="neg-slug">?neg=' + n.id + ' · prefijo: ' + (n.prefijo||'—') + ' · juego: ' + (n.juego||'—') + '</div>'
-        + '<div class="neg-stats">'
-          + '<div class="neg-stat">Juegos: <span>' + juegosNeg + '</span></div>'
-          + '<div class="neg-stat">Utilidad: <span>$' + utilNeg + '</span></div>'
-          + '<div class="neg-stat">WA: <span>' + (n.wa||'—') + '</span></div>'
-        + '</div>'
-        + '<div class="neg-stats" style="margin-top:.2rem">'
-          + '<div class="neg-stat" style="color:' + (vencido ? '#fca5a5' : '#6ee7b7') + '">' + estadoPago + '</div>'
-        + '</div>'
-      + '</div>'
-      + '<div class="neg-actions">'
-        + '<a class="btn btn-gh btn-sm" href="' + link + '" target="_blank">🔗 Ver tienda</a>'
-        + '<button class="btn btn-gr btn-sm" onclick="marcarPagado(\'' + n.id + '\')">💰 Marcar pagado (+30d)</button>'
-        + (activo
-          ? '<button class="btn btn-rd btn-sm" onclick="toggleNegocio(\'' + n.id + '\', false)">Desactivar</button>'
-          : '<button class="btn btn-gr btn-sm" onclick="toggleNegocio(\'' + n.id + '\', true)">Activar</button>')
-      + '</div>'
-      + '</div>';
-  });
-  el.innerHTML = html;
-}
-
-// ================================================================
-//  ACTIVAR / DESACTIVAR NEGOCIO
-// ================================================================
-async function toggleNegocio(id, activar) {
-  var confirmar = confirm((activar ? '¿Activar' : '¿Desactivar') + ' el negocio "' + id + '"?');
-  if (!confirmar) return;
-
-  var { error } = await sb.from('configuraciones')
-    .update({ activo: activar })
-    .eq('id', id);
-
-  if (error) {
-    alert('Error: ' + error.message + '\n\nNota: Si la columna "activo" no existe, ejecuta en Supabase SQL Editor:\nALTER TABLE configuraciones ADD COLUMN IF NOT EXISTS activo boolean DEFAULT true;');
+function validarRut() {
+  var rut = document.getElementById('rut-input').value.replace(/\./g,'').replace('-','');
+  if(!rut || rut.length < 3) return;
+  var cuerpo = rut.slice(0,-1);
+  var dv = rut.slice(-1).toUpperCase();
+  var dvCalc = calcDV(cuerpo);
+  var res = document.getElementById('rut-result');
+  res.style.display = 'block';
+  if(dvCalc === dv) {
+    res.className = 'rut-result rut-ok';
+    res.textContent = '✅ RUT válido — dígito verificador correcto';
   } else {
-    await cargarTodo();
+    res.className = 'rut-result rut-err';
+    res.textContent = '❌ RUT inválido — el dígito verificador debería ser ' + dvCalc;
   }
 }
 
-// ================================================================
-//  REGISTRAR PAGO DE SUSCRIPCIÓN (+30 días, base para automatizar luego)
-// ================================================================
-async function marcarPagado(id) {
-  var confirmar = confirm('¿Marcar "' + id + '" como pagado? Esto extiende su suscripción 30 días y reactiva la tienda si estaba desactivada.');
-  if (!confirmar) return;
-
-  var nuevaFecha = new Date();
-  nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-  var fechaStr = nuevaFecha.toISOString().split('T')[0];
-
-  var { error } = await sb.from('configuraciones')
-    .update({ suscripcion_vence: fechaStr, activo: true })
-    .eq('id', id);
-
-  if (error) {
-    alert('Error: ' + error.message + '\n\nNota: Si la columna "suscripcion_vence" no existe, ejecuta en Supabase SQL Editor:\nALTER TABLE configuraciones ADD COLUMN IF NOT EXISTS suscripcion_vence date;');
-  } else {
-    alert('✅ Pago registrado. "' + id + '" queda al día hasta ' + fechaStr + '.');
-    await cargarTodo();
+function calcDV(cuerpo) {
+  var suma = 0;
+  var multiplo = 2;
+  for(var i = cuerpo.length - 1; i >= 0; i--) {
+    suma += parseInt(cuerpo[i]) * multiplo;
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
   }
+  var res = 11 - (suma % 11);
+  if(res === 11) return '0';
+  if(res === 10) return 'K';
+  return String(res);
+}
+
+function verificarRutRol() {
+  var rut = document.getElementById('rut-input').value.replace(/\./g,'').replace('-','');
+  var rol = document.getElementById('rol-input').value.trim();
+  var comuna = document.getElementById('comuna-input').value.trim();
+
+  if(!rut) { toast('Ingresa el RUT primero', 'warn'); return; }
+
+  validarRut();
+
+  var rutLimpio = rut.slice(0,-1);
+  var linksEl = document.getElementById('rut-links');
+  linksEl.style.display = 'flex';
+
+  // Links de verificación oficial
+  var siiUrl = 'https://www.sii.cl/servicios_online/1047-busqueda_cobienes_raices.html';
+  var cbrUrl = rol
+    ? 'https://www.conservador.cl/consultas/bienes-raices?rol=' + encodeURIComponent(rol) + '&comuna=' + encodeURIComponent(comuna)
+    : 'https://www.conservador.cl';
+
+  linksEl.innerHTML =
+    '<a href="'+siiUrl+'" target="_blank" class="rut-link" style="background:var(--ac)">🏛️ Verificar en SII</a>'
+    +'<a href="'+cbrUrl+'" target="_blank" class="rut-link" style="background:var(--teal)">📋 Verificar en CBR</a>'
+    +'<a href="https://www.registrocivil.cl/principal/servicios-en-linea" target="_blank" class="rut-link" style="background:#374151">🪪 Verificar RUT en Registro Civil</a>';
+
+  toast('🔍 Links generados — verifica en cada sitio oficial', 'info');
+}
+
+function cargarEnValidador(rut, rol, comuna) {
+  document.getElementById('rut-input').value = rut;
+  document.getElementById('rol-input').value = rol;
+  document.getElementById('comuna-input').value = comuna;
+  // Scroll to validador
+  document.getElementById('sec-arriendo').scrollIntoView({behavior:'smooth'});
+  toast('📋 Datos cargados en el validador', 'info');
 }
 
 // ================================================================
-//  AUTO-DESACTIVAR NEGOCIOS VENCIDOS
-//  Base para el flujo automático: cuando se conecte el webhook de pago
-//  real (Mercado Pago / Flow), esta misma función puede llamarse desde
-//  una Supabase Edge Function en lugar de ejecutarse aquí.
+// MODAL
 // ================================================================
-async function revisarVencimientos() {
-  var hoy = new Date().toISOString().split('T')[0];
-  var vencidos = todosNegocios.filter(function(n){
-    return n.suscripcion_vence && n.suscripcion_vence < hoy && n.activo !== false;
-  });
-  if (!vencidos.length) return;
+function abrirModal(titulo, contenido) {
+  document.getElementById('modal-body').innerHTML = '<div class="modal-title">'+titulo+'</div>'+contenido;
+  document.getElementById('modal-bg').classList.add('open');
+}
+function cerrarModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function cerrarModalBg(e) { if(e.target===document.getElementById('modal-bg')) cerrarModal(); }
 
-  for (var i = 0; i < vencidos.length; i++) {
-    await sb.from('configuraciones').update({ activo: false }).eq('id', vencidos[i].id);
-  }
-  console.log('Negocios desactivados por vencimiento de suscripción:', vencidos.map(function(n){return n.id;}));
+// ================================================================
+// SEARCH
+// ================================================================
+function filtrarTabla(tblId, q) {
+  var tbl = document.getElementById(tblId);
+  if(!tbl) return;
+  var rows = tbl.querySelectorAll('tbody tr');
+  q = q.toLowerCase();
+  rows.forEach(function(row){
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
 }
 
 // ================================================================
-//  HISTORIAL GLOBAL
+// TOAST
 // ================================================================
-function renderHistorialGlobal() {
-  var per = document.getElementById('fil-per').value;
-  var ahora = Date.now();
-  var hoyMs = new Date(new Date().setHours(0,0,0,0)).getTime();
+var toastTimer = null;
+function toast(msg, tipo) {
+  var el = document.getElementById('toast');
+  var colors = {ok:'#10b981',warn:'#f59e0b',info:'#3b82f6',err:'#ef4444'};
+  el.style.borderColor = colors[tipo]||colors.info;
+  el.textContent = msg;
+  el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
 
-  var filtrado = todoHistorial.filter(function(h){
-    var ts = h.ts || new Date(h.created_at).getTime();
-    if (per === 'hoy')    return ts >= hoyMs;
-    if (per === 'semana') return ts >= hoyMs - 6*86400000;
-    if (per === 'mes')    return ts >= hoyMs - 29*86400000;
-    return true;
-  });
-
-  var lista = document.getElementById('h-list-global');
-  if (!filtrado.length) {
-    lista.innerHTML = '<li class="empty">Sin actividad en el período seleccionado</li>';
-    return;
-  }
-
-  var html = '';
-  filtrado.slice(0, 100).forEach(function(h){
-    html += '<li class="h-item">'
-      + '<span style="font-size:.95rem">' + (h.gano ? '🏆' : '🎟️') + '</span>'
-      + '<span class="h-premio">'
-        + '<span class="h-neg">' + (h.negocio_id||'?') + '</span> '
-        + (h.premio || 'Premio') + ' · ' + (h.codigo||'—')
-      + '</span>'
-      + '<span class="h-date">' + (h.fecha||'') + '</span>'
-    + '</li>';
-  });
-  lista.innerHTML = html;
+// ================================================================
+// UTILS
+// ================================================================
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function numFmt(n){ return Number(n||0).toLocaleString('es-CL'); }
+function formatFecha(f){ try{ return f ? new Date(f).toLocaleDateString('es-CL') : '—'; }catch(e){ return f||'—'; } }
+function renderError(tbodyId, cols, msg){
+  var el = document.getElementById(tbodyId);
+  if(el) el.innerHTML='<tr><td colspan="'+cols+'" class="tbl-empty" style="color:#fca5a5">⚠️ '+esc(msg)+'</td></tr>';
 }
 </script>
 </body>
