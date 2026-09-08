@@ -430,13 +430,13 @@ var SB_PRO_URL = 'https://wfosczhszouukypsvasx.supabase.co';
 var SB_PRO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY';
 
 // Supabase Arriendo Seguro — REEMPLAZA CON TUS CREDENCIALES
-var SB_AS_URL = 'TU_SUPABASE_ARRIENDO_URL';
-var SB_AS_KEY = 'TU_SUPABASE_ARRIENDO_KEY';
+var SB_AS_URL = 'https://xjsyedsfgwqiigyomtzj.supabase.co';
+var SB_AS_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqc3llZHNmZ3dxaWlneW9tdHpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MzQ4NTAsImV4cCI6MjEwNDQxMDg1MH0.7THXJ59xpVg4ewYw9782HmSwCgW6WBtB9CR-Hk33bTA';
 
 var sbPro = supabase.createClient(SB_PRO_URL, SB_PRO_KEY);
 var sbAs = null;
 try {
-  if(SB_AS_URL !== 'TU_SUPABASE_ARRIENDO_URL') {
+  if(SB_AS_URL !== 'https://xjsyedsfgwqiigyomtzj.supabase.co') {
     sbAs = supabase.createClient(SB_AS_URL, SB_AS_KEY);
   }
 } catch(e) {}
