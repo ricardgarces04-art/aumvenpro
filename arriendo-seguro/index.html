@@ -714,8 +714,9 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 var sb = null;
 try {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log('Supabase conectado OK');
 } catch(e) {
-  console.log('Supabase no configurado — modo demo');
+  console.error('Error Supabase init:', e);
 }
 
 // ================================================================
@@ -766,28 +767,26 @@ async function registrarEspera() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Registrando...';
 
-  if(sb) {
-    try {
-      await sb.from('lista_espera').insert({
-        nombre: nombre,
-        email: email,
-        telefono: document.getElementById('esp-tel').value,
-        rol: document.getElementById('esp-rol').value,
-        region: document.getElementById('esp-region').value
-      });
-      showAlert('espera-alert', '✅ ¡Listo! Estás en la lista. Te avisamos cuando lancemos.', 'success');
-      btn.innerHTML = '✅ ¡Ya estás en la lista!';
-    } catch(e) {
-      showAlert('espera-alert', 'Error: ' + e.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = '✉️ Quiero ser de los primeros';
-    }
-  } else {
-    // Demo mode
-    setTimeout(function(){
-      showAlert('espera-alert', '✅ ¡Listo! Estás en la lista de espera. Te notificaremos al lanzamiento.', 'success');
-      btn.innerHTML = '✅ ¡Ya estás en la lista!';
-    }, 1000);
+  try {
+    if(!sb) throw new Error('Supabase no inicializado — recarga la página');
+    var { error } = await sb.from('lista_espera').insert({
+      nombre: nombre,
+      email: email,
+      telefono: document.getElementById('esp-tel').value,
+      rol: document.getElementById('esp-rol').value,
+      region: document.getElementById('esp-region').value
+    });
+    if(error) throw error;
+    showAlert('espera-alert', '✅ ¡Listo! Estás en la lista. Te avisamos cuando lancemos.', 'success');
+    btn.innerHTML = '✅ ¡Ya estás en la lista!';
+    document.getElementById('esp-nombre').value = '';
+    document.getElementById('esp-email').value = '';
+    document.getElementById('esp-tel').value = '';
+  } catch(e) {
+    console.error('Error lista espera:', e);
+    showAlert('espera-alert', '❌ Error: ' + (e.message||e), 'error');
+    btn.disabled = false;
+    btn.innerHTML = '✉️ Quiero ser de los primeros';
   }
 }
 
