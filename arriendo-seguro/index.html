@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Arriendo Seguro — Arrienda con confianza. Sin sorpresas.</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -93,7 +93,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;min-he
   margin-bottom:1.2rem;display:flex;align-items:center;gap:.4rem}
 label{display:block;font-size:.72rem;font-weight:800;color:var(--mt);
   letter-spacing:.05em;text-transform:uppercase;margin-bottom:.25rem}
-input,select,textarea{width:100%;background:#f8fafc;border:1.5px solid rgba(14,116,144,.2);
+input,select,textarea{width:100%;font-size:16px;background:#f8fafc;border:1.5px solid rgba(14,116,144,.2);
   border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;font-size:.9rem;
   font-weight:600;padding:.65rem .95rem;outline:none;transition:border-color .2s;margin-bottom:.85rem}
 input:focus,select:focus,textarea:focus{border-color:var(--ac);background:#fff}
@@ -290,7 +290,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   <div class="section" style="max-width:640px">
     <h2 class="section-title">🚀 Únete a la lista de espera</h2>
     <p class="section-sub">Sé de los primeros en acceder. Precio especial para los primeros 20 usuarios.</p>
-    <div class="form-card" style="margin-top:1.5rem">
+    <div class="form-card" style="margin-top:1.5rem;scroll-margin-top:20px">
       <div id="espera-alert"></div>
       <div class="row2">
         <div>
@@ -1070,6 +1070,19 @@ function showAlert(id, msg, tipo) {
   el.innerHTML = '<div class="alert alert-'+tipo+'">'+msg+'</div>';
   setTimeout(function(){ el.innerHTML = ''; }, 6000);
 }
+
+// Fix mobile scroll jump on input focus
+document.addEventListener('DOMContentLoaded', function(){
+  var inputs = document.querySelectorAll('input, select, textarea');
+  inputs.forEach(function(inp){
+    inp.addEventListener('focus', function(){
+      var self = this;
+      setTimeout(function(){
+        self.scrollIntoView({behavior:'smooth', block:'center'});
+      }, 300);
+    });
+  });
+});
 </script>
 </body>
 </html>
