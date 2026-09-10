@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Arriendo Seguro — Arrienda con confianza. Sin sorpresas.</title>
+<title>Arriendo Confiable — Más datos, menos riesgo. Tú decides con quién.</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -204,11 +204,12 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo">🏠 Arriendo Seguro
+  <div class="nav-logo">🏠 Arriendo Confiable
     <span>Más datos, menos riesgo. Tú decides con quién.</span>
   </div>
   <div class="nav-btns">
     <button class="nav-btn" onclick="mostrarScreen('buscar')">🔍 Buscar</button>
+    <button class="nav-btn" onclick="mostrarScreen('verificarme')">🛡️ Cómo verificarme</button>
     <button class="nav-btn" onclick="mostrarScreen('reportes')">🚨 Reportes</button>
     <button class="nav-btn" onclick="mostrarScreen('publicar')">📋 Publicar</button>
     <button class="nav-btn" onclick="mostrarScreen('planes')">💳 Planes</button>
@@ -263,7 +264,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   <!-- POR QUE -->
   <div style="background:var(--sf);padding:3rem 1.5rem">
     <div class="section" style="padding:0">
-      <h2 class="section-title">¿Por qué Arriendo Seguro?</h2>
+      <h2 class="section-title">¿Por qué Arriendo Confiable?</h2>
       <p class="section-sub">El mercado de arriendos en Chile tiene un problema enorme que nadie resuelve</p>
       <div class="cards-grid">
         <div class="card">
@@ -285,6 +286,62 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
           <div class="card-icon">💰</div>
           <div class="card-title">Precio justo</div>
           <div class="card-desc">Publicar es gratis. El acceso a datos de contacto cuesta una suscripción económica mensual. Sin comisiones.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFICACIÓN EXPRESS -->
+  <div style="background:linear-gradient(135deg,#0f172a,#0e7490);padding:3rem 1.5rem">
+    <div class="section" style="padding:0;max-width:680px">
+      <div style="text-align:center;margin-bottom:2rem">
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;color:#a5f3fc;font-size:.75rem;font-weight:800;padding:.3rem 1rem;margin-bottom:1rem">⚡ DISPONIBLE AHORA</div>
+        <h2 style="font-family:'Fredoka One',cursive;font-size:1.9rem;color:#fff;margin-bottom:.6rem">Verificación Express</h2>
+        <p style="color:rgba(255,255,255,.8);font-size:.95rem;font-weight:600;line-height:1.65;max-width:500px;margin:0 auto">¿Vas a cerrar un arriendo de temporada?<br>Verifica al arrendador <strong style="color:#a5f3fc">antes de transferir</strong> — por solo $5.000.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem">
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:1.2rem;text-align:center">
+          <div style="font-size:1.8rem;margin-bottom:.4rem">👤</div>
+          <div style="color:#fff;font-weight:800;font-size:.88rem;margin-bottom:.2rem">Identidad real</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.78rem">RUT + carnet verificados</div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:1.2rem;text-align:center">
+          <div style="font-size:1.8rem;margin-bottom:.4rem">🏠</div>
+          <div style="color:#fff;font-weight:800;font-size:.88rem;margin-bottom:.2rem">Propiedad real</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.78rem">Rol SII a nombre del dueño</div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:1.2rem;text-align:center">
+          <div style="font-size:1.8rem;margin-bottom:.4rem">⏱️</div>
+          <div style="color:#fff;font-weight:800;font-size:.88rem;margin-bottom:.2rem">24 horas</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.78rem">Informe por WhatsApp</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(165,243,252,.3);border-radius:16px;padding:1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+          <div style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#a5f3fc">$5.000</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.8rem;font-weight:700">por verificación · pago por transferencia</div>
+        </div>
+        <a href="https://wa.me/56931341245?text=Hola,%20quiero%20verificar%20a%20un%20arrendador%20de%20temporada.%20¿Cómo%20funciona%3F"
+           target="_blank"
+           style="display:inline-flex;align-items:center;gap:.6rem;background:#25D366;color:#fff;border:none;border-radius:100px;padding:.9rem 1.8rem;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;text-decoration:none;transition:all .2s;white-space:nowrap">
+          📲 Verificar ahora por WhatsApp
+        </a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;color:rgba(255,255,255,.7);display:flex;gap:.5rem;align-items:center">
+          <span>✅</span> Disponible para todo Chile
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;color:rgba(255,255,255,.7);display:flex;gap:.5rem;align-items:center">
+          <span>✅</span> Arriendos de temporada, diario y mensual
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;color:rgba(255,255,255,.7);display:flex;gap:.5rem;align-items:center">
+          <span>✅</span> Informe en 24 hrs hábiles
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;color:rgba(255,255,255,.7);display:flex;gap:.5rem;align-items:center">
+          <span>✅</span> Sin registro previo necesario
         </div>
       </div>
     </div>
@@ -387,12 +444,12 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         🏠 Certificado de Dominio Vigente o Rol de la propiedad (SII o CBR)</div>
 
         <div style="background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:.85rem;margin-bottom:.85rem;font-size:.78rem;color:#065f46;line-height:1.65">
-          <strong>⚖️ Aviso Legal:</strong> AUMVEN, a través de Arriendo Seguro, actúa exclusivamente como plataforma intermediaria. La documentación solicitada se utiliza <strong>únicamente para verificar tu identidad</strong> y no es compartida con terceros. AUMVEN no es parte del contrato de arriendo ni asume responsabilidad por disputas entre usuarios.
+          <strong>⚖️ Aviso Legal:</strong> AUMVEN, a través de Arriendo Confiable, actúa exclusivamente como plataforma intermediaria. La documentación solicitada se utiliza <strong>únicamente para verificar tu identidad</strong> y no es compartida con terceros. AUMVEN no es parte del contrato de arriendo ni asume responsabilidad por disputas entre usuarios.
         </div>
 
         <label>📤 Link a tus documentos (Google Drive o Dropbox)</label>
         <input type="text" id="reg-doc" placeholder="https://drive.google.com/... (carpeta con los 3 documentos)">
-        <p class="form-hint">Sube los 3 documentos a una carpeta de Google Drive compartida y pega el link aquí. Tus documentos son confidenciales y solo los ve el equipo de verificación de Arriendo Seguro.</p>
+        <p class="form-hint">Sube los 3 documentos a una carpeta de Google Drive compartida y pega el link aquí. Tus documentos son confidenciales y solo los ve el equipo de verificación de Arriendo Confiable.</p>
       </div>
 
       <div class="verify-box" id="box-arrendatario" style="display:none;background:linear-gradient(135deg,rgba(8,145,178,.06),rgba(20,184,166,.06));border-color:rgba(8,145,178,.2)">
@@ -660,7 +717,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         <button class="btn btn-danger" id="rep-btn" onclick="reportarEstafa()">
           🚨 Enviar reporte
         </button>
-        <p class="form-hint" style="text-align:center;margin-top:.5rem">Tu reporte es anónimo para el resto de la comunidad. Solo el equipo de Arriendo Seguro lo verá completo.</p>
+        <p class="form-hint" style="text-align:center;margin-top:.5rem">Tu reporte es anónimo para el resto de la comunidad. Solo el equipo de Arriendo Confiable lo verá completo.</p>
       </div>
 
       <!-- LISTA REPORTES -->
@@ -738,11 +795,145 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: CÓMO VERIFICARME -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-verificarme">
+  <div class="section" style="max-width:780px">
+    <h2 class="section-title">🛡️ Cómo verificarme</h2>
+    <p class="section-sub">Sigue estos pasos antes de registrarte. El proceso toma menos de 10 minutos.</p>
+
+    <!-- TABS ROL -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:500px;margin:0 auto 2rem">
+      <button class="btn btn-primary" id="vtab-arr" onclick="switchVerifTab('arrendador')">🏠 Soy Arrendador</button>
+      <button class="btn btn-secondary" id="vtab-arrt" onclick="switchVerifTab('arrendatario')">🔍 Soy Arrendatario</button>
+    </div>
+
+    <!-- ARRENDADOR -->
+    <div id="vguia-arrendador">
+      <div style="background:linear-gradient(135deg,rgba(14,116,144,.06),rgba(20,184,166,.06));border:1.5px solid rgba(14,116,144,.2);border-radius:16px;padding:1.5rem;margin-bottom:1rem">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac);margin-bottom:1rem">📋 Documentos que necesitas preparar</div>
+        <div style="display:grid;gap:.75rem">
+          <div style="background:#fff;border-radius:10px;padding:1rem;border:1.5px solid rgba(14,116,144,.15)">
+            <div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">1️⃣ Carnet de identidad — ambos lados</div>
+            <div style="font-size:.83rem;color:var(--mt);line-height:1.6">Fotografía clara del <strong>frente</strong> (con foto y nombre) y del <strong>reverso</strong> (con RUT). El carnet debe estar vigente. Asegúrate que el número sea legible.</div>
+            <div style="margin-top:.6rem;background:#f0fdf4;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:#166534">✅ Buen ejemplo: foto tomada sobre fondo oscuro, buena luz, sin reflejo<br>❌ Evitar: foto borrosa, cortada o con flash que tape el texto</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:1rem;border:1.5px solid rgba(14,116,144,.15)">
+            <div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">2️⃣ Selfie sosteniendo tu carnet 🤳</div>
+            <div style="font-size:.83rem;color:var(--mt);line-height:1.6">Una foto tuya sosteniendo el carnet al lado de tu cara. Ambos deben verse claramente — tu rostro y el carnet abierto en el frente. No uses lentes de sol.</div>
+            <div style="margin-top:.6rem;background:#f0fdf4;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:#166534">✅ Buen ejemplo: luz natural, cara y carnet claramente visibles<br>❌ Evitar: cara tapada, carnet muy lejos o borroso, foto muy oscura</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:1rem;border:1.5px solid rgba(14,116,144,.15)">
+            <div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">3️⃣ Certificado de Dominio Vigente o Rol SII</div>
+            <div style="font-size:.83rem;color:var(--mt);line-height:1.6">Necesitas <strong>uno de los dos</strong>:</div>
+            <div style="margin-top:.5rem;font-size:.82rem;color:var(--mt);line-height:1.7">
+              <strong>Opción A — Certificado de Dominio Vigente (CBR):</strong> Lo obtienes en el Conservador de Bienes Raíces de tu región. Costo ~$3.000. Puedes pedirlo online en <a href="https://www.conservador.cl" target="_blank" style="color:var(--ac)">conservador.cl</a><br><br>
+              <strong>Opción B — Captura de "Mis Bienes Raíces" en SII:</strong> Entra a <a href="https://www.sii.cl" target="_blank" style="color:var(--ac)">sii.cl</a> con tu ClaveÚnica → "Mis Bienes Raíces" → captura de pantalla donde aparezca el Rol de la propiedad a tu nombre.
+            </div>
+            <div style="margin-top:.6rem;background:#f0fdf4;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:#166534">✅ Debe verse tu nombre, el Rol/dirección y que es vigente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASOS GOOGLE DRIVE -->
+      <div style="background:#fff;border:1.5px solid rgba(14,116,144,.15);border-radius:16px;padding:1.5rem;margin-bottom:1rem">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac);margin-bottom:1rem">📤 Cómo subir tus documentos (paso a paso)</div>
+        <div style="display:grid;gap:.6rem">
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">1</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Abre <strong>Google Drive</strong> en tu celular o computador (drive.google.com)</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">2</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Crea una carpeta nueva: <strong>"Verificación Arriendo Confiable — [Tu nombre]"</strong></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">3</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Sube los 3 archivos a esa carpeta: carnet frente, carnet reverso, selfie con carnet y certificado dominio/Rol SII</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">4</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Haz clic derecho en la carpeta → <strong>"Compartir"</strong> → cambia a <strong>"Cualquier persona con el enlace puede ver"</strong></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">5</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Copia el link y pégalo en el formulario de registro de Arriendo Confiable</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.83rem;color:#92400e;line-height:1.65">
+        ⏱️ <strong>Tiempo de verificación:</strong> Revisamos tus documentos en menos de 24 horas hábiles. Te avisamos por email cuando estés verificado y puedas publicar.
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;max-width:400px;display:block;margin:0 auto" onclick="mostrarScreen('registro');selRol('arrendador')">
+        ✅ Ya tengo mis docs — Registrarme como Arrendador
+      </button>
+    </div>
+
+    <!-- ARRENDATARIO -->
+    <div id="vguia-arrendatario" style="display:none">
+      <div style="background:linear-gradient(135deg,rgba(8,145,178,.06),rgba(20,184,166,.06));border:1.5px solid rgba(8,145,178,.2);border-radius:16px;padding:1.5rem;margin-bottom:1rem">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac);margin-bottom:1rem">📋 Documentos que necesitas preparar</div>
+        <div style="display:grid;gap:.75rem">
+          <div style="background:#fff;border-radius:10px;padding:1rem;border:1.5px solid rgba(14,116,144,.15)">
+            <div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">1️⃣ Carnet de identidad — ambos lados</div>
+            <div style="font-size:.83rem;color:var(--mt);line-height:1.6">Fotografía clara del <strong>frente</strong> y del <strong>reverso</strong>. El carnet debe estar vigente y el RUT debe ser legible.</div>
+            <div style="margin-top:.6rem;background:#f0fdf4;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:#166534">✅ Buen ejemplo: foto tomada sobre fondo oscuro, buena luz, sin reflejo<br>❌ Evitar: foto borrosa, cortada o con flash que tape el texto</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:1rem;border:1.5px solid rgba(14,116,144,.15)">
+            <div style="font-weight:800;color:var(--tx);margin-bottom:.3rem">2️⃣ Selfie sosteniendo tu carnet 🤳</div>
+            <div style="font-size:.83rem;color:var(--mt);line-height:1.6">Una foto tuya sosteniendo el carnet al lado de tu cara. Ambos deben verse claramente. La selfie confirma que eres la misma persona del carnet.</div>
+            <div style="margin-top:.6rem;background:#f0fdf4;border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:#166534">✅ Buen ejemplo: luz natural, cara y carnet claramente visibles<br>❌ Evitar: cara tapada, carnet muy lejos o borroso, foto muy oscura</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASOS GOOGLE DRIVE ARRENDATARIO -->
+      <div style="background:#fff;border:1.5px solid rgba(14,116,144,.15);border-radius:16px;padding:1.5rem;margin-bottom:1rem">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--ac);margin-bottom:1rem">📤 Cómo subir tus documentos (paso a paso)</div>
+        <div style="display:grid;gap:.6rem">
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">1</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Abre <strong>Google Drive</strong> en tu celular (drive.google.com o app Drive)</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">2</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Crea una carpeta: <strong>"Verificación Arriendo Confiable — [Tu nombre]"</strong></div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">3</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Sube las 3 fotos: carnet frente, carnet reverso y selfie con carnet</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">4</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Haz clic derecho → <strong>"Compartir"</strong> → <strong>"Cualquier persona con el enlace puede ver"</strong> → Copiar enlace</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:flex-start">
+            <div style="background:var(--ac);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0">5</div>
+            <div style="font-size:.85rem;color:var(--mt);line-height:1.6">Pega el link en tu formulario de registro de Arriendo Confiable</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.83rem;color:#92400e;line-height:1.65">
+        ⏱️ <strong>Tiempo de verificación:</strong> Revisamos tus documentos en menos de 24 horas hábiles. Una vez verificado puedes ver datos de contacto de arrendadores verificados.
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;max-width:400px;display:block;margin:0 auto" onclick="mostrarScreen('registro');selRol('arrendatario')">
+        ✅ Ya tengo mis docs — Registrarme como Arrendatario
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer class="footer">
-  <strong>🏠 Arriendo Seguro</strong> · Más datos, menos riesgo. Tú decides con quién.<br>
+  <strong>🏠 Arriendo Confiable</strong> · Más datos, menos riesgo. Tú decides con quién.<br>
   Un producto de <strong>AUMVEN</strong> · V Región de Chile 🇨🇱<br>
-  <span style="opacity:.6">Cobertura nacional · arriendoseguro.cl</span>
+  <span style="opacity:.6">Cobertura nacional · arriendoconfiable.cl</span>
 </footer>
 
 <script>
@@ -797,6 +988,23 @@ function selRol(rol) {
 }
 
 // ================================================================
+// CALLMEBOT — Notificación WhatsApp al CEO
+// ================================================================
+var CALLMEBOT_NUM = '56931341245';
+var CALLMEBOT_KEY = '8153793';
+
+async function notificarWhatsApp(msg) {
+  try {
+    var url = 'https://api.callmebot.com/whatsapp.php?phone=' + CALLMEBOT_NUM
+      + '&apikey=' + CALLMEBOT_KEY
+      + '&text=' + encodeURIComponent(msg);
+    await fetch(url, { mode: 'no-cors' });
+  } catch(e) {
+    console.log('CallMeBot enviado (no-cors, sin confirmación)');
+  }
+}
+
+// ================================================================
 // LISTA DE ESPERA
 // ================================================================
 async function registrarEspera() {
@@ -808,16 +1016,32 @@ async function registrarEspera() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Registrando...';
 
+  var rol = document.getElementById('esp-rol').value;
+  var region = document.getElementById('esp-region').value;
+
   try {
     if(!sb) throw new Error('Supabase no inicializado — recarga la página');
     var { error } = await sb.from('lista_espera').insert({
       nombre: nombre,
       email: email,
       telefono: document.getElementById('esp-tel').value,
-      rol: document.getElementById('esp-rol').value,
-      region: document.getElementById('esp-region').value
+      rol: rol,
+      region: region
     });
     if(error) throw error;
+
+    // Notificación WhatsApp al CEO
+    var rolLabel = {arrendador:'🏠 Arrendador', arrendatario:'🔍 Arrendatario', ambos:'🤝 Ambos'}[rol] || rol;
+    notificarWhatsApp(
+      '🏠 ARRIENDO CONFIABLE\n'
+      + '✅ Nuevo inscrito en lista de espera!\n'
+      + '👤 ' + nombre + '\n'
+      + '📧 ' + email + '\n'
+      + '📍 ' + region + '\n'
+      + '🎭 ' + rolLabel + '\n'
+      + '🕐 ' + new Date().toLocaleString('es-CL')
+    );
+
     showAlert('espera-alert', '✅ ¡Listo! Estás en la lista. Te avisamos cuando lancemos.', 'success');
     btn.innerHTML = '✅ ¡Ya estás en la lista!';
     document.getElementById('esp-nombre').value = '';
@@ -829,6 +1053,16 @@ async function registrarEspera() {
     btn.disabled = false;
     btn.innerHTML = '✉️ Quiero ser de los primeros';
   }
+}
+
+// ================================================================
+// GUÍA VERIFICACIÓN — tabs
+// ================================================================
+function switchVerifTab(rol) {
+  document.getElementById('vguia-arrendador').style.display  = rol === 'arrendador'   ? 'block' : 'none';
+  document.getElementById('vguia-arrendatario').style.display = rol === 'arrendatario' ? 'block' : 'none';
+  document.getElementById('vtab-arr').className  = 'btn ' + (rol === 'arrendador'   ? 'btn-primary' : 'btn-secondary');
+  document.getElementById('vtab-arrt').className = 'btn ' + (rol === 'arrendatario' ? 'btn-primary' : 'btn-secondary');
 }
 
 // ================================================================
@@ -858,6 +1092,16 @@ async function registrarUsuario() {
     try {
       var { error } = await sb.from('usuarios').insert(datos);
       if(error) throw error;
+      // Notificación WhatsApp CEO
+      notificarWhatsApp(
+        '🏠 ARRIENDO CONFIABLE\n'
+        + '🆕 Nuevo usuario registrado!\n'
+        + '👤 ' + nombre + '\n'
+        + '📧 ' + email + '\n'
+        + '🎭 ' + (rolSeleccionado === 'arrendador' ? '🏠 Arrendador' : '🔍 Arrendatario') + '\n'
+        + '📋 Estado: Pendiente verificación\n'
+        + '🕐 ' + new Date().toLocaleString('es-CL')
+      );
       var pasos = rolSeleccionado === 'arrendador'
         ? '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendador<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu documentación por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Revisamos tus documentos (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🏠 <b>Paso 5 — Pendiente:</b> Puedes publicar tu propiedad'
         : '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendatario<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu carnet y selfie por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Verificamos tu identidad (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🔍 <b>Paso 5 — Pendiente:</b> Acceso completo al buscador y contactos';
