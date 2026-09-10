@@ -133,7 +133,11 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 .prop-badge{position:absolute;top:.6rem;right:.6rem;background:#fff;color:var(--ac);
   font-size:.65rem;font-weight:800;padding:.18rem .55rem;border-radius:100px;
   letter-spacing:.04em}
-.prop-badge.veraneo{background:#fef3c7;color:#d97706}
+.prop-badge.temporada{background:#fef3c7;color:#d97706}
+.prop-badge.diario{background:#fce7f3;color:#9d174d}
+.prop-badge.semanal{background:#ede9fe;color:#6d28d9}
+.prop-badge.mensual{background:#e0f2fe;color:#0369a1}
+.prop-badge.año_corrido{background:#d1fae5;color:#065f46}
 .prop-badge.verificado{background:#d1fae5;color:#059669}
 .prop-info{padding:1rem}
 .prop-precio{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--ac);margin-bottom:.2rem}
@@ -201,7 +205,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">🏠 Arriendo Seguro
-    <span>Arrienda con confianza. Sin sorpresas.</span>
+    <span>Más datos, menos riesgo. Tú decides con quién.</span>
   </div>
   <div class="nav-btns">
     <button class="nav-btn" onclick="mostrarScreen('buscar')">🔍 Buscar</button>
@@ -220,8 +224,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   <!-- HERO -->
   <div class="hero">
     <div class="hero-badge">🆕 Lanzamiento 2026 — Todo Chile 🇨🇱</div>
-    <h1 class="hero-title">Arrienda con confianza.<br><em>Sin sorpresas.</em></h1>
-    <p class="hero-sub">La plataforma chilena que conecta arrendadores y arrendatarios con verificación real, contratos digitales y protección anti-estafas.</p>
+    <h1 class="hero-title">Más datos, menos riesgo.<br><em>Tú decides con quién.</em></h1>
+    <p class="hero-sub">La plataforma chilena que verifica identidades reales de arrendadores y arrendatarios. Datos confiables para que tú tomes mejores decisiones de arriendo.</p>
     <div class="hero-btns">
       <button class="hero-btn primary" onclick="mostrarScreen('registro')">🏠 Publicar mi propiedad</button>
       <button class="hero-btn secondary" onclick="mostrarScreen('buscar')">🔍 Buscar arriendo</button>
@@ -274,8 +278,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         </div>
         <div class="card">
           <div class="card-icon">☀️</div>
-          <div class="card-title">Veraneo seguro</div>
-          <div class="card-desc">Especial temporada de verano en la V Región. Arriendos de veraneo verificados en Viña, Valparaíso y alrededores.</div>
+          <div class="card-title">Temporada y veraneo</div>
+          <div class="card-desc">Arriendos por día, semana o temporada en todo Chile. Verificados en Viña, Zapallar, Algarrobo, La Serena, Puerto Varas y más.</div>
         </div>
         <div class="card">
           <div class="card-icon">💰</div>
@@ -289,7 +293,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   <!-- CTA LISTA ESPERA -->
   <div class="section" style="max-width:640px">
     <h2 class="section-title">🚀 Únete a la lista de espera</h2>
-    <p class="section-sub">Sé de los primeros en acceder. Precio especial para los primeros 20 usuarios.</p>
+    <p class="section-sub">Sé de los primeros en acceder. Los primeros 20 usuarios obtienen <strong>1 mes gratis</strong>.</p>
     <div class="form-card" style="margin-top:1.5rem;scroll-margin-top:20px">
       <div id="espera-alert"></div>
       <div class="row2">
@@ -433,8 +437,11 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
           <label>Modalidad</label>
           <select id="f-modalidad" onchange="filtrarPropiedades()">
             <option value="">Todas</option>
-            <option value="arriendo">Arriendo mensual</option>
-            <option value="veraneo">🌊 Veraneo</option>
+            <option value="diario">📅 Diario</option>
+            <option value="semanal">📆 Semanal</option>
+            <option value="mensual">🏠 Mensual</option>
+            <option value="temporada">☀️ Temporada</option>
+            <option value="año_corrido">📋 Año corrido</option>
           </select>
         </div>
         <div>
@@ -468,8 +475,11 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 
     <div class="tabs">
       <button class="tab active" onclick="switchTab('todas',this)">Todas</button>
-      <button class="tab" onclick="switchTab('veraneo',this)">🌊 Veraneo</button>
-      <button class="tab" onclick="switchTab('arriendo',this)">🏠 Arriendo mensual</button>
+      <button class="tab" onclick="switchTab('diario',this)">📅 Diario</button>
+      <button class="tab" onclick="switchTab('semanal',this)">📆 Semanal</button>
+      <button class="tab" onclick="switchTab('mensual',this)">🏠 Mensual</button>
+      <button class="tab" onclick="switchTab('temporada',this)">☀️ Temporada</button>
+      <button class="tab" onclick="switchTab('año_corrido',this)">📋 Año corrido</button>
       <button class="tab" onclick="switchTab('verificadas',this)">✅ Solo verificadas</button>
     </div>
 
@@ -513,21 +523,52 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         <div>
           <label>Modalidad</label>
           <select id="pub-modalidad" onchange="togglePrecios()">
-            <option value="arriendo">Arriendo mensual</option>
-            <option value="veraneo">🌊 Veraneo temporada</option>
+            <option value="diario">📅 Diario</option>
+            <option value="semanal">📆 Semanal</option>
+            <option value="mensual">🏠 Mensual</option>
+            <option value="temporada">☀️ Temporada</option>
+            <option value="año_corrido">📋 Año corrido</option>
           </select>
         </div>
       </div>
 
+      <!-- PRECIO DINÁMICO -->
+      <div id="precio-diario-wrap" style="display:block">
+        <label>Precio por día ($)</label>
+        <input type="text" id="pub-precio-dia" placeholder="35000">
+      </div>
+      <div id="precio-semanal-wrap" style="display:none">
+        <label>Precio por semana ($)</label>
+        <input type="text" id="pub-precio-sem" placeholder="150000">
+      </div>
+      <div id="precio-mensual-wrap" style="display:none">
+        <label>Precio mensual ($)</label>
+        <input type="text" id="pub-precio-mes" placeholder="450000">
+      </div>
+      <div id="precio-temporada-wrap" style="display:none">
+        <label>Precio por temporada ($)</label>
+        <input type="text" id="pub-precio-temp" placeholder="800000">
+        <p class="form-hint">Temporada de verano u otra época específica</p>
+      </div>
+      <div id="precio-año-wrap" style="display:none">
+        <label>Precio anual ($)</label>
+        <input type="text" id="pub-precio-año" placeholder="4800000">
+        <p class="form-hint">Arriendo por año corrido</p>
+      </div>
+
+      <!-- 3 FOTOS -->
+      <div style="background:rgba(14,116,144,.05);border:1.5px dashed rgba(14,116,144,.25);border-radius:12px;padding:1.1rem;margin-bottom:.85rem">
+        <div style="font-size:.82rem;font-weight:800;color:var(--ac);margin-bottom:.7rem">📷 Fotos de la propiedad (hasta 3)</div>
+        <p class="form-hint" style="margin-bottom:.6rem">Sube las fotos a Google Drive (compartido) y pega los links aquí.</p>
+        <label>Foto 1 (principal) — obligatoria</label>
+        <input type="text" id="pub-foto1" placeholder="https://drive.google.com/file/...">
+        <label>Foto 2 (opcional)</label>
+        <input type="text" id="pub-foto2" placeholder="https://drive.google.com/file/...">
+        <label>Foto 3 (opcional)</label>
+        <input type="text" id="pub-foto3" placeholder="https://drive.google.com/file/...">
+      </div>
+
       <div class="row2">
-        <div id="precio-mensual-wrap">
-          <label>Precio mensual ($)</label>
-          <input type="text" id="pub-precio-mes" placeholder="450000">
-        </div>
-        <div id="precio-diario-wrap" style="display:none">
-          <label>Precio por día ($)</label>
-          <input type="text" id="pub-precio-dia" placeholder="50000">
-        </div>
         <div>
           <label>Región</label>
           <select id="pub-region">
@@ -691,7 +732,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
     </div>
 
     <div class="alert alert-info" style="max-width:600px;margin:0 auto;text-align:center">
-      🎁 <strong>Lanzamiento especial:</strong> Los primeros 20 usuarios obtienen 3 meses gratis del plan que elijan.
+      🎁 <strong>Lanzamiento especial:</strong> Los primeros 20 usuarios obtienen 1 mes gratis del plan que elijan.
       <a href="#" onclick="mostrarScreen('inicio');document.getElementById('esp-nombre').focus()" style="color:var(--ac);font-weight:800"> Únete a la lista de espera →</a>
     </div>
   </div>
@@ -699,7 +740,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 
 <!-- FOOTER -->
 <footer class="footer">
-  <strong>🏠 Arriendo Seguro</strong> · Arrienda con confianza. Sin sorpresas.<br>
+  <strong>🏠 Arriendo Seguro</strong> · Más datos, menos riesgo. Tú decides con quién.<br>
   Un producto de <strong>AUMVEN</strong> · V Región de Chile 🇨🇱<br>
   <span style="opacity:.6">Cobertura nacional · arriendoseguro.cl</span>
 </footer>
@@ -817,7 +858,10 @@ async function registrarUsuario() {
     try {
       var { error } = await sb.from('usuarios').insert(datos);
       if(error) throw error;
-      showAlert('reg-alert', '✅ ¡Cuenta creada! ' + (rolSeleccionado === 'arrendador' ? 'Revisaremos tu documento en menos de 24 horas.' : 'Ya puedes buscar propiedades verificadas.'), 'success');
+      var pasos = rolSeleccionado === 'arrendador'
+        ? '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendador<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu documentación por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Revisamos tus documentos (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🏠 <b>Paso 5 — Pendiente:</b> Puedes publicar tu propiedad'
+        : '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendatario<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu carnet y selfie por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Verificamos tu identidad (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🔍 <b>Paso 5 — Pendiente:</b> Acceso completo al buscador y contactos';
+      showAlert('reg-alert', pasos, 'success');
       btn.innerHTML = '✅ ¡Cuenta creada!';
       localStorage.setItem('as_user', JSON.stringify(datos));
     } catch(e) {
@@ -938,8 +982,11 @@ function filtrarPorTab(tipo) {
 // ================================================================
 function togglePrecios() {
   var modal = document.getElementById('pub-modalidad').value;
-  document.getElementById('precio-mensual-wrap').style.display = modal === 'arriendo' ? 'block' : 'none';
-  document.getElementById('precio-diario-wrap').style.display = modal === 'veraneo' ? 'block' : 'none';
+  document.getElementById('precio-diario-wrap').style.display   = modal === 'diario'      ? 'block' : 'none';
+  document.getElementById('precio-semanal-wrap').style.display  = modal === 'semanal'     ? 'block' : 'none';
+  document.getElementById('precio-mensual-wrap').style.display  = modal === 'mensual'     ? 'block' : 'none';
+  document.getElementById('precio-temporada-wrap').style.display= modal === 'temporada'   ? 'block' : 'none';
+  document.getElementById('precio-año-wrap').style.display      = modal === 'año_corrido' ? 'block' : 'none';
 }
 
 async function publicarPropiedad() {
@@ -954,6 +1001,13 @@ async function publicarPropiedad() {
 
   var modal = document.getElementById('pub-modalidad').value;
   var user = getUser();
+  var precioMap = {
+    diario:      parseInt(document.getElementById('pub-precio-dia').value)  || null,
+    semanal:     parseInt(document.getElementById('pub-precio-sem').value)  || null,
+    mensual:     parseInt(document.getElementById('pub-precio-mes').value)  || null,
+    temporada:   parseInt(document.getElementById('pub-precio-temp').value) || null,
+    año_corrido: parseInt(document.getElementById('pub-precio-año').value)  || null
+  };
   var datos = {
     usuario_id: user ? user.id : null,
     titulo: titulo,
@@ -962,8 +1016,11 @@ async function publicarPropiedad() {
     modalidad: modal,
     region: region,
     comuna: comuna,
-    precio_mensual: modal === 'arriendo' ? parseInt(document.getElementById('pub-precio-mes').value) || null : null,
-    precio_diario: modal === 'veraneo' ? parseInt(document.getElementById('pub-precio-dia').value) || null : null,
+    precio_mensual: precioMap[modal] || null,
+    precio_diario: modal === 'diario' ? precioMap.diario : null,
+    foto1: document.getElementById('pub-foto1').value.trim() || null,
+    foto2: document.getElementById('pub-foto2').value.trim() || null,
+    foto3: document.getElementById('pub-foto3').value.trim() || null,
     dormitorios: parseInt(document.getElementById('pub-dorm').value),
     banos: parseInt(document.getElementById('pub-banos').value),
     permite_mascotas: document.getElementById('pub-mascotas').checked,
