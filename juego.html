@@ -171,6 +171,24 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
   border-radius:100px;height:100%;transition:width .2s;width:0%}
 .sc-hint{color:var(--mt);font-size:.83rem;font-weight:600;text-align:center}
 
+/* MONEDAS DE ORO */
+.mon-area{display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:.9rem;padding:1.5rem 1.2rem 1.8rem;text-align:center}
+.mon-coin-wrap{position:relative;width:150px;height:150px}
+.mon-coin-wrap img{width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 6px 22px rgba(245,158,11,.45))}
+.mon-coin-wrap.brillar img{animation:monBrillo 1.1s ease-in-out infinite}
+@keyframes monBrillo{0%,100%{filter:drop-shadow(0 6px 22px rgba(245,158,11,.45)) brightness(1)}
+  50%{filter:drop-shadow(0 10px 34px rgba(245,158,11,.85)) brightness(1.25)}}
+.mon-cuenta{font-family:'Fredoka One',cursive;font-size:1.7rem;color:var(--gd)}
+.mon-cuenta small{font-family:'Nunito',sans-serif;font-size:.95rem;color:var(--mt);font-weight:700}
+.mon-prog-wrap{width:100%;max-width:280px;background:rgba(124,58,237,.14);
+  border-radius:100px;height:12px;overflow:hidden}
+.mon-prog-bar{height:100%;background:linear-gradient(90deg,#f59e0b,#facc15);
+  border-radius:100px;transition:width .4s ease}
+.mon-msg{color:var(--mt);font-size:.9rem;font-weight:700}
+.mon-btns{display:flex;flex-direction:column;gap:.55rem;width:100%;max-width:280px}
+
 /* RESULT */
 .result-card{background:var(--sf);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
   border-radius:var(--r);padding:2.4rem 1.75rem;text-align:center;
@@ -270,6 +288,10 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
       <input class="cod-in" type="text" id="cod-in"
         placeholder="Tu c&#xF3;digo aqu&#xED;" maxlength="14"
         autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <input class="cod-in" type="tel" id="tel-in"
+        placeholder="Tu WhatsApp (Ej: 912345678)" maxlength="20"
+        style="display:none;font-size:1rem;letter-spacing:normal;text-transform:none;font-weight:700"
+        autocomplete="off">
       <button class="btn btn-pk" onclick="entrar()">&#10024; Ingresar y Jugar</button>
     </div>
     <p style="text-align:center;margin-top:1.1rem">
@@ -291,6 +313,14 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
     <div class="game-hdr" id="game-hdr"></div>
     <div class="game-ins" id="game-ins"></div>
     <div id="game-zone"></div>
+  </div>
+</div>
+
+<!-- ========== MONEDAS (pantalla de progreso) ========== -->
+<div class="screen" id="sc-monedas">
+  <div class="game-wrap">
+    <div class="game-hdr" id="monedas-hdr"></div>
+    <div id="monedas-zone"></div>
   </div>
 </div>
 
@@ -325,7 +355,7 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-val" id="kpi-tot">0</div>
-        <div class="kpi-lbl">Juegos totales</div>
+        <div class="kpi-lbl" id="kpi-tot-lbl">Juegos totales</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-val" id="kpi-prem">0</div>
@@ -400,10 +430,11 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
     <div class="divider"></div>
     <div class="sec" style="font-size:.93rem">&#127918; Din&#xe1;mica del Juego</div>
     <label>Tipo de juego activo</label>
-    <select id="f-juego">
+    <select id="f-juego" onchange="toggleMonedasCfg()">
       <option value="3_cofres">&#129521; 3 Cofres &#8212; elige uno</option>
       <option value="globos" selected>&#127880; Globos &#8212; pincha uno</option>
       <option value="raspe">&#128133; Raspa y Gana</option>
+      <option value="monedas">&#129689; Monedas de Oro &#8212; junta y canjea</option>
     </select>
     <label>Premios Mayores (3 a 5, separados por coma)</label>
     <p class="l-hint" style="margin-top:0">De <strong>menor a mayor costo</strong>: 1&#xBA; y 2&#xBA; = 60%, 3&#xBA; y 4&#xBA; = 30%, 5&#xBA; = 10%.</p>
@@ -414,6 +445,30 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
     <label>Premio de Consolaci&#xF3;n (20% &#8212; siempre seguro)</label>
     <input type="text" id="f-con"
       placeholder="Ej: &#127903;&#65039; Cup&#xF3;n 10% en tu pr&#xF3;xima compra">
+
+    <div id="monedas-cfg" style="display:none">
+      <div class="divider"></div>
+      <div class="sec" style="font-size:.93rem">&#129689; Configuraci&#xF3;n Monedas de Oro</div>
+      <label>Valor de 1 Moneda de Oro ($)</label>
+      <input type="number" id="f-valormoneda" placeholder="Ej: 2000, 3500, 5000">
+      <p class="l-hint">&#128176; Monto extra que el cliente gasta para ganar 1 moneda. Utilidad = este valor &#xD7; 80%.</p>
+      <div class="row2">
+        <div>
+          <label>Meta 1 &#8212; N&#xB0; monedas (premio bajo)</label>
+          <input type="number" id="f-meta1mon" placeholder="5" value="5">
+        </div>
+        <div>
+          <label>Meta 2 &#8212; N&#xB0; monedas (premio alto)</label>
+          <input type="number" id="f-meta2mon" placeholder="10" value="10">
+        </div>
+      </div>
+      <label>Premios Meta 1 (3 a 5, separados por coma)</label>
+      <textarea id="f-premmeta1" placeholder="Ej: &#127838; Snack gratis, &#9749; Caf&#xe9;, &#127873; Sorpresa"></textarea>
+      <label>Premios Meta 2 (3 a 5, separados por coma)</label>
+      <textarea id="f-premmeta2" placeholder="Ej: &#128176; 10% dcto, &#127829; Combo gratis, &#127942; Premio VIP"></textarea>
+      <p class="l-hint">&#127895; Usa el mismo Premio de Consolaci&#xF3;n de arriba para cuando no caiga premio mayor en el canje.</p>
+    </div>
+
     <button class="btn btn-gd" onclick="guardarCfg()">&#128190; Guardar Configuraci&#xF3;n</button>
   </div>
 
@@ -521,7 +576,8 @@ function addHst(e) {
 var CFG0 = {
   nombre: 'Cargando...', logo: '', logoData: '', emoji: '🏪',
   juego: 'globos', premios: [], consolacion: '', wa: '56926221935',
-  meta: 15000, ticket: 0, adicional: 2500, prefijo: ''
+  meta: 15000, ticket: 0, adicional: 2500, prefijo: '',
+  valorMoneda: 0, meta1Monedas: 5, meta2Monedas: 10, premiosMeta1: [], premiosMeta2: []
 };
 
 var inq = { premios: [], consolacion: '', wa: '' };
@@ -590,16 +646,38 @@ async function inicializarPlataformaAumven() {
       inq.premios = premiosReales;
       inq.consolacion = CFG0.consolacion;
       inq.wa = whatsappReal;
+
+      // Monedas de Oro — nuevos campos (no afectan a los otros juegos)
+      CFG0.valorMoneda = Number(data.valor_moneda) || 0;
+      CFG0.meta1Monedas = Number(data.meta1_monedas) || 5;
+      CFG0.meta2Monedas = Number(data.meta2_monedas) || 10;
+      CFG0.premiosMeta1 = normalizarLista(data.premios_meta1);
+      CFG0.premiosMeta2 = normalizarLista(data.premios_meta2);
     }
 
     arrancarConDatosLocales();
     actualizarTituloTienda();
+    toggleTelInput();
     console.log("CFG0 final tras inicializaci\xF3n:", CFG0);
   } catch (e) {
     console.error("Error cr\xEDtico en inicializaci\xF3n:", e.message);
     arrancarConDatosLocales();
     actualizarTituloTienda();
+    toggleTelInput();
   }
+}
+
+// Convierte jsonb/array/string de Supabase a array limpio de strings
+function normalizarLista(val) {
+  if (Array.isArray(val)) return val.map(function(p){ return String(p).trim(); }).filter(Boolean);
+  if (typeof val === 'string' && val.trim()) {
+    try {
+      var parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed.map(function(p){ return String(p).trim(); }).filter(Boolean);
+    } catch(e) {}
+    return val.split(',').map(function(p){ return p.trim(); }).filter(Boolean);
+  }
+  return [];
 }
 
 // ================================================================
@@ -612,6 +690,14 @@ function actualizarTituloTienda() {
   if (!el) return;
   var nombre = (CFG0 && CFG0.nombre && CFG0.nombre !== 'Cargando...') ? CFG0.nombre.trim() : '';
   el.textContent = nombre ? ('SUCURSAL ' + nombre.toUpperCase()) : 'SUCURSAL AUMVEN PRO';
+}
+
+// Muestra/oculta el campo de WhatsApp en el login según el juego activo
+// (solo Monedas de Oro lo necesita, para acumular monedas entre visitas)
+function toggleTelInput() {
+  var tel = document.getElementById('tel-in');
+  if (!tel) return;
+  tel.style.display = (CFG0.juego === 'monedas') ? 'block' : 'none';
 }
 
 function arrancarConDatosLocales() {
@@ -636,6 +722,11 @@ function arrancarConDatosLocales() {
     if (local.prefijo) CFG0.prefijo = local.prefijo;
     if (local.adicional) CFG0.adicional = local.adicional;
     if (local.ticket) CFG0.ticket = local.ticket;
+    if (local.valorMoneda) CFG0.valorMoneda = local.valorMoneda;
+    if (local.meta1Monedas) CFG0.meta1Monedas = local.meta1Monedas;
+    if (local.meta2Monedas) CFG0.meta2Monedas = local.meta2Monedas;
+    if (local.premiosMeta1 && local.premiosMeta1.length) CFG0.premiosMeta1 = local.premiosMeta1;
+    if (local.premiosMeta2 && local.premiosMeta2.length) CFG0.premiosMeta2 = local.premiosMeta2;
 
     inq.premios = CFG0.premios;
     inq.consolacion = CFG0.consolacion;
@@ -683,6 +774,7 @@ function goLogin() {
   if (ls) ls.classList.add('active');
   var inp = document.getElementById('cod-in');
   if (inp) inp.value = '';
+  toggleTelInput();
   window.scrollTo(0, 0);
 }
 
@@ -718,6 +810,18 @@ async function entrar() {
   }
 
   var cfg = getCfg() || CFG0;
+  var esMonedas = (cfg.juego || CFG0.juego) === 'monedas';
+
+  // Monedas de Oro necesita el WhatsApp del cliente para acumular entre visitas
+  var telRaw = '';
+  if (esMonedas) {
+    telRaw = document.getElementById('tel-in').value.replace(/[^0-9]/g, '');
+    if (telRaw.length < 8) {
+      alerta('\u26A0\uFE0F Ingresa tu WhatsApp (solo n\xFAmeros)');
+      return;
+    }
+  }
+
   var pfx = (cfg.prefijo || CFG0.prefijo || 'CARI').trim().toUpperCase();
 
   if (pfx) {
@@ -780,7 +884,13 @@ async function entrar() {
     addUsd(raw);
 
     if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-    launchGame();
+
+    if (esMonedas) {
+      document.getElementById('tel-in').value = '';
+      procesarMoneda(telRaw, raw);
+    } else {
+      launchGame();
+    }
 
   } catch(e) {
     // Si Supabase falla (sin internet), usar solo localStorage como respaldo
@@ -791,7 +901,12 @@ async function entrar() {
     cod = raw;
     addUsd(raw);
     if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-    launchGame();
+    if (esMonedas) {
+      document.getElementById('tel-in').value = '';
+      procesarMoneda(telRaw, raw);
+    } else {
+      launchGame();
+    }
   }
 }
 
@@ -836,10 +951,15 @@ function launchGame() {
 
 // ================================================================
 //  MOTOR DE PREMIOS
+//  premiosOverride / consolacionOverride: usados por Monedas de Oro
+//  para sortear con la lista de Meta 1 o Meta 2 en vez de la lista
+//  global. Si no se pasan, se comporta EXACTAMENTE igual que antes.
 // ================================================================
-function sortearPremio() {
-  var p = (inq && inq.premios && inq.premios.length) ? inq.premios : CFG0.premios;
-  var c = (inq && inq.consolacion) ? inq.consolacion : CFG0.consolacion;
+function sortearPremio(premiosOverride, consolacionOverride) {
+  var p = (premiosOverride && premiosOverride.length) ? premiosOverride
+        : ((inq && inq.premios && inq.premios.length) ? inq.premios : CFG0.premios);
+  var c = consolacionOverride
+        || ((inq && inq.consolacion) ? inq.consolacion : CFG0.consolacion);
   var n = p.length;
   var r = Math.random();
 
@@ -1137,12 +1257,212 @@ function renderRaspe(zone) {
 }
 
 // ================================================================
+//  JUEGO: MONEDAS DE ORO
+// ================================================================
+
+// Se llama desde entrar() justo después de validar y quemar el código.
+// 1) Suma 1 moneda al saldo del cliente (por teléfono) en Supabase.
+// 2) Registra la fila en monedas_historial (para el Panel Admin en vivo).
+// 3) Pinta la pantalla de progreso.
+async function procesarMoneda(telefono, codigo) {
+  var negocioId = NEG_SLUG || 'carinito';
+  var meta1 = CFG0.meta1Monedas || 5;
+  var meta2 = CFG0.meta2Monedas || 10;
+
+  var monedas = 1;
+  var meta1Perdida = false;
+
+  try {
+    var { data: cliente, error: errSel } = await supabaseClient
+      .from('monedas_clientes')
+      .select('*')
+      .eq('negocio_id', negocioId)
+      .eq('telefono', telefono)
+      .maybeSingle();
+
+    if (!errSel && cliente) {
+      monedas = (cliente.monedas || 0) + 1;
+      meta1Perdida = !!cliente.meta1_perdida;
+      await supabaseClient.from('monedas_clientes')
+        .update({ monedas: monedas, updated_at: new Date().toISOString() })
+        .eq('negocio_id', negocioId).eq('telefono', telefono);
+    } else {
+      await supabaseClient.from('monedas_clientes')
+        .insert({ negocio_id: negocioId, telefono: telefono, monedas: 1, meta1_perdida: false });
+    }
+  } catch(e) {
+    console.error('Error actualizando saldo de monedas:', e);
+  }
+
+  var ahora = new Date();
+  var metaAlcanzada = null;
+  if (monedas >= meta2) metaAlcanzada = 'META2';
+  else if (monedas >= meta1 && !meta1Perdida) metaAlcanzada = 'META1';
+
+  try {
+    await supabaseClient.from('monedas_historial').insert({
+      negocio_id: negocioId,
+      telefono: telefono,
+      codigo: codigo,
+      monedas_acumuladas: monedas,
+      meta_alcanzada: metaAlcanzada,
+      fecha: ahora.toLocaleDateString('es-CL'),
+      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
+      ts: Date.now()
+    });
+  } catch(e) {
+    console.error('Error guardando historial de monedas:', e);
+  }
+
+  window._monTelActual = telefono;
+  renderPantallaMonedas(monedas, meta1Perdida);
+  if (typeof renderKPIs === 'function') renderKPIs();
+}
+
+function renderPantallaMonedas(monedas, meta1Perdida) {
+  var meta1 = CFG0.meta1Monedas || 5;
+  var meta2 = CFG0.meta2Monedas || 10;
+  var t = CFG0;
+
+  var lh = t.logoData || t.logo
+    ? '<img class="b-logo" src="' + (t.logoData || t.logo) + '" alt="' + t.nombre
+      + '" onerror="this.style.display=\'none\';document.getElementById(\'fbm\').style.display=\'block\'">'
+      + '<span id="fbm" class="b-emoji" style="display:none">' + (t.emoji||'✨') + '</span>'
+    : '<span class="b-emoji">' + (t.emoji||'✨') + '</span>';
+  document.getElementById('monedas-hdr').innerHTML = lh + '<div class="b-name">' + (t.nombre||'Mi Negocio') + '</div>';
+
+  var metaObjetivo = (monedas >= meta1 && !meta1Perdida) ? meta1 : meta2;
+  var yaListoMeta1 = (monedas >= meta1 && !meta1Perdida);
+  var yaListoMeta2 = (monedas >= meta2);
+  var pct = Math.min(100, Math.round((monedas / metaObjetivo) * 100));
+
+  var html = '<div class="mon-area">';
+  html += '<div class="mon-coin-wrap' + ((yaListoMeta1||yaListoMeta2) ? ' brillar' : '') + '">'
+        + '<img src="moneda_oro.png" alt="Moneda de oro" onerror="this.style.opacity=0">'
+        + '</div>';
+  html += '<div class="mon-cuenta">' + monedas + ' <small>/ ' + metaObjetivo + ' Monedas de Oro 🪙</small></div>';
+  html += '<div class="mon-prog-wrap"><div class="mon-prog-bar" style="width:' + pct + '%"></div></div>';
+
+  if (yaListoMeta2) {
+    html += '<div class="mon-msg" style="color:var(--gd)">🎉 ¡Meta lograda! Puedes canjear tu premio mayor.</div>';
+    html += '<div class="mon-btns"><button class="btn btn-gd" onclick="canjearMoneda(2)">🏆 Canjear premio Meta 2</button></div>';
+  } else if (yaListoMeta1) {
+    html += '<div class="mon-msg">✨ ¡Llegaste a la Meta 1! ¿Canjeas ahora o sigues juntando?</div>';
+    html += '<div class="mon-btns">'
+          + '<button class="btn btn-gd" onclick="canjearMoneda(1)">🎁 Canjear premio Meta 1</button>'
+          + '<button class="btn btn-gh" onclick="seguirJuntando()">🪙 Seguir juntando hacia Meta 2</button>'
+          + '</div>';
+  } else {
+    var faltan = metaObjetivo - monedas;
+    html += '<div class="mon-msg">Te faltan ' + faltan + ' moneda' + (faltan===1?'':'s') + ' para tu próximo premio</div>';
+  }
+  html += '</div>';
+
+  document.getElementById('monedas-zone').innerHTML = html;
+  goScreen('sc-monedas');
+}
+
+async function seguirJuntando() {
+  var negocioId = NEG_SLUG || 'carinito';
+  var tel = window._monTelActual;
+  if (!tel) return;
+  try {
+    await supabaseClient.from('monedas_clientes')
+      .update({ meta1_perdida: true, updated_at: new Date().toISOString() })
+      .eq('negocio_id', negocioId).eq('telefono', tel);
+  } catch(e) { console.error('Error marcando meta1 perdida:', e); }
+
+  try {
+    var { data: cliente } = await supabaseClient
+      .from('monedas_clientes').select('monedas')
+      .eq('negocio_id', negocioId).eq('telefono', tel).maybeSingle();
+    renderPantallaMonedas((cliente && cliente.monedas) || 0, true);
+  } catch(e) {
+    renderPantallaMonedas(CFG0.meta1Monedas || 5, true);
+  }
+}
+
+async function canjearMoneda(metaNum) {
+  var negocioId = NEG_SLUG || 'carinito';
+  var tel = window._monTelActual;
+  var listaPremios = metaNum === 1 ? CFG0.premiosMeta1 : CFG0.premiosMeta2;
+  var premio = sortearPremio(listaPremios, CFG0.consolacion);
+
+  // Resetea el saldo del cliente para empezar un nuevo ciclo
+  try {
+    if (tel) {
+      await supabaseClient.from('monedas_clientes')
+        .update({ monedas: 0, meta1_perdida: false, updated_at: new Date().toISOString() })
+        .eq('negocio_id', negocioId).eq('telefono', tel);
+    }
+  } catch(e) { console.error('Error reseteando saldo tras canje:', e); }
+
+  var ahora = new Date();
+  try {
+    await supabaseClient.from('monedas_historial').insert({
+      negocio_id: negocioId,
+      telefono: tel || '',
+      codigo: '(canje)',
+      monedas_acumuladas: 0,
+      meta_alcanzada: 'META' + metaNum + '_CANJEADA',
+      fecha: ahora.toLocaleDateString('es-CL'),
+      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
+      ts: Date.now()
+    });
+  } catch(e) { console.error('Error guardando canje en historial:', e); }
+
+  mostrarResMoneda(premio, metaNum);
+  if (typeof renderKPIs === 'function') renderKPIs();
+}
+
+function mostrarResMoneda(premio, metaNum) {
+  var card = document.getElementById('result-card');
+  var ico  = '<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
+
+  var telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
+  telefonoDestino = String(telefonoDestino).replace(/[^0-9]/g, '');
+  if (!telefonoDestino) telefonoDestino = "56926221935";
+  var mensajeTexto = encodeURIComponent("¡Hola! Alcancé la Meta " + metaNum + " de Monedas de Oro y gané: " + premio.txt + " 🎉");
+  var linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoDestino + "&text=" + mensajeTexto;
+
+  if (premio.gano) {
+    if (typeof sndWin === 'function') sndWin();
+    setTimeout(function(){
+      try {
+        confetti({particleCount:160,spread:90,origin:{y:.4}, colors:['#f59e0b','#facc15','#a855f7','#ec4899']});
+      } catch(e) {}
+    }, 200);
+    card.innerHTML = '<span class="r-trophy">🏆</span>'
+      + '<div class="r-title">¡Felicitaciones!</div>'
+      + '<div class="r-prize">' + premio.txt + '</div>'
+      + '<p class="r-sub">Muestra este mensaje al vendedor 🎉</p>'
+      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Canjear por WhatsApp</a>';
+  } else {
+    if (typeof sndPop === 'function') sndPop();
+    card.innerHTML = '<span class="r-trophy">🎁</span>'
+      + '<span class="con-badge">Premio de consolación</span>'
+      + '<div class="r-title" style="color:var(--ac2)">¡Casi!</div>'
+      + '<div class="r-prize">' + premio.txt + '</div>'
+      + '<p class="r-sub">Válido en tu próxima compra.</p>'
+      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Mostrar al vendedor</a>';
+  }
+  goScreen('sc-result');
+}
+
+// ================================================================
 //  ADMIN
 // ================================================================
 async function abrirAdmin() {
   goScreen('sc-admin');
   await loadForm();
   renderKPIs();
+}
+
+function toggleMonedasCfg() {
+  var sel = document.getElementById('f-juego');
+  var block = document.getElementById('monedas-cfg');
+  if (!sel || !block) return;
+  block.style.display = (sel.value === 'monedas') ? 'block' : 'none';
 }
 
 async function loadForm() {
@@ -1175,7 +1495,12 @@ async function loadForm() {
         meta:        data.meta        || c.meta        || 0,
         ventasGuard: data.ventasGuard || c.ventasGuard || 0,
         pedidosGuard:data.pedidosGuard|| c.pedidosGuard|| 0,
-        ticket:      data.ticket      || c.ticket      || 0
+        ticket:      data.ticket      || c.ticket      || 0,
+        valorMoneda:  Number(data.valor_moneda) || c.valorMoneda || 0,
+        meta1Monedas: Number(data.meta1_monedas) || c.meta1Monedas || 5,
+        meta2Monedas: Number(data.meta2_monedas) || c.meta2Monedas || 10,
+        premiosMeta1: normalizarLista(data.premios_meta1).length ? normalizarLista(data.premios_meta1) : (c.premiosMeta1 || []),
+        premiosMeta2: normalizarLista(data.premios_meta2).length ? normalizarLista(data.premios_meta2) : (c.premiosMeta2 || [])
       };
       _llenarFormulario(remoto);
       // Sincronizar CFG0 con datos reales de Supabase
@@ -1200,7 +1525,13 @@ function _llenarFormulario(c) {
   document.getElementById('f-meta').value        = '';
   document.getElementById('c-ventas').value      = c.ventasGuard || '';
   document.getElementById('c-ped').value         = c.pedidosGuard|| '';
+  document.getElementById('f-valormoneda').value = c.valorMoneda  || '';
+  document.getElementById('f-meta1mon').value    = c.meta1Monedas || 5;
+  document.getElementById('f-meta2mon').value    = c.meta2Monedas || 10;
+  document.getElementById('f-premmeta1').value   = (c.premiosMeta1||[]).join(', ');
+  document.getElementById('f-premmeta2').value   = (c.premiosMeta2||[]).join(', ');
   document.getElementById('calc-r').classList.remove('show');
+  toggleMonedasCfg();
   if (c.ventasGuard || c.meta) { calcTicket(); }
   c.logoData ? prevLogo(c.logoData) : (c.logo ? prevLogo(c.logo) : hideLogo());
   renderLeyenda();
@@ -1210,6 +1541,11 @@ async function guardarCfg() {
   var pRaw   = document.getElementById('f-prem').value;
   var premios = pRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
   var ex     = getCfg() || CFG0;
+
+  var premiosMeta1 = document.getElementById('f-premmeta1').value
+    .split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  var premiosMeta2 = document.getElementById('f-premmeta2').value
+    .split(',').map(function(s){ return s.trim(); }).filter(Boolean);
 
   var cfg = {
     nombre:      document.getElementById('f-nom').value.trim()   || ex.nombre      || CFG0.nombre,
@@ -1231,7 +1567,12 @@ async function guardarCfg() {
                  })(),
     ventasGuard: parseFloat(document.getElementById('c-ventas').value)       || ex.ventasGuard || 0,
     pedidosGuard:parseFloat(document.getElementById('c-ped').value)          || ex.pedidosGuard|| 0,
-    ticket:      parseFloat(ex.ticket) || 0
+    ticket:      parseFloat(ex.ticket) || 0,
+    valorMoneda:  parseFloat(document.getElementById('f-valormoneda').value) || ex.valorMoneda  || 0,
+    meta1Monedas: parseInt(document.getElementById('f-meta1mon').value, 10)  || ex.meta1Monedas || 5,
+    meta2Monedas: parseInt(document.getElementById('f-meta2mon').value, 10)  || ex.meta2Monedas || 10,
+    premiosMeta1: premiosMeta1.length ? premiosMeta1 : (ex.premiosMeta1 || []),
+    premiosMeta2: premiosMeta2.length ? premiosMeta2 : (ex.premiosMeta2 || [])
   };
 
   localStorage.removeItem(K_CFG);
@@ -1251,6 +1592,11 @@ async function guardarCfg() {
   CFG0.adicional = cfg.adicional;
   CFG0.meta = cfg.meta;
   CFG0.ticket = cfg.ticket;
+  CFG0.valorMoneda = cfg.valorMoneda;
+  CFG0.meta1Monedas = cfg.meta1Monedas;
+  CFG0.meta2Monedas = cfg.meta2Monedas;
+  CFG0.premiosMeta1 = cfg.premiosMeta1;
+  CFG0.premiosMeta2 = cfg.premiosMeta2;
 
   whatsappReal = cfg.wa;
   window.whatsappReal = cfg.wa;
@@ -1269,7 +1615,12 @@ async function guardarCfg() {
       premios: cfg.premios,
       consolacion: cfg.consolacion,
       wa: cfg.wa,
-      prefijo: cfg.prefijo
+      prefijo: cfg.prefijo,
+      valor_moneda: cfg.valorMoneda,
+      meta1_monedas: cfg.meta1Monedas,
+      meta2_monedas: cfg.meta2Monedas,
+      premios_meta1: cfg.premiosMeta1,
+      premios_meta2: cfg.premiosMeta2
     };
     var idActualizar = NEG_SLUG || 'carinito';
     var q = supabaseClient.from('configuraciones').update(updatePayload).eq('id', idActualizar);
@@ -1324,11 +1675,72 @@ function calcDinamica() {
   return { TK: TK, adicional: adicional, meta: meta, utilidadJuego: utilidadJuego, cfg: cfg };
 }
 
+// ================================================================
+//  KPIs — con rama especial para Monedas de Oro (Acotación 9)
+//  Cuando el juego activo es "monedas": la tarjeta que antes decía
+//  "Juegos totales" pasa a contar monedas ganadas en el período, y
+//  la utilidad se calcula como monedas_ganadas × valor_moneda × 0.8
+//  en vez de usar el "adicional" de los otros 3 juegos.
+//  Supuesto a confirmar contigo: "premios entregados" = N° de CANJES
+//  (Meta 1 o Meta 2) en el período, no cada moneda individual.
+// ================================================================
 async function renderKPIs() {
   var per  = document.getElementById('kpi-fil').value;
   var negocioId = NEG_SLUG || 'carinito';
+  var esMonedas = CFG0.juego === 'monedas';
 
-  // Leer historial desde Supabase (centralizado, todos los dispositivos)
+  document.getElementById('kpi-tot-lbl').textContent = esMonedas ? 'Monedas ganadas' : 'Juegos totales';
+  document.getElementById('kpi-proy').parentElement.querySelector('.kpi-lbl').textContent =
+    esMonedas ? 'Proyección 30 días • monedas × utilidad' : 'Proyección 30 días • juegos × utilidad';
+
+  if (esMonedas) {
+    var hAllM = [];
+    try {
+      var { data: rowsM, error: errM } = await supabaseClient
+        .from('monedas_historial')
+        .select('*')
+        .eq('negocio_id', negocioId)
+        .order('ts', { ascending: false });
+      if (!errM && rowsM) hAllM = rowsM;
+    } catch(e) { console.error('Error leyendo monedas_historial:', e); }
+
+    var hFM = filtrHst(hAllM.map(function(r){ return { ts: r.ts, meta_alcanzada: r.meta_alcanzada, codigo: r.codigo, telefono: r.telefono, fecha: r.fecha, hora: r.hora }; }), per);
+
+    var monedasGanadas = hFM.filter(function(r){ return r.codigo !== '(canje)'; }).length;
+    var canjes = hFM.filter(function(r){ return r.meta_alcanzada && r.meta_alcanzada.indexOf('CANJEADA') !== -1; }).length;
+
+    var valorMoneda = CFG0.valorMoneda || 0;
+    var utilidadPorMoneda = Math.round(valorMoneda * 0.8);
+    var utilidadAcumuladaM = monedasGanadas * utilidadPorMoneda;
+    var monedasMensuales = monedasGanadas * 30;
+    var utilidadMensualM = monedasMensuales * utilidadPorMoneda;
+
+    document.getElementById('kpi-tot').textContent  = monedasGanadas;
+    document.getElementById('kpi-prem').textContent = canjes;
+    document.getElementById('kpi-ing').textContent  =
+      '$' + utilidadAcumuladaM.toLocaleString('es-CL')
+      + ' \u2022 $' + utilidadPorMoneda.toLocaleString('es-CL') + '/moneda';
+    document.getElementById('kpi-proy').textContent =
+      monedasMensuales + ' monedas \u2192 $' + utilidadMensualM.toLocaleString('es-CL');
+
+    var listaM = document.getElementById('h-list');
+    if (!hFM.length) {
+      listaM.innerHTML = '<li class="empty">Sin registros en el per\xEDodo seleccionado</li>';
+      return;
+    }
+    var htmlM = '';
+    hFM.slice().reverse().forEach(function(r){
+      var etiqueta = r.codigo === '(canje)'
+        ? ('\uD83C\uDFC6 Canje ' + (r.meta_alcanzada || '').replace('_CANJEADA',''))
+        : ('\uD83E\uDE99 +1 moneda \u2014 ' + (r.telefono || ''));
+      htmlM += '<li class="h-item"><span style="flex:1">' + etiqueta + '</span>'
+             + '<span class="h-date">' + (r.fecha || '&#8212;') + '</span></li>';
+    });
+    listaM.innerHTML = htmlM;
+    return;
+  }
+
+  // --- Comportamiento original para 3_cofres / globos / raspe (sin tocar) ---
   var hAll = [];
   try {
     var { data: rows, error } = await supabaseClient
