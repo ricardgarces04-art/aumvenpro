@@ -450,8 +450,9 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
       <div class="divider"></div>
       <div class="sec" style="font-size:.93rem">&#129689; Configuraci&#xF3;n Monedas de Oro</div>
       <label>Valor de 1 Moneda de Oro ($)</label>
-      <input type="number" id="f-valormoneda" placeholder="Ej: 2000, 3500, 5000">
+      <input type="number" id="f-valormoneda" placeholder="Ej: 2000, 3500, 5000" oninput="calcTicket()">
       <p class="l-hint">&#128176; Monto extra que el cliente gasta para ganar 1 moneda. Utilidad = este valor &#xD7; 80%.</p>
+      <p class="l-hint" id="mon-sugerencia" style="color:var(--gd)"></p>
       <div class="row2">
         <div>
           <label>Meta 1 &#8212; N&#xB0; monedas (premio bajo)</label>
@@ -1331,7 +1332,7 @@ function renderPantallaMonedas(monedas, meta1Perdida) {
     : '<span class="b-emoji">' + (t.emoji||'✨') + '</span>';
   document.getElementById('monedas-hdr').innerHTML = lh + '<div class="b-name">' + (t.nombre||'Mi Negocio') + '</div>';
 
-  var metaObjetivo = (monedas >= meta1 && !meta1Perdida) ? meta1 : meta2;
+  var metaObjetivo = meta1Perdida ? meta2 : meta1;
   var yaListoMeta1 = (monedas >= meta1 && !meta1Perdida);
   var yaListoMeta2 = (monedas >= meta2);
   var pct = Math.min(100, Math.round((monedas / metaObjetivo) * 100));
@@ -1833,6 +1834,24 @@ function calcTicket() {
 
   var fMetaEl = document.getElementById('f-meta');
   if (fMetaEl) fMetaEl.value = d.meta.toLocaleString('es-CL');
+
+  actualizarSugerenciaMoneda(d.TK);
+}
+
+// Pauta sugerida para el valor de la moneda: ~30% del ticket promedio real,
+// para que una compra típica entregue entre 2 y 4 monedas. Es solo una
+// sugerencia — el campo queda libre para que el emprendedor decida lo que quiera.
+function actualizarSugerenciaMoneda(TK) {
+  var el = document.getElementById('mon-sugerencia');
+  if (!el) return;
+  if (!TK || TK <= 0) { el.innerHTML = ''; return; }
+  var sugerido = Math.round((TK * 0.30) / 100) * 100;
+  if (sugerido < 500) sugerido = 500;
+  el.innerHTML = '&#128161; Con tu ticket promedio ($' + TK.toLocaleString('es-CL')
+    + '), una pauta justa es <strong>$' + sugerido.toLocaleString('es-CL')
+    + '</strong> por moneda (~30% del ticket, para que una compra t\xEDpica d\xE9 2 a 4 monedas). '
+    + '<button type="button" class="btn btn-gh" style="width:auto;padding:.3rem .7rem;font-size:.72rem;margin-top:.35rem;display:inline-flex"'
+    + ' onclick="document.getElementById(\'f-valormoneda\').value=' + sugerido + '">Usar sugerencia</button>';
 }
 
 async function exportCSV() {
