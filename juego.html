@@ -174,6 +174,30 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
 /* MONEDAS DE ORO */
 .mon-area{display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:.9rem;padding:1.5rem 1.2rem 1.8rem;text-align:center}
+
+/* ROCKOLA DE PROGRESO */
+.rockola-wrap{width:100%;background:linear-gradient(180deg,rgba(25,18,50,.96),rgba(15,10,32,.98));
+  border:1px solid rgba(245,158,11,.22);border-radius:var(--rs);padding:1.1rem 1.15rem;text-align:left}
+.rockola-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+.rockola-title{font-family:'Fredoka One',cursive;font-size:.92rem;letter-spacing:.03em;
+  color:var(--gd);text-transform:uppercase}
+.rockola-pct{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--gd)}
+.rockola-barwrap{background:rgba(0,0,0,.45);border-radius:100px;height:14px;overflow:hidden;margin-bottom:.9rem}
+.rockola-barfill{height:100%;background:linear-gradient(90deg,#f59e0b,#facc15);
+  border-radius:100px;transition:width .4s ease}
+.rockola-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+.rockola-stat{background:rgba(0,0,0,.35);border:1px solid rgba(245,158,11,.14);
+  border-radius:10px;padding:.6rem .4rem;text-align:center}
+.rockola-stat-lbl{color:var(--mt);font-size:.62rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.04em;margin-bottom:.3rem}
+.rockola-stat-val{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--tx);
+  display:flex;align-items:center;justify-content:center;gap:.25rem}
+.rockola-stat-val img{width:18px;height:18px;object-fit:contain}
+.rockola-grid{display:flex;flex-wrap:wrap;gap:.4rem}
+.rockola-coin{width:30px;height:30px;object-fit:contain;
+  filter:drop-shadow(0 2px 6px rgba(245,158,11,.4))}
+.rockola-more{color:var(--mt);font-size:.78rem;font-weight:700;align-self:center;margin-left:.2rem}
+
 .mon-coin-wrap{position:relative;width:150px;height:150px}
 .mon-coin-wrap img{width:100%;height:100%;object-fit:contain;
   filter:drop-shadow(0 6px 22px rgba(245,158,11,.45))}
@@ -1336,13 +1360,34 @@ function renderPantallaMonedas(monedas, meta1Perdida) {
   var yaListoMeta1 = (monedas >= meta1 && !meta1Perdida);
   var yaListoMeta2 = (monedas >= meta2);
   var pct = Math.min(100, Math.round((monedas / metaObjetivo) * 100));
+  var faltan = Math.max(0, metaObjetivo - monedas);
+
+  // Cuadrícula de monedas — tope visual de 30 íconos para no sobrecargar el celular,
+  // el resto se resume como "+N más" (igual que tu referencia)
+  var TOPE_GRID = 30;
+  var monedasAMostrar = Math.min(monedas, TOPE_GRID);
+  var extraGrid = monedas - monedasAMostrar;
+  var iconosHtml = '';
+  for (var gi = 0; gi < monedasAMostrar; gi++) {
+    iconosHtml += '<img class="rockola-coin" src="moneda_oro.png" alt="moneda" onerror="this.style.display=\'none\'">';
+  }
+  if (extraGrid > 0) iconosHtml += '<span class="rockola-more">+' + extraGrid + ' más</span>';
 
   var html = '<div class="mon-area">';
-  html += '<div class="mon-coin-wrap' + ((yaListoMeta1||yaListoMeta2) ? ' brillar' : '') + '">'
-        + '<img src="moneda_oro.png" alt="Moneda de oro" onerror="this.style.opacity=0">'
+  html += '<div class="rockola-wrap">'
+        + '<div class="rockola-hdr"><span class="rockola-title">🪙 Rockola de Progreso</span>'
+        + '<span class="rockola-pct">' + pct + '%</span></div>'
+        + '<div class="rockola-barwrap"><div class="rockola-barfill" style="width:' + pct + '%"></div></div>'
+        + '<div class="rockola-stats">'
+        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Monedas</div>'
+        + '<div class="rockola-stat-val">' + monedas + ' <img src="moneda_oro.png" alt="" onerror="this.style.display=\'none\'"></div></div>'
+        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Faltan</div>'
+        + '<div class="rockola-stat-val">' + faltan + '</div></div>'
+        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Meta</div>'
+        + '<div class="rockola-stat-val">' + metaObjetivo + '</div></div>'
+        + '</div>'
+        + '<div class="rockola-grid">' + iconosHtml + '</div>'
         + '</div>';
-  html += '<div class="mon-cuenta">' + monedas + ' <small>/ ' + metaObjetivo + ' Monedas de Oro 🪙</small></div>';
-  html += '<div class="mon-prog-wrap"><div class="mon-prog-bar" style="width:' + pct + '%"></div></div>';
 
   if (yaListoMeta2) {
     html += '<div class="mon-msg" style="color:var(--gd)">🎉 ¡Meta lograda! Puedes canjear tu premio mayor.</div>';
@@ -1354,7 +1399,6 @@ function renderPantallaMonedas(monedas, meta1Perdida) {
           + '<button class="btn btn-gh" onclick="seguirJuntando()">🪙 Seguir juntando hacia Meta 2</button>'
           + '</div>';
   } else {
-    var faltan = metaObjetivo - monedas;
     html += '<div class="mon-msg">Te faltan ' + faltan + ' moneda' + (faltan===1?'':'s') + ' para tu próximo premio</div>';
   }
   html += '</div>';
