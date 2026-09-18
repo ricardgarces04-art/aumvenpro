@@ -395,6 +395,27 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SCREEN: REGISTRO -->
 <!-- ══════════════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════ -->
+<!-- SCREEN: LOGIN -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-login">
+  <div class="section" style="max-width:680px">
+    <h2 class="section-title">Iniciar sesión</h2>
+    <p class="section-sub">Ingresa con tu email y contraseña</p>
+
+    <label>Email</label>
+    <input type="text" id="login-email" placeholder="maria@email.com">
+
+    <label>Contraseña</label>
+    <input type="password" id="login-pass" placeholder="Tu contraseña">
+
+    <div id="login-alert"></div>
+
+    <button id="login-btn" onclick="loginUsuario()">Ingresar</button>
+
+    <p style="margin-top:12px">¿No tienes cuenta? <a href="#" onclick="mostrarScreen('registro')">Regístrate aquí</a></p>
+  </div>
+</div>
 <div class="screen" id="screen-registro">
   <div class="section" style="max-width:680px">
     <h2 class="section-title">Crear cuenta</h2>
@@ -429,7 +450,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         </div>
       </div>
       <label>Email</label>
-      <input type="text" id="reg-email" placeholder="maria@email.com">
+      <input type="password"id="reg-email" placeholder="maria@email.com">
       <label>Crear contraseña</label>
       <input type="text" id="reg-pass" placeholder="Mínimo 6 caracteres">
 
@@ -468,17 +489,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         <input type="text" id="reg-doc-arr" placeholder="https://drive.google.com/... (carnet + selfie)">
         <p class="form-hint">Solo carnet (ambos lados) y selfie con el carnet. Completamente confidencial.</p>
       </div>
-
-      <button class="btn btn-primary" id="reg-btn" onclick="registrarUsuario()">
-        ✅ Crear mi cuenta
-      </button>
-      <p style="text-align:center;font-size:.8rem;color:var(--mt);margin-top:.75rem">
-        Al registrarte aceptas nuestros <a href="#" style="color:var(--ac)">Términos y Condiciones</a>
-      </p>
-    </div>
-  </div>
-</div>
-
+registrarUsuario()
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- SCREEN: BUSCAR -->
 <!-- ══════════════════════════════════════════════════════ -->
