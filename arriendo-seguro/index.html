@@ -1083,27 +1083,33 @@ async function registrarUsuario() {
   if(!rolSeleccionado) { showAlert('reg-alert', 'Por favor selecciona tu rol primero.', 'error'); return; }
   var nombre = document.getElementById('reg-nombre').value.trim();
   var email = document.getElementById('reg-email').value.trim();
+  var password = document.getElementById('reg-pass').value;
   if(!nombre || !email) { showAlert('reg-alert', 'Nombre y email son obligatorios.', 'error'); return; }
+  if(!password || password.length < 6) { showAlert('reg-alert', 'La contraseña debe tener al menos 6 caracteres.', 'error'); return; }
 
   var btn = document.getElementById('reg-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
 
-  var id = 'u_' + Date.now().toString(36);
-  var datos = {
-    id: id,
-    nombre: nombre,
-    email: email,
-    telefono: document.getElementById('reg-tel').value,
-    rol: rolSeleccionado,
-    foto_documento: rolSeleccionado === 'arrendador' ? document.getElementById('reg-doc').value : null
-  };
+  var telefono = document.getElementById('reg-tel').value;
+  var fotoDocumento = rolSeleccionado === 'arrendador' ? document.getElementById('reg-doc').value : null;
 
   if(sb) {
     try {
-      var { error } = await sb.from('usuarios').insert(datos);
+      var { data, error } = await sb.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { nombre: nombre, rol: rolSeleccionado } }
+      });
       if(error) throw error;
-      // Notificación WhatsApp CEO
+
+      if(data.user) {
+        await sb.from('usuarios').update({
+          telefono: telefono,
+          foto_documento: fotoDocumento
+        }).eq('id', data.user.id);
+      }
+
       notificarWhatsApp(
         '🏠 ARRIENDO CONFIABLE\n'
         + '🆕 Nuevo usuario registrado!\n'
@@ -1113,23 +1119,54 @@ async function registrarUsuario() {
         + '📋 Estado: Pendiente verificación\n'
         + '🕐 ' + new Date().toLocaleString('es-CL')
       );
+
       var pasos = rolSeleccionado === 'arrendador'
         ? '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendador<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu documentación por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Revisamos tus documentos (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🏠 <b>Paso 5 — Pendiente:</b> Puedes publicar tu propiedad'
         : '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendatario<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu carnet y selfie por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Verificamos tu identidad (máx. 24 hrs)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con sello de Verificado<br>🔍 <b>Paso 5 — Pendiente:</b> Acceso completo al buscador y contactos';
+
+      if(!data.session) {
+        pasos += '<br><br>📩 Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.';
+      }
       showAlert('reg-alert', pasos, 'success');
       btn.innerHTML = '✅ ¡Cuenta creada!';
-      localStorage.setItem('as_user', JSON.stringify(datos));
+
+      if(data.session) {
+        localStorage.setItem('as_user', JSON.stringify({ id: data.user.id, nombre: nombre, email: email, rol: rolSeleccionado }));
+      }
     } catch(e) {
       showAlert('reg-alert', 'Error: ' + e.message, 'error');
       btn.disabled = false;
       btn.innerHTML = '✅ Crear mi cuenta';
     }
-  } else {
-    setTimeout(function(){
-      localStorage.setItem('as_user', JSON.stringify(datos));
-      showAlert('reg-alert', '✅ ¡Cuenta creada en modo demo! ' + (rolSeleccionado === 'arrendador' ? 'Cuando conectes Supabase, tus datos se guardarán.' : 'Ahora puedes explorar la plataforma.'), 'success');
-      btn.innerHTML = '✅ ¡Cuenta creada!';
-    }, 1000);
+  }
+}
+
+// ================================================================
+// LOGIN DE USUARIO
+// ================================================================
+async function loginUsuario() {
+  var email = document.getElementById('login-email').value.trim();
+  var password = document.getElementById('login-pass').value;
+  if(!email || !password) { showAlert('login-alert', 'Ingresa tu email y contraseña.', 'error'); return; }
+
+  var btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Ingresando...';
+
+  if(sb) {
+    try {
+      var { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+      if(error) throw error;
+
+      var { data: perfil } = await sb.from('usuarios').select('*').eq('id', data.user.id).single();
+      localStorage.setItem('as_user', JSON.stringify(perfil));
+
+      mostrarScreen('inicio');
+    } catch(e) {
+      showAlert('login-alert', 'Email o contraseña incorrectos.', 'error');
+      btn.disabled = false;
+      btn.innerHTML = 'Ingresar';
+    }
   }
 }
 
