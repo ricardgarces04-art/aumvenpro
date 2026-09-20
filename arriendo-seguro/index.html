@@ -1092,7 +1092,7 @@ async function registrarUsuario() {
   if(!password || password.length < 6) { showAlert('reg-alert', 'La contraseña debe tener al menos 6 caracteres.', 'error'); return; }
   
 if(rolSeleccionado === 'arrendador') {
-  var docLink = document.getElementById('reg-doc-arr').value.trim();
+  var docLink = document.getElementById('reg-doc').value.trim();
   if(!docLink) { showAlert('reg-alert', 'Debes subir el link con tu documentación (carnet + selfie + certificado de dominio) antes de continuar.', 'error'); return; }
 }
   var btn = document.getElementById('reg-btn');
