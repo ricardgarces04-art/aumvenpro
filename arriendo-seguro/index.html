@@ -1119,18 +1119,11 @@ if(rolSeleccionado === 'arrendador') {
   if(sb) {
     try {
       var { data, error } = await sb.auth.signUp({
-        email: email,
-        password: password,
-        options: { data: { nombre: nombre, rol: rolSeleccionado } }
-      });
-      if(error) throw error;
-
-      if(data.user) {
-        await sb.from('usuarios').update({
-          telefono: telefono,
-          foto_documento: fotoDocumento
-        }).eq('id', data.user.id);
-      }
+  email: email,
+  password: password,
+  options: { data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento } }
+});
+if(error) throw error;
 
       notificarWhatsApp(
         '🏠 ARRIENDO CONFIABLE\n'
