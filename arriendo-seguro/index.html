@@ -449,6 +449,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
           <input type="text" id="reg-tel" placeholder="+56 9 1234 5678">
         </div>
       </div>
+      <label>RUT</label>
+      <input type="text" id="reg-rut" placeholder="12.345.678-9" maxlength="12" oninput="onRutInput()">
+      <div id="reg-rut-feedback" style="font-size:.78rem;margin:-.5rem 0 .75rem;min-height:1rem"></div>
       <label>Email</label>
       <input type="text" id="reg-email" placeholder="maria@email.com">
       <label>Crear contraseña</label>
@@ -1095,14 +1098,64 @@ function switchVerifTab(rol) {
 }
 
 // ================================================================
+// VALIDADOR DE RUT CHILENO (módulo 11)
+// ================================================================
+function formatearRut(rut) {
+  var valor = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+  if (valor.length === 0) return '';
+  var cuerpo = valor.slice(0, -1);
+  var dv = valor.slice(-1);
+  var cuerpoFormateado = '';
+  var count = 0;
+  for (var i = cuerpo.length - 1; i >= 0; i--) {
+    cuerpoFormateado = cuerpo[i] + cuerpoFormateado;
+    count++;
+    if (count % 3 === 0 && i !== 0) cuerpoFormateado = '.' + cuerpoFormateado;
+  }
+  return cuerpo.length ? (cuerpoFormateado + '-' + dv) : dv;
+}
+
+function validarRut(rutCompleto) {
+  if (!rutCompleto) return false;
+  var limpio = rutCompleto.replace(/\./g, '').replace('-', '');
+  if (limpio.length < 2) return false;
+  var cuerpo = limpio.slice(0, -1);
+  var dv = limpio.slice(-1).toUpperCase();
+  if (!/^\d+$/.test(cuerpo)) return false;
+  var suma = 0;
+  var multiplo = 2;
+  for (var i = cuerpo.length - 1; i >= 0; i--) {
+    suma += multiplo * parseInt(cuerpo[i], 10);
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
+  }
+  var resto = 11 - (suma % 11);
+  var dvEsperado = resto === 11 ? '0' : (resto === 10 ? 'K' : String(resto));
+  return dvEsperado === dv;
+}
+
+function onRutInput() {
+  var input = document.getElementById('reg-rut');
+  var feedback = document.getElementById('reg-rut-feedback');
+  input.value = formatearRut(input.value);
+  if (input.value.length < 3) { feedback.innerHTML = ''; return; }
+  if (validarRut(input.value)) {
+    feedback.innerHTML = '<span style="color:#059669">✅ RUT válido</span>';
+  } else {
+    feedback.innerHTML = '<span style="color:#dc2626">❌ RUT inválido</span>';
+  }
+}
+
+// ================================================================
 // REGISTRO DE USUARIO
 // ================================================================
 async function registrarUsuario() {
   if(!rolSeleccionado) { showAlert('reg-alert', 'Por favor selecciona tu rol primero.', 'error'); return; }
   var nombre = document.getElementById('reg-nombre').value.trim();
+  var rut = document.getElementById('reg-rut').value.trim();
   var email = document.getElementById('reg-email').value.trim();
   var password = document.getElementById('reg-pass').value;
   if(!nombre || !email) { showAlert('reg-alert', 'Nombre y email son obligatorios.', 'error'); return; }
+  if(!rut || !validarRut(rut)) { showAlert('reg-alert', 'Ingresa un RUT válido (ej: 12.345.678-9).', 'error'); return; }
   if(!password || password.length < 6) { showAlert('reg-alert', 'La contraseña debe tener al menos 6 caracteres.', 'error'); return; }
   
 if(rolSeleccionado === 'arrendador') {
@@ -1121,7 +1174,7 @@ if(rolSeleccionado === 'arrendador') {
       var { data, error } = await sb.auth.signUp({
   email: email,
   password: password,
-  options: { data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento } }
+  options: { data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento, rut: rut } }
 });
 if(error) throw error;
 
