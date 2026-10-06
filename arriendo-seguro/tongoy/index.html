@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Tongoy Prado del Mar | Arriendo Confiable by AUMVEN | R & R - Dueño Directo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style id="blindaje">
+#modalClave *{ -webkit-user-select:auto !important; user-select:auto !important; } *{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+input, textarea, select{ -webkit-user-select:auto !important; user-select:auto !important;}
+img{-webkit-user-drag:none; -webkit-touch-callout:none;}
+#watermark{position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; opacity:0.04; background-image: repeating-linear-gradient(-45deg, transparent, transparent 100px, rgba(0,0,0,0.05) 100px, rgba(0,0,0,0.05) 200px);}
+#watermark::after{content:"R & R - Ricardo Garcés Baeza - Reg 47314 - Las Dunas 1492 - Prado del Mar II - Dueño Directo - Prohibida copia"; position:absolute; top:50%; left:-20%; width:140%; transform:rotate(-25deg); font-size:28px; font-weight:900; color:#000; white-space:nowrap; letter-spacing:2px;}
+@media print{body{display:none;}}
+</style>
+
+<style>
+body{font-family:system-ui,sans-serif;background:#F5F1E8}
+.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:12px;font-weight:600;cursor:pointer;border:1px solid #e5e7eb;background:white;color:#0F2C3D;font-size:12px}
+.day:hover{background:#E0F2FE}.day.sel{background:#0F2C3D;color:white}.day.range{background:#BAE6FD}
+</style>
+</head>
+<body class="pb-10" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+
+<div style="background:#08050F; color:white; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-family:system-ui;">
+<div style="font-weight:900; color:#D8A0FF; letter-spacing:1px;">AUMVEN</div>
+<div style="display:flex; gap:12px; font-size:10px; align-items:center;">
+<span>Productos</span><span>Cómo funciona</span><span>Precios</span>
+<a href="https://aumven.cl" style="background:#A855F7; color:white; padding:6px 12px; border-radius:20px; text-decoration:none; font-weight:bold;">Volver a AUMVEN</a>
+</div>
+</div>
+<div style="background:#120C24; color:#C084FC; text-align:center; padding:4px; font-size:9px; letter-spacing:1px;">🏠 EL ECOSISTEMA AUMVEN • ARRIENDO CONFIABLE • PROPIEDAD VERIFICADA • R & R • Reg 47314</div>
+
+<div id="watermark"></div><div class="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl">
+<div class="bg-[#0F2C3D] text-white p-3 flex justify-between items-center sticky top-0 z-30">
+<div>
+<h1 class="text-[16px] font-bold leading-tight">Casa Tongoy Prado del Mar <span class="bg-white text-[#0F2C3D] px-2 py-0.5 rounded-full text-[10px] ml-1">by R & R</span></h1>
+<p class="text-[10px] mt-1 opacity-80"> 3D , 1 baño , living-comedor ,cocina americana,terrazay estacionamiento capacidad 6 pers - descanso total</p>
+</div>
+<button id="toggleDueno" type="button" onclick="try{if(typeof modoDueno!=='undefined' && modoDueno){ setModo(false); }else{ document.getElementById('modalClave').classList.remove('hidden'); document.getElementById('inputClave').focus(); } }catch(e){ document.getElementById('modalClave').classList.remove('hidden'); }" class="bg-yellow-400 text-black text-[13px] font-black px-5 py-3 rounded-full border-2 border-white shadow-xl">🔑 MODO DUEÑO</button>
+</div>
+<div id="barraDueno" class="hidden bg-amber-100 text-[11px] p-2 text-center border-b">🔧 MODO DUEÑO ON - Solo tú ves tu ganancia - <button id="btnSalirDueno" type="button" onclick="setModo(false); window.scrollTo(0,0);" class="underline font-bold bg-white px-3 py-1 rounded-full">👁️ Salir a cliente - Probar días</button></div>
+
+<div id="modalClave" class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4" onselectstart="return true" oncontextmenu="return true">
+<div class="bg-white rounded-2xl p-4 w-full max-w-[320px]">
+<div class="font-bold text-[14px] text-center">🔑 Clave Dueño</div>
+<div class="text-[11px] text-center text-gray-600 mt-1">Pista: 1492</div>
+<input id="inputClave" type="password" inputmode="numeric" placeholder="Clave" onkeydown="if(event.key==='Enter'){ document.getElementById('btnEntrarClave').click(); }" class="w-full mt-3 border-2 border-amber-400 rounded-xl px-3 py-3 text-[16px] text-center">
+<div class="flex gap-2 mt-3">
+<button id="btnCancelarClave" type="button" onclick="document.getElementById('modalClave').classList.add('hidden');" class="flex-1 bg-gray-100 py-3 rounded-xl text-[12px] font-bold">Cancelar</button>
+<button id="btnEntrarClave" type="button" onclick="let v=document.getElementById('inputClave').value.trim(); if(v==='1492'){ document.getElementById('modalClave').classList.add('hidden'); document.getElementById('inputClave').value=''; try{ modoDueno=true; setModo(true); }catch(e){ document.getElementById('panelDueno').classList.remove('hidden'); document.getElementById('barraDueno').classList.remove('hidden'); let b=document.getElementById('toggleDueno'); if(b){ b.textContent='MODO DUEÑO ON'; b.className='bg-green-500 text-white text-[13px] font-black px-5 py-3 rounded-full border-2 border-white shadow-xl'; } document.getElementById('carteraClientes')?.classList.remove('hidden'); } }else{ alert('Clave incorrecta - es 1492'); }" class="flex-1 bg-[#0F2C3D] text-white py-3 rounded-xl text-[12px] font-bold">Entrar</button>
+</div>
+</div>
+</div>
+
+<div class="p-3">
+<div class="relative">
+<img id="mainImg" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600" class="h-60 w-full object-cover rounded-2xl cursor-pointer">
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[8px] px-2 py-1 rounded-full">🔒 R & R - Ricardo Garcés Baeza Reg 47314</div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-2" id="miniGrid">
+<img id="img1" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400" class="h-20 w-full object-cover rounded-xl border-2 border-[#0F2C3D] cursor-pointer">
+<img id="img2" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400" class="h-20 w-full object-cover rounded-xl cursor-pointer">
+<img id="img3" src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=400" class="h-20 w-full object-cover rounded-xl cursor-pointer">
+<img id="img4" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400" class="h-20 w-full object-cover rounded-xl cursor-pointer">
+<img id="img5" src="https://images.unsplash.com/photo-1616047006789-b7af5afb8c20?w=400" class="h-20 w-full object-cover rounded-xl cursor-pointer">
+<img id="img6" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400" class="h-20 w-full object-cover rounded-xl cursor-pointer">
+</div>
+<div class="mt-2 flex flex-wrap gap-2">
+<label class="bg-amber-400 text-black text-[11px] font-bold px-4 py-2 rounded-full cursor-pointer">📷 Elegir 6 fotos reales Tongoy<input id="fotoInput" type="file" multiple accept="image/*" class="hidden"></label>
+<button id="btnBorrarFotos" type="button" class="bg-gray-100 text-[10px] px-3 py-2 rounded-full">🗑️ Borrar fotos</button>
+<button id="btnExportFinal" type="button" class="bg-[#0F2C3D] text-white text-[10px] px-3 py-2 rounded-full">⬇️ Exportar FINAL con fotos</button>
+</div>
+<div class="text-[10px] text-gray-500 mt-1">Toca mini foto para ver grande. Las fotos quedan guardadas en tu navegador.
+<!-- ⭐ RESEÑAS ARRENDATARIOS -->
+<div class="mx-3 mt-4 bg-white border-2 border-[#0F2C3D]/10 rounded-2xl p-3">
+<div class="font-bold text-[13px] text-[#0F2C3D]">⭐ Reseñas de arrendatarios verificados</div>
+<div class="text-[10px] text-gray-500">Casa, lugar y anfitrión - Ricardo Garcés Baeza</div>
+<div id="listaResenas" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div>
+
+<div class="mt-3 bg-[#F5F1E8] rounded-xl p-3">
+<div class="text-[11px] font-bold">¿Te quedaste en la casa? Deja tu reseña:</div>
+<div class="grid grid-cols-3 gap-1 mt-2">
+<div><div class="text-[9px]">Casa</div><select id="rCasa" class="w-full border rounded text-[11px] p-1"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
+<div><div class="text-[9px]">Lugar</div><select id="rLugar" class="w-full border rounded text-[11px] p-1"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
+<div><div class="text-[9px]">Anfitrión</div><select id="rAnfitrion" class="w-full border rounded text-[11px] p-1"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
+</div>
+<input id="resenaNombre" placeholder="Tu nombre (ej: Familia Pérez)" class="w-full mt-2 border rounded px-2 py-2 text-[11px]">
+<textarea id="resenaTexto" placeholder="¿Qué te gustó de la casa, playa, tranquilidad, anfitrión?" class="w-full mt-2 border rounded px-2 py-2 text-[11px] h-16"></textarea>
+<button id="btnEnviarResena" class="w-full mt-2 bg-[#0F2C3D] text-white rounded-full py-2 text-[11px] font-bold">Enviar reseña ⭐</button>
+<div class="text-[9px] text-gray-400 mt-1">Las reseñas quedan guardadas y se muestran a futuros arrendatarios.</div>
+</div>
+</div>
+
+<div id="panelDueno"
+ class="hidden mx-3 bg-amber-50 border-2 border-amber-400 rounded-2xl p-3 mb-3">
+<div class="text-[11px] font-bold text-amber-900">🔧 MODO DUEÑO - Edición (solo tú ves)</div>
+<div class="grid grid-cols-2 gap-2 mt-2 text-[11px]">
+<label>Lun-Jue $<input id="p1" type="number" value="55000" class="w-20 border rounded px-1"></label>
+<label>Vie-Dom $<input id="p2" type="number" value="80000" class="w-20 border rounded px-1"></label>
+<label>Pack 12 oct $<input id="p3" type="number" value="230000" class="w-20 border rounded px-1"></label>
+<label>Semana $<input id="p4" type="number" value="450000" class="w-20 border rounded px-1"></label>
+<label>Reserva $<input id="pReserva" type="number" value="50000" class="w-20 border rounded px-1"></label>
+<label class="flex items-center gap-1"><input id="pGarantiaActiva" type="checkbox"> Garantía $<input id="pGarantia" type="number" value="80000" disabled class="w-14 border rounded px-1"></label>
+<label>Aseo (interno) $<input id="pAseo" type="number" value="30000" class="w-20 border rounded px-1"></label>
+</div>
+<div class="mt-3 border-t pt-2">
+<div class="font-bold text-[11px]">📅 Bloquear fechas - Aseo / Yo ocupado</div>
+<div class="text-[9px] text-gray-600">Selecciona una fecha y bloquéala. El arrendatario la verá como OCUPADO (no podrá reservar).</div>
+<div class="flex gap-1 mt-2">
+<input id="bloqueoFecha" type="date" class="border rounded px-1 py-1 text-[11px]">
+<select id="bloqueoMotivo" class="border rounded px-1 py-1 text-[11px]"><option value="🧹 Aseo - Yo">🧹 Aseo - Yo</option><option value="🔒 Reservado">🔒 Reservado</option><option value="🔧 Mantención">🔧 Mantención</option><option value="👤 Uso personal">👤 Uso personal - Yo</option></select>
+<button id="btnBloquear" class="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold">Bloquear</button>
+</div>
+<div id="listaBloqueos" class="mt-2 max-h-[120px] overflow-auto space-y-1"></div>
+<button id="btnLimpiarBloqueos" class="mt-1 text-[9px] underline">Limpiar todo</button>
+</div>
+</div>
+
+<div class="mx-3 mt-2 bg-[#0F2C3D]/5 border border-[#0F2C3D]/20 rounded-xl p-2 text-center">
+<div class="text-[11px] font-bold text-[#0F2C3D]">🔒 Estadía mínima: 3 noches</div>
+</div>
+<div class="px-4 mt-3">
+<div class="flex justify-between items-center mb-2">
+<button id="prev" type="button" class="w-8 h-8 rounded-full border">‹</button>
+<div id="monthLabel" class="font-bold text-[13px]"></div>
+<button id="next" type="button" class="w-8 h-8 rounded-full border">›</button>
+</div>
+<div id="calGrid" class="grid grid-cols-2 gap-4"></div>
+</div>
+
+<div id="resumen" class="mx-3 mt-4 bg-[#0F2C3D] text-white rounded-2xl p-4">
+<div id="resumenVacio" class="text-[13px] opacity-80">Toca tu entrada y salida en el calendario. Estadía mínima 3 noches.</div>
+<div id="resumenLleno" class="hidden">
+<div class="flex justify-between items-start">
+<div class="text-[13px] leading-tight">
+<div>📅 Entrada: <span id="rEntrada"></span> 15:00</div>
+<div>📅 Salida: <span id="rSalida"></span> 11:00</div>
+<div class="mt-1 text-amber-300">🌙 <span id="rNoches"></span> noches: <span id="rDetalle"></span></div>
+</div>
+<button id="btnClear" type="button" class="bg-red-500 text-white px-2 py-1 rounded-full text-[11px]">X</button>
+</div>
+<div id="rDesglose" class="mt-3 text-[12px] bg-white/10 rounded-xl p-2"></div>
+<div class="mt-3 bg-white text-[#0F2C3D] rounded-xl p-3 text-[12px] border-2 border-amber-300"><div class="font-bold text-[13px] mb-1">💳 Forma de pago:</div><div class="flex justify-between"><span>🔒 Reserva 40%:</span><span class="font-black">$<span id="rReserva40">0</span></span></div><div class="flex justify-between mt-1"><span>Saldo 60% al ingresar:</span><span>$<span id="rSaldo60">0</span></span></div></div>
+<div class="mt-3 text-[22px] font-bold">Total cliente paga: $<span id="rTotal">0</span></div>
+<div id="boxDuenoInterno" class="hidden mt-3 bg-amber-100 text-black rounded-xl p-3 text-[11px] border-2 border-amber-400">
+<div class="font-bold">🔧 Solo tú ves (Modo Dueño):</div>
+<div class="mt-1">🧹 Aseo interno: -$<span id="rAseo">30.000</span></div>
+<div class="font-bold text-[14px]">💰 Tu ganancia neta: $<span id="rNeto">0</span></div>
+<div class="text-[9px]">Reserva $<span id="rReservaShow">50.000</span> + Garantía $<span id="rGarantiaShow">80.000</span></div>
+</div>
+<a id="btnWA" target="_blank" class="mt-3 block text-center bg-[#25D366] text-white py-3 rounded-xl font-bold text-[14px]">Reservar por WhatsApp</a>
+</div>
+</div>
+<div class="mx-3 mt-4 bg-green-50 border-2 border-green-500 rounded-2xl p-3">
+<div class="font-bold text-[13px] text-green-900">📍 Ubicación Verificada Prados del Mar II - A 3 min playa</div>
+<div class="text-[11px] mt-1">Condominio cerrado seguro - 200m Playa Socos - Corredor Reg 47314 Ricardo Garcés Baeza - Las Dunas 1492, Tongoy</div>
+<div class="mt-3 rounded-xl bg-white border-2 border-green-600 p-4 text-center">
+<div class="text-[40px]">📍</div>
+<div class="font-bold text-[13px] text-[#0F2C3D] mt-1">Prados del Mar II, Tongoy - Las Dunas 1492</div>
+<div class="text-[11px] text-gray-600">Prados del Mar II, Tongoy - Las Dunas 1492 - 200m playa Socos</div>
+</div>
+<div class="grid grid-cols-1 gap-2 mt-3">
+<a href="https://www.google.com/maps/search/?api=1&query=Las+Dunas+1492,+Prados+del+Mar+II,+Tongoy,+Chile" target="_blank" class="block text-center bg-[#0F2C3D] text-white py-3 rounded-xl font-bold text-[13px]">📍 Abrir en Google Maps (GPS)</a>
+<a href="https://www.google.com/maps/dir/?api=1&destination=Las+Dunas+1492,+Prados+del+Mar+II,+Tongoy,+Chile" target="_blank" class="block text-center bg-white border-2 border-[#0F2C3D] text-[#0F2C3D] py-2 rounded-xl font-bold text-[12px]">🚗 Cómo llegar</a>
+</div>
+</div>
+
+<div class="mx-3 mt-4 bg-white border-2 border-amber-300 rounded-2xl p-3">
+<div class="font-bold text-[13px]">🪙 Club Retribución - 10 noches = 1 gratis</div>
+<div class="text-[11px] mt-1 text-gray-700">1 noche arrendada = 1 moneda 🪙 - 10 monedas = 1 noche gratis Lun-Jue (no finde largo ni ene-feb)</div>
+<div class="grid grid-cols-1 gap-2 mt-3">
+<input id="clubNombre" placeholder="Nombre completo" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="clubWA" placeholder="WhatsApp +56 9..." class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="clubRUT" placeholder="RUT 12.345.678-9" class="border rounded-xl px-3 py-2 text-[13px]">
+<label class="text-[10px] flex gap-2"><input id="clubAcepta" type="checkbox"> Acepto cláusulas: 1 noche=1 moneda, 10=1 gratis Lun-Jue, no transferible, solo casa Las Dunas 1492</label>
+<button id="btnClubInscribir" type="button" class="bg-amber-400 text-black py-2 rounded-xl font-bold text-[13px]">🪙 Inscribirme al Club</button>
+</div>
+</div>
+
+<div id="carteraClientes" class="hidden mx-3 mt-4 bg-amber-50 border rounded-2xl p-3">
+<div class="font-bold text-[13px]">📒 Cartera Clientes (solo dueño)</div>
+<div class="grid grid-cols-1 gap-2 mt-2">
+<input id="cNombre" placeholder="Nombre" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="cWA" placeholder="WhatsApp" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="cRUT" placeholder="RUT" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="cTel" placeholder="Teléfono" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="cCorreo" placeholder="Correo" class="border rounded-xl px-3 py-2 text-[13px]">
+<input id="cNotas" placeholder="Notas" class="border rounded-xl px-3 py-2 text-[13px]">
+<button id="cGuardar" type="button" class="bg-amber-400 text-black py-2 rounded-xl font-bold text-[13px]">Guardar cliente</button>
+</div>
+<div id="cLista" class="grid gap-2 mt-3"></div>
+<div class="flex gap-2 mt-3">
+<button id="cExport" type="button" class="bg-white border rounded-xl px-3 py-2 text-[11px] font-bold">⬇️ Exportar</button>
+<label class="bg-white border rounded-xl px-3 py-2 text-[11px] font-bold">⬆️ Importar<input id="cImport" type="file" accept=".json,application/json" class="hidden"></label>
+</div>
+</div>
+
+
+
+
+
+
+</div>
+<script>
+let cur=new Date(2026,9,1);
+let selStart=null, selEnd=null;
+let modoDueno=false;
+const claveDueño="1492";
+
+function priceFor(d){const wd=d.getDay(); const p1=parseInt(document.getElementById('p1')?.value)||55000; const p2=parseInt(document.getElementById('p2')?.value)||80000; return (wd>=1&&wd<=4)?p1:p2;}
+function fmt(d){return d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric',month:'short'});}
+function loadPrecios(){try{const p=JSON.parse(localStorage.getItem('preciosV9FIX')||'null'); if(p){['p1','p2','p3','p4','pReserva','pGarantia','pAseo'].forEach(id=>{if(p[id]&&document.getElementById(id)) document.getElementById(id).value=p[id];});}}catch(e){}}
+function savePrecios(){const o={}; ['p1','p2','p3','p4','pReserva','pGarantia','pAseo'].forEach(id=>{const el=document.getElementById(id); if(el) o[id]=el.value;}); localStorage.setItem('preciosV9FIX',JSON.stringify(o));}
+['p1','p2','p3','p4','pReserva','pGarantia','pAseo'].forEach(id=>{document.getElementById(id)?.addEventListener('change',savePrecios);});
+
+function render(){
+  const grid=document.getElementById('calGrid'); grid.innerHTML='';
+  const label=document.getElementById('monthLabel');
+  const m1=new Date(cur.getFullYear(),cur.getMonth(),1);
+  const m2=new Date(cur.getFullYear(),cur.getMonth()+1,1);
+  label.textContent=m1.toLocaleDateString('es-CL',{month:'long',year:'numeric'})+' · '+m2.toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+  [m1,m2].forEach(m=>{
+    const cont=document.createElement('div'); cont.className='bg-white rounded-xl p-2 border';
+    const title=document.createElement('div'); title.className='text-center font-bold text-[12px] mb-2 text-[#0F2C3D]'; title.textContent=m.toLocaleDateString('es-CL',{month:'long',year:'numeric'}); cont.appendChild(title);
+    const head=document.createElement('div'); head.className='grid grid-cols-7 text-[10px] text-center text-gray-500 mb-1 font-bold'; head.innerHTML='<div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div>Sá</div><div>Do</div>'; cont.appendChild(head);
+    const body=document.createElement('div'); body.className='grid grid-cols-7 gap-1';
+    const first=(m.getDay()+6)%7;
+    for(let i=0;i<first;i++){const e=document.createElement('div'); body.appendChild(e);}
+    const days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+    for(let d=1;d<=days;d++){
+      const date=new Date(m.getFullYear(),m.getMonth(),d);
+      const el=document.createElement('div'); el.className='day'; el.textContent=d;
+      if(selStart&&date.getTime()===selStart.getTime()) el.classList.add('sel');
+      if(selEnd&&date.getTime()===selEnd.getTime()) el.classList.add('sel');
+      if(selStart&&selEnd&&date>selStart&&date<selEnd) el.classList.add('range');
+      el.addEventListener('click',()=>{
+        if(!selStart||(selStart&&selEnd)){selStart=date;selEnd=null;}
+        else if(date>selStart){
+          const diff = Math.round((date - selStart)/86400000);
+          if(diff < 3){
+            const falta = 3 - diff;
+            alert('Estadía mínima 3 noches. Te faltan '+falta+' noche'+(falta>1?'s':'')+'. Por favor elige al menos 3 noches.');
+            // Mostrar mensaje en resumen también
+            const vac=document.getElementById('resumenVacio');
+            const lle=document.getElementById('resumenLleno');
+            if(vac && lle){
+              vac.classList.remove('hidden');
+              vac.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12px] font-bold text-amber-900">⚠️ Estadía mínima 3 noches<br><span class="font-normal text-[11px] text-gray-700">Has seleccionado ${diff} noche${diff>1?'s':''}. El mínimo son 3 noches. Por favor extiende tu estadía.</span></div>`;
+              lle.classList.add('hidden');
+            }
+            return;
+          }
+          selEnd=date;
+        }
+        else {selStart=date;selEnd=null;}
+        render(); renderResumen();
+      });
+      body.appendChild(el);
+    }
+    cont.appendChild(body); grid.appendChild(cont);
+  });
+}
+function renderResumen(){
+  const vac=document.getElementById('resumenVacio'), lle=document.getElementById('resumenLleno');
+  if(!selStart||!selEnd){vac.classList.remove('hidden'); lle.classList.add('hidden'); return;}
+  vac.classList.add('hidden'); lle.classList.remove('hidden');
+  const diff=Math.round((selEnd-selStart)/86400000);
+  if(diff<=0){vac.classList.remove('hidden'); lle.classList.add('hidden'); return;}
+  if(diff < 3){
+    const falta = 3 - diff;
+    vac.classList.remove('hidden');
+    vac.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12px] font-bold text-amber-900">⚠️ Estadía mínima 3 noches<br><span class="font-normal text-[11px] text-gray-700">Has seleccionado ${diff} noche${diff>1?'s':''}. El mínimo son 3 noches. Ejemplo: jueves a domingo = 3 noches pagadas (jue, vie, sáb).</span></div>`;
+    lle.classList.add('hidden');
+    return;
+  }
+  document.getElementById('rEntrada').textContent=fmt(selStart);
+  document.getElementById('rSalida').textContent=fmt(selEnd);
+  document.getElementById('rNoches').textContent=diff;
+  let detalle=[], total=0, html='';
+  for(let i=0;i<diff;i++){const dd=new Date(selStart); dd.setDate(dd.getDate()+i); const pr=priceFor(dd); detalle.push(fmt(dd)); total+=pr; html+=`<div class="flex justify-between"><span>${fmt(dd)}</span><span>$${pr.toLocaleString('es-CL')}</span></div>`;}
+  const ps=new Date(2026,9,10), pe=new Date(2026,9,13), pp=parseInt(document.getElementById('p3')?.value)||230000;
+  if(selStart.getTime()===ps.getTime()&&selEnd.getTime()===pe.getTime()){html+=`<div class="mt-2 bg-amber-300 text-black rounded p-1">Pack 12 oct: $${pp.toLocaleString('es-CL')} (3 noches)</div>`; total=pp;}
+  document.getElementById('rDetalle').textContent=detalle.join(', ');
+  document.getElementById('rDesglose').innerHTML=html;
+  document.getElementById('rTotal').textContent=total.toLocaleString('es-CL');
+  const aseo=parseInt(document.getElementById('pAseo')?.value||30000)||30000;
+  const neto=total-aseo;
+  document.getElementById('rAseo').textContent=aseo.toLocaleString('es-CL');
+  document.getElementById('rNeto').textContent=neto.toLocaleString('es-CL');
+    const garantiaRaw=document.getElementById('pGarantia')?.value;
+  const garantia=(garantiaRaw===''||garantiaRaw===null?0:parseInt(garantiaRaw)||0);
+  const reserva40=Math.round(total*0.4);
+  const saldo60=total-reserva40;
+  const elR40=document.getElementById('rReserva40'); if(elR40) elR40.textContent=reserva40.toLocaleString('es-CL');
+  const elS60=document.getElementById('rSaldo60'); if(elS60) elS60.textContent=saldo60.toLocaleString('es-CL');
+  document.getElementById('rReservaShow').textContent=(document.getElementById('pReserva')?.value||'50000');
+  const elGS=document.getElementById('rGarantiaShow'); if(elGS) elGS.textContent=garantia.toLocaleString('es-CL');
+  const box=document.getElementById('boxDuenoInterno');
+  if(modoDueno){box.classList.remove('hidden');} else {box.classList.add('hidden');}
+  document.getElementById('btnWA').href='https://wa.me/?text='+encodeURIComponent(`Hola Ricardo Garcés Baeza! Reserva Casa Tongoy Las Dunas 1492 del ${fmt(selStart)} al ${fmt(selEnd)} ${diff} noches Total $${total} - Vi tu link`);
+}
+document.getElementById('prev').addEventListener('click',()=>{cur.setMonth(cur.getMonth()-1);render();});
+document.getElementById('next').addEventListener('click',()=>{cur.setMonth(cur.getMonth()+1);render();});
+document.getElementById('btnClear').addEventListener('click',()=>{selStart=null;selEnd=null;render();renderResumen();});
+
+// Modo dueño
+function setModo(on){
+  modoDueno=on;
+  document.getElementById('panelDueno').classList.toggle('hidden',!on);
+  document.getElementById('barraDueno').classList.toggle('hidden',!on);
+  document.getElementById('toggleDueno').textContent=on?'MODO DUEÑO ON':'MODO DUEÑO OFF';
+  document.getElementById('toggleDueno').className=on?'bg-green-500 text-white text-[10px] font-bold px-3 py-2 rounded-full':'bg-amber-400 text-black text-[10px] font-bold px-3 py-2 rounded-full';
+  renderResumen();
+}
+document.getElementById('toggleDueno').addEventListener('click',()=>{
+  if(modoDueno){setModo(false); return;}
+  document.getElementById('modalClave').classList.remove('hidden');
+  document.getElementById('inputClave').focus();
+});
+document.getElementById('btnSalirDueno').addEventListener('click',()=>setModo(false));
+document.getElementById('btnCancelarClave').addEventListener('click',()=>document.getElementById('modalClave').classList.add('hidden'));
+document.getElementById('btnEntrarClave').addEventListener('click',()=>{
+  const v=document.getElementById('inputClave').value.trim();
+  if(v===claveDueño){document.getElementById('modalClave').classList.add('hidden'); document.getElementById('inputClave').value=''; setModo(true);}
+  else {alert('Clave incorrecta - pista 1492');}
+});
+
+// Fotos
+function loadFotos(){
+  try{
+    const f=JSON.parse(localStorage.getItem('fotosV9FIX')||'null');
+    if(f && f[0] && !f[0].includes('unsplash')){
+      document.getElementById('mainImg').src=f[0];
+      for(let i=1;i<=6;i++){const el=document.getElementById('img'+i); if(el&&f[i-1]) el.src=f[i-1];}
+    }
+  }catch(e){}
+}
+function saveFotos(arr){localStorage.setItem('fotosV9FIX',JSON.stringify(arr));}
+document.getElementById('fotoInput')?.addEventListener('change',e=>{
+  const files=[...e.target.files].slice(0,6);
+  if(!files.length) return;
+  let loaded=0;
+  const result=new Array(6).fill(null);
+  files.forEach((file,idx)=>{
+    const r=new FileReader();
+    r.onload=ev=>{result[idx]=ev.target.result; loaded++; if(loaded===files.length){const finalArr=result.filter(Boolean); saveFotos(finalArr); 
+// 🔒 BLINDAJE ANTI-COPIA - R & R - Ricardo Garcés Baeza Reg 47314
+document.addEventListener('contextmenu', e=>e.preventDefault());
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && ['s','u','c','a','p'].includes(e.key.toLowerCase())){ e.preventDefault(); return false; }
+  if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))){ e.preventDefault(); return false; }
+});
+document.addEventListener('copy', e=>{ e.preventDefault(); alert('🔒 Contenido protegido - R & R - Casa Tongoy Prado del Mar - Dueño Directo R & R - Ricardo Garcés Baeza Reg 47314'); });
+console.log('%c🔒 R & R - Casa Tongoy Prado del Mar - Dueño Directo - R & R - Ricardo Garcés Baeza Reg 47314 - Contenido protegido', 'font-size:20px; color:red; font-weight:bold;');
+console.log('%cSi copias esta página será denunciada por uso no autorizado de imágenes y marca', 'font-size:12px;');
+// Bloquear arrastrar imágenes
+document.querySelectorAll('img').forEach(img=>{ img.addEventListener('dragstart', e=>e.preventDefault()); });
+// Marca invisible en HTML
+document.documentElement.setAttribute('data-owner','Ricardo Garces Baeza - Reg 47314 - Las Dunas 1492 - Prado del Mar II - '+Date.now());
+
+loadFotos(); alert('✅ Fotos cargadas: '+finalArr.length);}};
+    r.readAsDataURL(file);
+  });
+});
+document.getElementById('btnBorrarFotos')?.addEventListener('click',()=>{localStorage.removeItem('fotosV9FIX'); location.reload();});
+['img1','img2','img3','img4','img5','img6'].forEach(id=>{const el=document.getElementById(id); if(el) el.addEventListener('click',()=>{document.getElementById('mainImg').src=el.src;});});
+
+document.getElementById('btnExportFinal')?.addEventListener('click',()=>{
+  try{
+    const fotos=JSON.parse(localStorage.getItem('fotosV9FIX')||'null');
+    if(!fotos||!fotos[0]||fotos[0].includes('unsplash')){alert('Primero sube al menos 1 foto real con 📷'); return;}
+    let htmlFinal=document.documentElement.outerHTML;
+    // reemplazar src por base64
+    fotos.forEach((src,i)=>{
+      if(i===0){
+        htmlFinal=htmlFinal.replace(/<img id="mainImg"[^>]*>/, `<img id="mainImg" src="${src}" class="h-60 w-full object-cover rounded-2xl cursor-pointer">`);
+      }
+      const id=`img${i+1}`;
+      const re=new RegExp(`<img id="${id}"[^>]*>`);
+      htmlFinal=htmlFinal.replace(re, `<img id="${id}" src="${src}" class="h-20 w-full object-cover rounded-xl cursor-pointer">`);
+    });
+    const blob=new Blob([htmlFinal],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='Casa_Tongoy_FINAL_con_fotos_reales.html'; a.click();
+    alert('✅ Descargado FINAL con fotos pegadas - ese súbelo a GitHub/Netlify');
+  }catch(e){alert('Error: '+e.message);}
+});
+
+
+// Copiar ubicación
+document.getElementById('btnCopy')?.addEventListener('click',()=>{navigator.clipboard.writeText('Calle Las Dunas 1492, Prados del Mar II, Tongoy, Chile'); alert('Dirección copiada');});
+
+// Clientes
+function loadC(){try{return JSON.parse(localStorage.getItem('clientesV9FIX')||'[]');}catch(e){return [];}}
+function saveC(l){localStorage.setItem('clientesV9FIX',JSON.stringify(l)); renderC();}
+function renderC(){
+  const l=loadC(); const div=document.getElementById('cLista'); if(!div) return; div.innerHTML='';
+  l.forEach((c,i)=>{
+    const d=document.createElement('div'); d.className='bg-white border rounded-xl p-2 flex justify-between items-center';
+    d.innerHTML=`<div class="text-[11px]"><div class="font-bold">${c.nombre} - ${c.coins||0} 🪙</div><div class="text-[10px] text-gray-600">WA:${c.wa||''} RUT:${c.rut||''} Tel:${c.tel||''}<br>${c.correo||''} ${c.notas||''}</div></div><div class="flex flex-col gap-1"><div class="flex gap-1"><button type="button" class="px-2 py-1 bg-green-100 rounded text-[10px]" data-act="mas" data-i="${i}">+1</button><button type="button" class="px-2 py-1 bg-red-100 rounded text-[10px]" data-act="menos" data-i="${i}">-1</button></div><div class="flex gap-1"><button type="button" class="px-2 py-1 bg-amber-300 rounded text-[10px]" data-act="canjear" data-i="${i}">Canjear</button><button type="button" class="px-2 py-1 bg-gray-100 rounded text-[10px]" data-act="wa" data-i="${i}">WA</button></div></div>`;
+    div.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const act=b.dataset.act; const idx=parseInt(b.dataset.i);
+        if(act==='mas'){l[idx].coins=(l[idx].coins||0)+1;}
+        else if(act==='menos'){l[idx].coins=Math.max(0,(l[idx].coins||0)-1);}
+        else if(act==='canjear'){if((l[idx].coins||0)>=10){l[idx].coins-=10; alert('Canjeado 10 noches por 1 gratis para '+l[idx].nombre);} else {alert('Le faltan '+(10-(l[idx].coins||0))+' noches'); return;}}
+        else if(act==='wa'){window.open('https://wa.me/'+(l[idx].wa||'').replace(/[^0-9]/g,'')+'?text='+encodeURIComponent('Hola '+l[idx].nombre+'! Tienes '+(l[idx].coins||0)+' monedas 🪙'),' _blank'); return;}
+        saveC(l);
+      });
+    });
+    div.appendChild(d);
+  });
+}
+document.getElementById('cGuardar')?.addEventListener('click',()=>{
+  const nombre=document.getElementById('cNombre').value.trim(); if(!nombre) return alert('Pon nombre');
+  const l=loadC();
+  l.push({nombre:nombre, wa:document.getElementById('cWA').value.trim(), rut:document.getElementById('cRUT').value.trim(), tel:document.getElementById('cTel').value.trim(), correo:document.getElementById('cCorreo').value.trim(), notas:document.getElementById('cNotas').value.trim(), coins:0});
+  saveC(l);
+  ['cNombre','cWA','cRUT','cTel','cCorreo','cNotas'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+});
+document.getElementById('cExport')?.addEventListener('click',()=>{
+  const data=JSON.stringify(loadC(),null,2); const blob=new Blob([data],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='club_tongoy.json'; a.click();
+});
+document.getElementById('cImport')?.addEventListener('change',(e)=>{
+  const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const j=JSON.parse(r.result); localStorage.setItem('clientesV9FIX',JSON.stringify(j)); renderC(); alert('Importado '+j.length);}catch(err){alert('Archivo inválido');}}; r.readAsText(f);
+});
+document.getElementById('btnClubInscribir')?.addEventListener('click',()=>{
+  const nombre=document.getElementById('clubNombre').value.trim();
+  const wa=document.getElementById('clubWA').value.trim();
+  const rut=document.getElementById('clubRUT').value.trim();
+  const acepta=document.getElementById('clubAcepta').checked;
+  if(!nombre||!wa||!rut){alert('Completa Nombre, WhatsApp y RUT'); return;}
+  if(!acepta){alert('Debes aceptar cláusulas'); return;}
+  const msg=encodeURIComponent(`Hola Ricardo! Quiero inscribirme al Club Retribución Casa Tongoy 🪙%0ANombre: ${nombre}%0AWhatsApp: ${wa}%0ARUT: ${rut}%0AEntiendo 1 noche=1 moneda, 10=1 gratis Lun-Jue, no finde largo ni ene-feb`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+  try{let lista=loadC(); lista.push({nombre:nombre, wa:wa, rut:rut, notas:'Inscrito Club web', coins:0}); saveC(lista);}catch(e){}
+  alert('Gracias '+nombre+'! Te abrí WhatsApp');
+});
+
+// Mostrar cartera solo en modo dueño - sobrescribir setModo
+const _setModoOriginal = setModo;
+setModo = function(on){
+  modoDueno=on;
+  document.getElementById('panelDueno').classList.toggle('hidden',!on);
+  document.getElementById('barraDueno').classList.toggle('hidden',!on);
+  const cc=document.getElementById('carteraClientes');
+  if(cc) cc.classList.toggle('hidden',!on);
+  document.getElementById('toggleDueno').textContent=on?'MODO DUEÑO ON':'MODO DUEÑO OFF';
+  document.getElementById('toggleDueno').className=on?'bg-green-500 text-white text-[10px] font-bold px-3 py-2 rounded-full':'bg-amber-400 text-black text-[10px] font-bold px-3 py-2 rounded-full';
+  renderResumen();
+}
+
+
+
+// 🔒 BLOQUEOS - Aseo / Yo ocupado
+function loadBloqueos(){try{return JSON.parse(localStorage.getItem('bloqueosTongoyV1')||'[]');}catch(e){return [];}}
+function saveBloqueos(l){localStorage.setItem('bloqueosTongoyV1', JSON.stringify(l)); renderBloqueos(); render();}
+function isBloqueado(dateStr){const list=loadBloqueos(); return list.find(b=>b.fecha===dateStr);}
+function renderBloqueos(){
+  const div=document.getElementById('listaBloqueos');
+  if(!div) return;
+  const list=loadBloqueos();
+  if(list.length===0){div.innerHTML='<div class="text-[9px] text-gray-400">Sin fechas bloqueadas</div>'; return;}
+  div.innerHTML='';
+  list.forEach(b=>{
+    const d=document.createElement('div');
+    d.className='flex justify-between items-center bg-white border rounded px-2 py-1 text-[10px]';
+    d.innerHTML=`<span>${b.fecha} - ${b.motivo}</span><button class="text-red-500" data-f="${b.fecha}">X</button>`;
+    d.querySelector('button').addEventListener('click',()=>{let l=loadBloqueos(); l=l.filter(x=>x.fecha!==b.fecha); saveBloqueos(l);});
+    div.appendChild(d);
+  });
+}
+document.getElementById('btnBloquear')?.addEventListener('click',()=>{
+  const f=document.getElementById('bloqueoFecha').value;
+  const m=document.getElementById('bloqueoMotivo').value;
+  if(!f){alert('Elige fecha'); return;}
+  let list=loadBloqueos();
+  if(list.find(x=>x.fecha===f)){alert('Esa fecha ya está bloqueada'); return;}
+  list.push({fecha:f, motivo:m});
+  saveBloqueos(list);
+  document.getElementById('bloqueoFecha').value='';
+});
+document.getElementById('btnLimpiarBloqueos')?.addEventListener('click',()=>{if(confirm('¿Liberar todas las fechas?')){localStorage.removeItem('bloqueosTongoyV1'); renderBloqueos(); render();}});
+
+// Modificar render para mostrar bloqueados
+const renderOriginal = render;
+render = function(){
+  // llamar original lógica pero con bloqueos
+  // Copiamos lógica original de render simplificada
+  const grid=document.getElementById('calGrid');
+  if(!grid) return;
+  grid.innerHTML='';
+  const listaBloq=loadBloqueos();
+  for(let k=0;k<2;k++){
+    const monthDate=new Date(cur); monthDate.setMonth(cur.getMonth()+k);
+    const y=monthDate.getFullYear(), m=monthDate.getMonth();
+    const firstDay=new Date(y,m,1).getDay(); const daysInMonth=new Date(y,m+1,0).getDate();
+    const cont=document.createElement('div');
+    const offset = firstDay===0?6:firstDay-1;
+    let htmlDays='';
+    for(let i=0;i<offset;i++) htmlDays+=`<div></div>`;
+    for(let d=1;d<=daysInMonth;d++){
+      const date=new Date(y,m,d);
+      const dateStr=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      const bloqueo=isBloqueado(dateStr);
+      const isSel = selStart && date.getTime()===selStart.getTime() || selEnd && date.getTime()===selEnd.getTime();
+      const isRange = selStart && selEnd && date>selStart && date<selEnd;
+      let cls='day';
+      if(bloqueo) cls+=' !bg-gray-300 !text-gray-500 !cursor-not-allowed';
+      else if(isSel) cls+=' sel';
+      else if(isRange) cls+=' range';
+      const label = bloqueo? 'X' : d;
+      htmlDays+=`<div class="${cls}" data-date="${dateStr}" data-bloq="${bloqueo?1:0}" title="${bloqueo?bloqueo.motivo:''}">${label}</div>`;
+    }
+    cont.innerHTML=`<div class="font-bold text-[11px] mb-1">${monthDate.toLocaleDateString('es-CL',{month:'long',year:'numeric'})}</div><div class="grid grid-cols-7 gap-1">${htmlDays}</div>`;
+    grid.appendChild(cont);
+  }
+  document.getElementById('monthLabel').textContent = cur.toLocaleDateString('es-CL',{month:'long',year:'numeric'}) + ' · ' + new Date(cur.getFullYear(),cur.getMonth()+1,1).toLocaleDateString('es-CL',{month:'long',year:'numeric'});
+  // listeners
+  document.querySelectorAll('.day').forEach(el=>{
+    if(el.dataset.bloq==='1'){ el.addEventListener('click',()=>{ alert('📅 Fecha ocupada: '+ (isBloqueado(el.dataset.date)?.motivo||'Ocupado') + ' - No disponible'); }); return; }
+    el.addEventListener('click',()=>{
+      const ds=el.dataset.date;
+      const [yy,mm,dd]=ds.split('-').map(Number);
+      const date=new Date(yy,mm-1,dd);
+      if(!selStart || (selStart && selEnd)){ selStart=date; selEnd=null; }
+      else if(date>selStart){ selEnd=date; }
+      else { selStart=date; selEnd=null; }
+      render(); renderResumen();
+    });
+  });
+}
+
+// ⭐ RESEÑAS
+function loadResenas(){try{return JSON.parse(localStorage.getItem('resenasTongoyV1')||'[]');}catch(e){return [];}}
+function saveResenas(l){localStorage.setItem('resenasTongoyV1', JSON.stringify(l)); renderResenas(); renderBloqueos();}
+function renderResenas(){
+  const lista=loadResenas();
+  const div=document.getElementById('listaResenas');
+  if(!div) return;
+  if(lista.length===0){div.innerHTML='<div class="text-[11px] text-gray-400 text-center py-4">Aún no hay reseñas - ¡sé el primero en dejar tu experiencia! 🏖️</div>'; return;}
+  div.innerHTML='';
+  lista.slice().reverse().forEach(r=>{
+    const pro = ((r.casa+r.lugar+r.anfitrion)/3).toFixed(1);
+    const d=document.createElement('div');
+    d.className='bg-[#F5F1E8] rounded-xl p-2 border';
+    d.innerHTML=`<div class="flex justify-between items-center"><div class="font-bold text-[11px]">${r.nombre} - ${pro} ⭐</div><div class="text-[9px] text-gray-500">${r.fecha}</div></div><div class="text-[9px] mt-1">Casa:${'⭐'.repeat(r.casa)} Lugar:${'⭐'.repeat(r.lugar)} Anfitrión:${'⭐'.repeat(r.anfitrion)}</div><div class="text-[11px] mt-1">${r.texto}</div>${modoDueno?`<button class="text-[9px] text-red-500 underline mt-1" onclick="borrarResena('${r.id}')">Borrar (dueño)</button>`:''}`;
+    div.appendChild(d);
+  });
+}
+function borrarResena(id){if(!confirm('¿Borrar reseña?')) return; let l=loadResenas(); l=l.filter(x=>x.id!==id); saveResenas(l);}
+document.getElementById('btnEnviarResena')?.addEventListener('click',()=>{
+  const nombre=document.getElementById('resenaNombre').value.trim();
+  const texto=document.getElementById('resenaTexto').value.trim();
+  const casa=parseInt(document.getElementById('rCasa').value);
+  const lugar=parseInt(document.getElementById('rLugar').value);
+  const anfitrion=parseInt(document.getElementById('rAnfitrion').value);
+  if(!nombre||!texto){alert('Pon tu nombre y comentario'); return;}
+  if(texto.length<10){alert('Cuéntanos un poco más (10 letras mínimo)'); return;}
+  const lista=loadResenas();
+  lista.push({id:Date.now().toString(), nombre:nombre, texto:texto, casa:casa, lugar:lugar, anfitrion:anfitrion, fecha:new Date().toLocaleDateString('es-CL')});
+  saveResenas(lista);
+  document.getElementById('resenaNombre').value='';
+  document.getElementById('resenaTexto').value='';
+  alert('¡Gracias por tu reseña! ⭐ Ya quedó publicada');
+});
+
+
+
+// 📊 GOOGLE SHEETS - No perder datos nunca
+function enviarAGoogleSheet(tipo, datos){
+  const url = document.getElementById('pSheetURL')?.value?.trim();
+  if(!url || !url.includes('script.google.com')) return; // si no hay url, no hace nada
+  try{
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({tipo: tipo, datos: datos, fecha: new Date().toISOString(), casa: 'Las Dunas 1492'})
+    }).then(()=>console.log('Enviado a Sheet:', tipo)).catch(e=>console.log('Sheet error', e));
+  }catch(e){console.log(e);}
+}
+// Cuando deja reseña, enviar a sheet
+const btnResenaOrig = document.getElementById('btnEnviarResena');
+if(btnResenaOrig){
+  btnResenaOrig.addEventListener('click', ()=>{
+    setTimeout(()=>{
+      const lista=loadResenas();
+      const ultima=lista[lista.length-1];
+      if(ultima) enviarAGoogleSheet('resena', ultima);
+    }, 500);
+  });
+}
+// Cuando bloquea fecha, enviar a sheet
+const btnBloqOrig = document.getElementById('btnBloquear');
+if(btnBloqOrig){
+  const origClick = btnBloqOrig.onclick;
+  btnBloqOrig.addEventListener('click', ()=>{
+    setTimeout(()=>{
+      const f=document.getElementById('bloqueoFecha')?.value;
+      const m=document.getElementById('bloqueoMotivo')?.value;
+      if(f) enviarAGoogleSheet('bloqueo', {fecha: f, motivo: m});
+    }, 600);
+  });
+}
+// Cuando hace click en Reservar por WhatsApp, enviar lead a sheet
+document.getElementById('btnWA')?.addEventListener('click', ()=>{
+  try{
+    const entrada=document.getElementById('rEntrada')?.textContent||'';
+    const salida=document.getElementById('rSalida')?.textContent||'';
+    const noches=document.getElementById('rNoches')?.textContent||'';
+    const total=document.getElementById('rTotal')?.textContent||'';
+    const reserva=document.getElementById('rReservaShow')?.textContent||'';
+    enviarAGoogleSheet('lead_reserva', {entrada: entrada, salida: salida, noches: noches, total: total, reserva: reserva, garantiaActiva: document.getElementById('pGarantiaActiva')?.checked});
+  }catch(e){}
+});
+
+document.getElementById('pGarantiaActiva')?.addEventListener('change', (e)=>{
+  localStorage.setItem('pGarantiaActiva', e.target.checked);
+  renderResumen();
+});
+document.getElementById('pSheetURL')?.addEventListener('change', (e)=>{
+  localStorage.setItem('pSheetURL', e.target.value);
+});
+
+
+// 🔒 BLINDAJE ANTI-COPIA - R & R - Ricardo Garcés Baeza Reg 47314
+document.addEventListener('contextmenu', e=>e.preventDefault());
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && ['s','u','c','a','p'].includes(e.key.toLowerCase())){ e.preventDefault(); return false; }
+  if(e.key==='F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))){ e.preventDefault(); return false; }
+});
+document.addEventListener('copy', e=>{ e.preventDefault(); alert('🔒 Contenido protegido - R & R - Casa Tongoy Prado del Mar - Dueño Directo R & R - Ricardo Garcés Baeza Reg 47314'); });
+console.log('%c🔒 R & R - Casa Tongoy Prado del Mar - Dueño Directo - R & R - Ricardo Garcés Baeza Reg 47314 - Contenido protegido', 'font-size:20px; color:red; font-weight:bold;');
+console.log('%cSi copias esta página será denunciada por uso no autorizado de imágenes y marca', 'font-size:12px;');
+// Bloquear arrastrar imágenes
+document.querySelectorAll('img').forEach(img=>{ img.addEventListener('dragstart', e=>e.preventDefault()); });
+// Marca invisible en HTML
+document.documentElement.setAttribute('data-owner','Ricardo Garces Baeza - Reg 47314 - Las Dunas 1492 - Prado del Mar II - '+Date.now());
+
+
+// MODO DUEÑO 1492 - FIX
+function setModo(on){
+  modoDueno=on;
+  const pd=document.getElementById('panelDueno');
+  const bd=document.getElementById('barraDueno');
+  const cc=document.getElementById('carteraClientes');
+  if(pd) pd.classList.toggle('hidden',!on);
+  if(bd) bd.classList.toggle('hidden',!on);
+  if(cc) cc.classList.toggle('hidden',!on);
+  const btn=document.getElementById('toggleDueno');
+  if(btn){ btn.textContent=on?'MODO DUEÑO ON':'MODO DUEÑO OFF'; btn.className=on?'bg-green-500 text-white text-[10px] font-bold px-3 py-2 rounded-full':'bg-amber-400 text-black text-[10px] font-bold px-3 py-2 rounded-full'; }
+  try{ render(); renderResumen(); }catch(e){ console.log('render error', e); }
+}
+document.getElementById('toggleDueno')?.addEventListener('click',()=>{
+  if(modoDueno){ setModo(false); return; }
+  document.getElementById('modalClave').classList.remove('hidden');
+  document.getElementById('inputClave').focus();
+});
+document.getElementById('btnCancelarClave')?.addEventListener('click',()=>{ document.getElementById('modalClave').classList.add('hidden'); });
+document.getElementById('btnEntrarClave')?.addEventListener('click',()=>{
+  const v=document.getElementById('inputClave').value.trim();
+  if(v==='1492'){ document.getElementById('modalClave').classList.add('hidden'); document.getElementById('inputClave').value=''; setModo(true); }
+  else{ alert('Clave incorrecta - pista 1492'); }
+});
+document.getElementById('btnSalirDueno')?.addEventListener('click',()=>setModo(false));
+document.getElementById('inputClave')?.addEventListener('keydown',(e)=>{ if(e.key==='Enter') document.getElementById('btnEntrarClave').click(); });
+
+
+try{ loadFotos(); }catch(e){ console.log('fotos', e); }
+try{ loadPrecios(); }catch(e){ console.log('precios', e); }
+try{ render(); }catch(e){ console.log('render', e); document.getElementById('calGrid').innerHTML='<div class=text-[12px] text-red-500>Error calendario, recarga: '+e.message+'</div>'; }
+try{ renderResumen(); }catch(e){}
+try{ renderC(); }catch(e){}
+try{ renderResenas(); }catch(e){}
+try{ renderBloqueos(); }catch(e){}
+
+</script>
+<div style="background:#08050F; color:#9CA3AF; padding:16px 12px; text-align:center; font-size:10px; margin-top:20px;">
+<div style="color:#D8A0FF; font-weight:900; font-size:14px; margin-bottom:6px;">AUMVEN</div>
+<div>Arriendo Confiable • Verificación de identidad y RUT • Reportes de estafas de la comunidad • Propiedades verificadas</div>
+<div style="margin-top:8px;">R & R - Ricardo Garcés Baeza - Reg 47314 - Las Dunas 1492 - Prado del Mar II - Tongoy</div>
+<div style="margin-top:4px; opacity:0.6;">Tecnología para el comercio local chileno • aumven.cl</div>
+</div>
+</body>
+</html>
