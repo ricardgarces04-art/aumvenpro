@@ -635,13 +635,13 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
       <!-- 3 FOTOS -->
       <div style="background:rgba(14,116,144,.05);border:1.5px dashed rgba(14,116,144,.25);border-radius:12px;padding:1.1rem;margin-bottom:.85rem">
         <div style="font-size:.82rem;font-weight:800;color:var(--ac);margin-bottom:.7rem">📷 Fotos de la propiedad (hasta 3)</div>
-        <p class="form-hint" style="margin-bottom:.6rem">Sube las fotos a Google Drive (compartido) y pega los links aquí.</p>
+        <p class="form-hint" style="margin-bottom:.6rem">Pega el enlace directo de cada foto (termina en .jpg o .png). Si no tienes dónde subirlas, escríbenos por WhatsApp y las cargamos nosotros.</p>
         <label>Foto 1 (principal) — obligatoria</label>
-        <input type="text" id="pub-foto1" placeholder="https://drive.google.com/file/...">
+        <input type="text" id="pub-foto1" placeholder="https://.../foto.jpg">
         <label>Foto 2 (opcional)</label>
-        <input type="text" id="pub-foto2" placeholder="https://drive.google.com/file/...">
+        <input type="text" id="pub-foto2" placeholder="https://.../foto.jpg">
         <label>Foto 3 (opcional)</label>
-        <input type="text" id="pub-foto3" placeholder="https://drive.google.com/file/...">
+        <input type="text" id="pub-foto3" placeholder="https://.../foto.jpg">
       </div>
 
       <div class="row2">
@@ -1272,6 +1272,12 @@ function precioTexto(p, sufDia, sufMes){
   return 'Consultar precio';
 }
 
+function fotoUrl(u){
+  if(!u) return '';
+  u = String(u).trim();
+  return (/^https?:\/\//.test(u) || u.charAt(0) === '/') ? u : '';
+}
+
 function renderPropiedades(props) {
   var grid = document.getElementById('props-grid');
   if(!props.length) {
@@ -1283,7 +1289,7 @@ function renderPropiedades(props) {
     var verif = (p.estado_verificacion === 'verificado' || (p.usuarios && p.usuarios.estado_verificacion === 'verificado'));
     var emojis = {departamento:'🏢', casa:'🏠', pieza:'🛏️', otro:'🏡'};
     return '<div class="prop-card" onclick="verPropiedad(' + p.id + ')">'
-      +'<div class="prop-img">' + (emojis[p.tipo]||'🏠')
+      +'<div class="prop-img"' + (fotoUrl(p.foto1) ? ' style="background:url(\'' + esc(fotoUrl(p.foto1)) + '\') center/cover no-repeat"' : '') + '>' + (fotoUrl(p.foto1) ? '' : (emojis[p.tipo]||'🏠'))
       +'<span class="prop-badge '+(esVeraneo(p)?'veraneo':'')+'">'+  (esVeraneo(p)?'☀️ Veraneo':'Arriendo')+'</span>'
       +(verif?'<span class="prop-badge verificado" title="Identidad y titularidad revisadas por Arriendo Confiable" style="top:.6rem;left:.6rem;right:auto">🛡️ Sello azul</span>':'')
       +'</div>'
