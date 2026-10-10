@@ -1181,7 +1181,7 @@ if(rolSeleccionado === 'arrendador') {
       var { data, error } = await sb.auth.signUp({
   email: email,
   password: password,
-  options: { data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento, rut: rut } }
+  options: { emailRedirectTo: 'https://aumven.cl/arriendo-confiable/', data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento, rut: rut } }
 });
 if(error) throw error;
 
