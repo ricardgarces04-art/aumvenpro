@@ -633,9 +633,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
       </div>
 
       <!-- 3 FOTOS -->
-      <div style="background:rgba(14,116,144,.05);border:1.5px dashed rgba(14,116,144,.25);border-radius:12px;padding:1.1rem;margin-bottom:.85rem">
-        <div style="font-size:.82rem;font-weight:800;color:var(--ac);margin-bottom:.5rem">📷 Fotos de la propiedad (hasta 3)</div>
-        <p class="form-hint" style="margin:0">Las fotos las adjuntas en el mensaje de WhatsApp. Usa fotos propias y claras de la propiedad.</p>
+      <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:1rem 1.1rem;margin-bottom:.85rem;font-size:.84rem;color:#1e3a8a;line-height:1.6">
+        📲 <strong>Las fotos no se suben en este formulario.</strong><br>
+        Al tocar "Enviar por WhatsApp" se abre un mensaje con tus datos. Adjunta ahí hasta 3 fotos propias y claras de la propiedad.
       </div>
 
       <div class="row2">
@@ -1184,6 +1184,8 @@ if(error) throw error;
         + '🆕 Nuevo usuario registrado!\n'
         + '👤 ' + nombre + '\n'
         + '📧 ' + email + '\n'
+        + '📱 ' + (telefono || 'sin teléfono') + '\n'
+        + (rolSeleccionado === 'arrendador' ? '📎 ' + fotoDocumento + '\n' : '')
         + '🎭 ' + (rolSeleccionado === 'arrendador' ? '🏠 Arrendador' : '🔍 Arrendatario') + '\n'
         + '📋 Estado: ' + (rolSeleccionado === 'arrendador' ? 'Pendiente verificación' : 'Registrado (sin documentos)') + '\n'
         + '🕐 ' + new Date().toLocaleString('es-CL')
