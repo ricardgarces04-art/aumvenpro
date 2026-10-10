@@ -468,7 +468,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         🏠 Certificado de Dominio Vigente o Rol de la propiedad (SII o CBR)</div>
 
         <div style="background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);border-radius:8px;padding:.85rem;margin-bottom:.85rem;font-size:.78rem;color:#065f46;line-height:1.65">
-          <strong>⚖️ Aviso Legal:</strong> AUMVEN, a través de Arriendo Confiable, actúa exclusivamente como plataforma intermediaria. La documentación solicitada se utiliza <strong>únicamente para verificar tu identidad</strong>, no es compartida con terceros y se elimina al terminar la revisión. AUMVEN no es parte del contrato de arriendo ni asume responsabilidad por disputas entre usuarios.
+          <strong>⚖️ Aviso Legal:</strong> AUMVEN, a través de Arriendo Confiable, actúa exclusivamente como plataforma intermediaria. La documentación solicitada se utiliza <strong>únicamente para verificar tu identidad</strong>, no es compartida con terceros, no guardamos copias y dejamos de tener acceso al terminar la revisión. AUMVEN no es parte del contrato de arriendo ni asume responsabilidad por disputas entre usuarios.
         </div>
         <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:.85rem;margin-bottom:.85rem;font-size:.82rem;color:#0c4a6e;line-height:1.7">
   <strong>📱 ¿No sabes cómo subir tus documentos? Sigue estos pasos:</strong><br><br>
@@ -480,7 +480,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 </div>   
         <label>📤 Link a tus documentos (Google Drive)</label>
         <input type="text" id="reg-doc" placeholder="https://drive.google.com/... (carpeta con los 3 documentos)">
-        <p class="form-hint">Sube los documentos a una carpeta de Google Drive, compártela solo con arrienda.seguro.cl@gmail.com y pega el link aquí. Solo los ve el equipo de verificación y los eliminamos al terminar la revisión.</p>
+        <p class="form-hint">Sube los documentos a una carpeta de Google Drive, compártela solo con arrienda.seguro.cl@gmail.com y pega el link aquí. Solo los ve el equipo de verificación. Al terminar la revisión dejamos de tener acceso y no guardamos copias; después puedes borrar tu carpeta.</p>
       </div>
 
       <div class="verify-box" id="box-arrendatario" style="display:none;background:linear-gradient(135deg,rgba(8,145,178,.06),rgba(20,184,166,.06));border-color:rgba(8,145,178,.2)">
@@ -574,7 +574,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 <div class="screen" id="screen-publicar">
   <div class="section" style="max-width:680px">
     <h2 class="section-title">📋 Publicar Propiedad</h2>
-    <p class="section-sub">Solo arrendadores verificados pueden publicar</p>
+    <p class="section-sub">Completa los datos y envíalos por WhatsApp junto con tus fotos. Publicamos solo propiedades de arrendadores con sello azul.</p>
 
     <div class="form-card">
       <div class="form-title">🏠 Datos de la propiedad</div>
@@ -634,14 +634,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 
       <!-- 3 FOTOS -->
       <div style="background:rgba(14,116,144,.05);border:1.5px dashed rgba(14,116,144,.25);border-radius:12px;padding:1.1rem;margin-bottom:.85rem">
-        <div style="font-size:.82rem;font-weight:800;color:var(--ac);margin-bottom:.7rem">📷 Fotos de la propiedad (hasta 3)</div>
-        <p class="form-hint" style="margin-bottom:.6rem">Pega el enlace directo de cada foto (termina en .jpg o .png). Si no tienes dónde subirlas, escríbenos por WhatsApp y las cargamos nosotros.</p>
-        <label>Foto 1 (principal) — obligatoria</label>
-        <input type="text" id="pub-foto1" placeholder="https://.../foto.jpg">
-        <label>Foto 2 (opcional)</label>
-        <input type="text" id="pub-foto2" placeholder="https://.../foto.jpg">
-        <label>Foto 3 (opcional)</label>
-        <input type="text" id="pub-foto3" placeholder="https://.../foto.jpg">
+        <div style="font-size:.82rem;font-weight:800;color:var(--ac);margin-bottom:.5rem">📷 Fotos de la propiedad (hasta 3)</div>
+        <p class="form-hint" style="margin:0">Las fotos las adjuntas en el mensaje de WhatsApp. Usa fotos propias y claras de la propiedad.</p>
       </div>
 
       <div class="row2">
@@ -697,9 +691,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
       </div>
 
       <button class="btn btn-primary" id="pub-btn" onclick="publicarPropiedad()">
-        📋 Publicar propiedad
+        📲 Enviar por WhatsApp
       </button>
-      <p class="form-hint" style="text-align:center;margin-top:.5rem">Solo arrendadores verificados pueden publicar. Si aún no estás verificado, tu publicación quedará en revisión.</p>
+      <p class="form-hint" style="text-align:center;margin-top:.5rem">Se abrirá WhatsApp con tus datos ya escritos. Adjunta ahí hasta 3 fotos. Publicamos tu propiedad cuando tu verificación esté aprobada.</p>
     </div>
   </div>
 </div>
@@ -787,7 +781,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
     <h2 class="section-title">🔒 Privacidad y eliminación de datos</h2>
     <p class="section-sub">Cómo tratamos los datos en Arriendo Confiable, un producto de AUMVEN SPA.</p>
     <div class="form-card" style="line-height:1.7;font-size:.92rem">
-      <p><strong>Qué datos recogemos.</strong> Al registrarte: nombre, email, teléfono y RUT. Si eres arrendador, además el enlace a tus documentos de verificación (carnet, selfie y título de propiedad), que usamos solo para verificarte y eliminamos al terminar la revisión. Al reportar: los datos del hecho, el RUT de la persona denunciada (si lo conoces) y tus datos de contacto.</p>
+      <p><strong>Qué datos recogemos.</strong> Al registrarte: nombre, email, teléfono y RUT. Si eres arrendador, además el enlace a tus documentos de verificación (carnet, selfie y título de propiedad), que usamos solo para verificarte; al terminar la revisión dejamos de tener acceso y no guardamos copias. Al reportar: los datos del hecho, el RUT de la persona denunciada (si lo conoces) y tus datos de contacto.</p>
       <p style="margin-top:.8rem"><strong>Para qué los usamos.</strong> Para operar la plataforma, revisar reportes y contactarte si necesitamos respaldo. Tus datos de contacto como reportante no se muestran públicamente.</p>
       <p style="margin-top:.8rem"><strong>Sobre los reportes.</strong> Son relatos de usuarios y no han sido verificados por Arriendo Confiable. Se publican sin nombres, y la búsqueda por RUT solo muestra reportes que tienen respaldo. No constituyen una acusación ni una resolución judicial.</p>
       <p style="margin-top:.8rem"><strong>Tus derechos.</strong> Puedes pedir acceso, corrección, eliminación u oposición respecto de tus datos. Si apareces en un reporte y crees que es inexacto, escríbenos: lo retiramos mientras lo revisamos.</p>
@@ -930,7 +924,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         🛡️ <strong>¿Qué significa el sello azul?</strong><br>
         Revisamos que: (1) tu identidad coincide con tu carnet y tu selfie, (2) figuras como propietario según tu certificado de dominio o Rol SII, y (3) no tienes reportes con respaldo en nuestra base.<br>
         El sello se retira si recibimos un reporte con respaldo en tu contra. <strong>No es una garantía</strong> ni reemplaza que el arrendatario compruebe los datos por su cuenta.<br>
-        🔒 Al terminar la revisión eliminamos tus documentos y solo conservamos el resultado.
+        🔒 Al terminar la revisión dejamos de tener acceso a tu carpeta, no guardamos copias y solo conservamos el resultado. Después puedes borrarla tú.
       </div>
 
       <div style="background:#fef3c7;border:1.5px solid #fcd34d;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.83rem;color:#92400e;line-height:1.65">
@@ -1196,7 +1190,7 @@ if(error) throw error;
       );
 
       var pasos = rolSeleccionado === 'arrendador'
-        ? '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendador<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu documentación por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Revisamos tus documentos (hasta 48 hrs hábiles)<br>✅ <b>Paso 4 — Pendiente:</b> Recibirás email con tu sello azul<br>🏠 <b>Paso 5 — Pendiente:</b> Puedes publicar tu propiedad'
+        ? '<strong>✅ ¡Cuenta creada!</strong> Próximos pasos:<br>📋 <b>Paso 1 — Hecho:</b> Te registraste como Arrendador<br>📤 <b>Paso 2 — Hecho:</b> Enviaste tu documentación por Google Drive<br>🔍 <b>Paso 3 — En revisión:</b> Revisamos tus documentos (hasta 48 hrs hábiles)<br>✅ <b>Paso 4 — Pendiente:</b> Te avisaremos por email o WhatsApp cuando tu sello azul esté listo<br>🏠 <b>Paso 5 — Pendiente:</b> Con tu sello aprobado, envíanos los datos y fotos de tu propiedad desde Publicar'
         : '<strong>✅ ¡Cuenta creada!</strong> Ya puedes buscar propiedades y consultar RUT en Reportes. Prefiere arrendadores con sello azul.';
 
       if(!data.session) {
@@ -1358,62 +1352,38 @@ function togglePrecios() {
   document.getElementById('precio-año-wrap').style.display      = modal === 'año_corrido' ? 'block' : 'none';
 }
 
-async function publicarPropiedad() {
+function publicarPropiedad() {
   var titulo = document.getElementById('pub-titulo').value.trim();
   var region = document.getElementById('pub-region').value;
   var comuna = document.getElementById('pub-comuna').value.trim();
   if(!titulo || !comuna) { showAlert('pub-alert', 'Título y comuna son obligatorios.', 'error'); return; }
 
-  var btn = document.getElementById('pub-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Publicando...';
-
   var modal = document.getElementById('pub-modalidad').value;
-  var user = getUser();
-  var precioMap = {
-    diario:      parseInt(document.getElementById('pub-precio-dia').value)  || null,
-    semanal:     parseInt(document.getElementById('pub-precio-sem').value)  || null,
-    mensual:     parseInt(document.getElementById('pub-precio-mes').value)  || null,
-    temporada:   parseInt(document.getElementById('pub-precio-temp').value) || null,
-    año_corrido: parseInt(document.getElementById('pub-precio-año').value)  || null
-  };
-  var datos = {
-    usuario_id: user ? user.id : null,
-    titulo: titulo,
-    descripcion: document.getElementById('pub-desc').value,
-    tipo: document.getElementById('pub-tipo').value,
-    modalidad: modal,
-    region: region,
-    comuna: comuna,
-    precio_mensual: precioMap[modal] || null,
-    precio_diario: modal === 'diario' ? precioMap.diario : null,
-    foto1: document.getElementById('pub-foto1').value.trim() || null,
-    foto2: document.getElementById('pub-foto2').value.trim() || null,
-    foto3: document.getElementById('pub-foto3').value.trim() || null,
-    dormitorios: parseInt(document.getElementById('pub-dorm').value),
-    banos: parseInt(document.getElementById('pub-banos').value),
-    permite_mascotas: document.getElementById('pub-mascotas').checked,
-    amoblado: document.getElementById('pub-amoblado').checked
-  };
+  var precioIds = {diario:'pub-precio-dia', semanal:'pub-precio-sem', mensual:'pub-precio-mes', temporada:'pub-precio-temp', año_corrido:'pub-precio-año'};
+  var precioEl = document.getElementById(precioIds[modal]);
+  var precio = precioEl && precioEl.value ? precioEl.value : 'por definir';
 
-  if(sb) {
-    try {
-      var { error } = await sb.from('propiedades').insert(datos);
-      if(error) throw error;
-      showAlert('pub-alert', '✅ ¡Propiedad publicada! Aparecerá en el buscador una vez verificada.', 'success');
-      btn.innerHTML = '✅ Publicada';
-    } catch(e) {
-      showAlert('pub-alert', 'Error: ' + e.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = '📋 Publicar propiedad';
-    }
-  } else {
-    setTimeout(function(){
-      propiedadesData.unshift(Object.assign({id: Date.now(), activa:true, estado_verificacion:'pendiente'}, datos));
-      showAlert('pub-alert', '✅ ¡Propiedad publicada en modo demo! Configura Supabase para guardar datos reales.', 'success');
-      btn.innerHTML = '✅ Publicada';
-    }, 1000);
-  }
+  var lineas = [
+    'Hola, quiero publicar mi propiedad en Arriendo Confiable.',
+    '',
+    'Correo con el que me registré: ',
+    'Título: ' + titulo,
+    'Tipo: ' + document.getElementById('pub-tipo').value,
+    'Modalidad: ' + modal,
+    'Región: ' + region,
+    'Comuna: ' + comuna,
+    'Precio (CLP): ' + precio,
+    'Dormitorios: ' + document.getElementById('pub-dorm').value,
+    'Baños: ' + document.getElementById('pub-banos').value,
+    'Permite mascotas: ' + (document.getElementById('pub-mascotas').checked ? 'Sí' : 'No'),
+    'Amoblado: ' + (document.getElementById('pub-amoblado').checked ? 'Sí' : 'No'),
+    'Descripción: ' + document.getElementById('pub-desc').value.trim(),
+    '',
+    'Adjunto mis fotos a continuación.'
+  ];
+  var url = 'https://wa.me/56931341245?text=' + encodeURIComponent(lineas.join('\n'));
+  window.open(url, '_blank');
+  showAlert('pub-alert', '✅ Se abrió WhatsApp con tus datos. Completa tu correo de registro, adjunta tus fotos y envía el mensaje. Publicamos cuando tu verificación esté aprobada.', 'success');
 }
 
 // ================================================================
