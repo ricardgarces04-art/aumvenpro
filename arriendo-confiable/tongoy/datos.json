@@ -1,0 +1,15 @@
+{
+  "precios": {
+    "p1": "75000",
+    "p2": "85000",
+    "pb1": "55000",
+    "pb2": "70000",
+    "pAltaDesde": "2026-12-11",
+    "pOfertaOn": "0",
+    "pOfertaNombre": "Pack oferta",
+    "pOfertaDesde": "",
+    "pOfertaHasta": "",
+    "p3": "230000"
+  },
+  "bloqueos": []
+}
