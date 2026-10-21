@@ -687,7 +687,8 @@ document.getElementById('btnDatosJson')?.addEventListener('click',()=>{
   alert('Listo: se descargó datos.json. Súbelo a GitHub en la carpeta tongoy (reemplazando el anterior) para publicar tus precios y fechas.');
 });
 // 🔐 Modo Dueño oculto al público: solo aparece si entras con /tongoy/#dueno
-try{ if(location.hash==='#dueno'){ const b=document.getElementById('toggleDueno'); if(b) b.style.display=''; } }catch(e){}
+function _mostrarBotonDueno(){ try{ const h=(location.hash||'').toLowerCase(); const b=document.getElementById('toggleDueno'); if(b) b.style.display=(h.indexOf('dueno')>-1||h.indexOf('dueño')>-1||h.indexOf('due%c3%b1o')>-1)?'':'none'; }catch(e){} }
+_mostrarBotonDueno(); window.addEventListener('hashchange',_mostrarBotonDueno);
 const _setModoFinal=setModo;
 setModo=function(on){ _setModoFinal(on); document.body.classList.toggle('dueno-on',!!on); };
 cargarDatosPublicos();
