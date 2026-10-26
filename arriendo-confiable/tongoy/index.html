@@ -304,7 +304,7 @@ function renderResumen(){
   const elGS=document.getElementById('rGarantiaShow'); if(elGS) elGS.textContent=garantia.toLocaleString('es-CL');
   const box=document.getElementById('boxDuenoInterno');
   if(modoDueno){box.classList.remove('hidden');} else {box.classList.add('hidden');}
-  document.getElementById('btnWA').href='https://wa.me/?text='+encodeURIComponent(`Hola Ricardo Garcés Baeza! Reserva Casa Tongoy Las Dunas 1492 del ${fmt(selStart)} al ${fmt(selEnd)} - ${diff} noches Total $${total} - Reserva 40% $${Math.round(total*0.4)} Saldo $${total-Math.round(total*0.4)} al ingresar - Cuenta Banco Estado Cuenta Pro 24770062329 RICARDO FRANCISCO GARCES BAEZA RUT 10416364-5 - Vi tu link aumven.cl/arriendo-confiable/tongoy - Se entrega las llaves en persona, sin GPS ni codigo`);
+  document.getElementById('btnWA').href='https://wa.me/56931341245?text='+encodeURIComponent(`Hola Ricardo Garcés Baeza! Reserva Casa Tongoy Las Dunas 1492 del ${fmt(selStart)} al ${fmt(selEnd)} - ${diff} noches Total $${total} - Reserva 40% $${Math.round(total*0.4)} Saldo $${total-Math.round(total*0.4)} al ingresar - Cuenta Banco Estado Cuenta Pro 24770062329 RICARDO FRANCISCO GARCES BAEZA RUT 10416364-5 - Vi tu link aumven.cl/arriendo-confiable/tongoy - Se entrega las llaves en persona, sin GPS ni codigo`);
 }
 document.getElementById('prev').addEventListener('click',()=>{cur.setMonth(cur.getMonth()-1);render();});
 document.getElementById('next').addEventListener('click',()=>{cur.setMonth(cur.getMonth()+1);render();});
