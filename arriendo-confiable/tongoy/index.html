@@ -70,9 +70,14 @@ body{font-family:system-ui,sans-serif;background:#F5F1E8}
 <div class="font-bold text-[13px] text-[#0F2C3D]">⭐ Reseñas de arrendatarios verificados</div>
 <div class="text-[10px] text-gray-500">Casa, lugar y anfitrión - Ricardo Garcés Baeza</div>
 <div id="listaResenas" class="mt-3 space-y-2 max-h-[300px] overflow-auto"><div class="text-[11px] text-gray-400 text-center py-4">Aún no hay reseñas - ¡sé el primero en dejar tu experiencia! 🏖️</div></div>
-
-<div class="mt-3 bg-[#F5F1E8] rounded-xl p-3">
+<div class="mt-3 bg-[#F5F1E8] rounded-xl p-3" id="bloqueCerrado">
+<div class="text-[11px] font-bold">¿Te quedaste en Casa Tongoy Las Dunas 1492?</div>
+<div class="text-[10px] mt-1 text-gray-700">Solo nuestros arrendatarios pueden dejar reseña. Al terminar tu estadía te enviamos tu link personal para evaluar Casa, Lugar y Anfitrión. Tu reseña queda guardada y se muestra a futuros arrendatarios.</div>
+<div class="text-[10px] mt-2 bg-white border rounded p-2">🎁 <b>Club Retribución:</b> Inscríbete gratis y acumula puntos para tu próxima estadía en Tongoy.</div>
+</div>
+<div id="formResena" style="display:none;" class="mt-3 bg-[#F5F1E8] rounded-xl p-3">
 <div class="text-[11px] font-bold">¿Te quedaste en la casa? Deja tu reseña:</div>
+
 <div class="grid grid-cols-3 gap-1 mt-2">
 <div><div class="text-[9px]">Casa</div><select id="rCasa" class="w-full border rounded text-[11px] p-1"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
 <div><div class="text-[9px]">Lugar</div><select id="rLugar" class="w-full border rounded text-[11px] p-1"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
@@ -702,5 +707,6 @@ cargarDatosPublicos();
 </div>
 </div>
 
-
+<script>if(window.location.hash==="#resena"){var f=document.getElementById("formResena"); if(f) f.style.display="block"; var c=document.getElementById("bloqueCerrado"); if(c) c.style.display="none";}</script
+  
 </body></html>
