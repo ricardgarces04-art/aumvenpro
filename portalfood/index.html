@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portal Food by AUMVEN</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#0a0a0a;--sf:#171717;--ln:#262626;--ac:#FFC72C;--rd:#FF3B30;--tx:#f5f5f5;--mu:#a3a3a3}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{padding:env(safe-area-inset-top,0px) 0 110px}
+a{color:inherit;text-decoration:none}button{font-family:inherit}
+h1,h2,h3{margin:0}.mu{color:var(--mu);font-size:14px}.err{color:var(--rd);font-size:14px}
+.n{max-width:560px;margin:0 auto;padding:0 16px}.w{max-width:1100px;margin:0 auto;padding:0 16px}
+.hd{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.94);border-bottom:1px solid var(--ln)}
+.hd .w{display:flex;justify-content:space-between;align-items:center;height:60px}
+.logo{font-weight:900;font-size:21px;letter-spacing:-.5px;line-height:1}.logo b{color:var(--ac)}.logo small{display:block;font-size:10px;font-weight:400;color:var(--mu);letter-spacing:0;margin-top:3px}
+.pillb{border:1px solid var(--ln);border-radius:99px;padding:9px 15px;font-size:13px;font-weight:700;background:var(--sf);cursor:pointer;color:var(--tx)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.price{font-weight:900;color:var(--ac);font-variant-numeric:tabular-nums}
+.btn{background:var(--ac);color:#000;font:700 16px Inter,sans-serif;border:0;border-radius:16px;padding:14px 20px;cursor:pointer;transition:transform .15s;display:inline-block}
+.btn:active{transform:scale(.95)}.btn:disabled{opacity:.5}.btn.dk{background:#000;color:var(--ac)}
+.hero{background:var(--ac);color:#000;border-radius:28px;padding:28px 24px;margin-top:16px;position:relative;overflow:hidden}
+.hero h1{font-size:35px;line-height:1.03;font-weight:900;letter-spacing:-1.2px;max-width:62%}
+.hero p{max-width:62%;margin:12px 0 18px;font-size:15px;line-height:1.4;color:#000c}
+.hero .em{position:absolute;right:20px;top:18px;font-size:52px;line-height:1.12;text-align:center;transform:rotate(8deg)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:16px 0 4px;scrollbar-width:none}
+.chip{flex:none;padding:10px 16px;border-radius:99px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);font-weight:700;font-size:14px;cursor:pointer}.chip.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.sec{font-size:23px;font-weight:900;letter-spacing:-.6px;margin:30px 0 12px}
+.loc{display:block;overflow:hidden;margin-top:12px}
+.cv{height:120px;background:linear-gradient(135deg,#4a3500,#171717) center/cover;display:grid;place-items:center;font-size:58px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.tags span{font-size:12px;font-weight:700;padding:6px 11px;border-radius:99px;background:var(--ln)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.join{display:block;border:2px dashed #FFC72C77;border-radius:24px;padding:18px;transition:background .2s}.join:hover{background:#FFC72C12}.join h3{font-size:17px;font-weight:900;margin:8px 0 2px}
+.cmp{padding:6px 18px}.cmp .r{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;align-items:center;padding:14px 0;border-bottom:1px solid var(--ln);font-size:15px}.cmp .r:last-child{border:0}
+.cmp .h{font-size:13px;color:var(--mu);font-weight:700}.cmp .pf{font-size:20px}.cmp .h .pf{font-size:13px;color:var(--ac)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:7px 0}
+.gain{background:var(--ac);color:#000;border-radius:16px;padding:14px;text-align:center;font-weight:900;font-size:17px;margin-top:10px}
+.prod{display:flex;align-items:center;gap:14px;padding:14px;margin-top:12px}.prod>div:nth-child(2){flex:1}
+.thumb{position:relative;width:78px;height:78px;border-radius:18px;background:linear-gradient(135deg,#4a3500,#262626) center/cover;display:grid;place-items:center;font-size:38px;flex:none}
+.cnt{position:absolute;top:-6px;right:-6px;background:var(--ac);color:#000;font-size:12px;font-weight:900;border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;padding:0 6px}
+.add{background:var(--ac);border:0;border-radius:16px;width:46px;height:46px;font-size:24px;font-weight:700;cursor:pointer;transition:transform .15s}.add:active{transform:scale(.8)}
+.fab{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:528px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;transform:translateY(130px);transition:transform .35s cubic-bezier(.2,.9,.3,1);z-index:9}.fab.show{transform:none}
+.fn{background:#000;color:var(--ac);border-radius:99px;min-width:26px;height:26px;display:grid;place-items:center;font-size:13px;font-weight:900;padding:0 7px}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}.shade.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:92vh;overflow-y:auto;border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .4s cubic-bezier(.2,.9,.3,1);z-index:41}.drawer.show{transform:none}
+.q{display:flex;align-items:center;gap:10px}.q button{background:var(--ln);color:var(--tx);border:0;border-radius:10px;width:28px;height:28px;cursor:pointer}
+.opt{display:flex;gap:12px;align-items:center;width:100%;padding:14px;border:1.5px solid var(--ln);border-radius:18px;margin-top:8px;cursor:pointer;background:none;color:var(--tx);text-align:left;font-size:15px}.opt.on{border-color:var(--ac);background:#FFC72C14}.opt .oi{font-size:26px}
+.input{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:16px;padding:13px 16px;color:var(--tx);font:400 16px Inter,sans-serif;outline:none;margin-top:10px}.input:focus{border-color:var(--ac)}
+.ok{text-align:center;padding:36px 0}.dot{width:70px;height:70px;border-radius:50%;background:var(--ac);color:#000;font-size:34px;display:grid;place-items:center;margin:0 auto 14px;animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(0)}}@keyframes pulse{50%{box-shadow:0 0 0 6px #FF3B3033}}
+.pill{font-size:12px;font-weight:700;padding:4px 12px;border-radius:99px;background:var(--ln)}.pill.n{background:var(--rd);color:#fff;animation:pulse 1.6s infinite}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}.sum .card{padding:16px}.sum b{font-size:22px;display:block;margin-top:4px}
+.ptabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:16px 0 4px}.ptabs .ptab{font-size:11.5px;padding:10px 2px}
+.ptab{padding:11px 4px;border-radius:14px;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font-weight:700;font-size:13px;cursor:pointer}.ptab.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.cols{display:grid;gap:14px;grid-template-columns:1fr;margin-top:8px}.col{display:none}.col.on{display:block}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:12px 4px}.ch h3{font-size:18px;font-weight:900}
+.ord{padding:18px;margin-bottom:12px;animation:pop .35s ease-out}
+.split{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--ln)}.split span{display:block;font-size:12px;color:var(--mu)}.split b{font-size:20px}
+.empty{padding:26px;text-align:center;border:1px dashed var(--ln);border-radius:20px}
+.snav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0 4px}
+@media(min-width:900px){.cols{grid-template-columns:repeat(4,1fr)}.ptabs{display:none}.col{display:block!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="hd"><div class="w"><a href="#/" class="logo">Portal <b>Food</b><small>by AUMVEN</small></a><a id="nav" class="pillb" href="#/panel">Panel del local</a></div></header>
+<main id="app"><p class="mu" style="padding:32px">Cargando…</p></main>
+<button class="btn fab" id="fab" onclick="open_()"><span class="fn" id="fabN"></span><span>Ver pedido</span><b id="fabT"></b></button>
+<div class="shade" id="shade" onclick="close_()"></div>
+<div class="card drawer" id="drawer"></div>
+
+<script src="config.js"></script>
+<script>
+/* ===== CONFIG: completa estos datos ===== */
+// SUPABASE_URL, SUPABASE_KEY y WHATSAPP vienen del archivo config.js
+if(typeof SUPABASE_URL==='undefined'||typeof WHATSAPP==='undefined'){document.body.innerHTML='<p style="padding:32px;font-family:sans-serif;color:#FF3B30;line-height:1.5">Falta el archivo <b>config.js</b> junto a index.html (o está incompleto).<br>Ábrelo con doble clic desde tu carpeta portalfood, no desde la vista previa del chat.</p>';throw new Error('config.js ausente')}
+const CFG={wa:WHATSAPP,com:15}; // wa = WhatsApp de AUMVEN para captar locales; com = % mostrado en la página
+const CATS=[['Completos','🌭'],['Sushi','🍣'],['Churrascos','🥩'],['Pizzas','🍕']];
+
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+const clp=n=>new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(n);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const emo=t=>(CATS.find(c=>c[0]===t)||[0,'🍽️'])[1];
+const bg=u=>u?`background-image:url('${esc(encodeURI(u).replace(/'/g,'%27'))}')`:'';
+const wa=(n,t)=>`https://wa.me/${String(n).replace(/\D/g,'')}?text=${encodeURIComponent(t)}`;
+const ESTADOS=[['NUEVO','Llega pedido'],['EN COCINA','Pasa a cocina'],['EN CAMINO','En camino'],['ENTREGADO','Entregado']];
+let MYL=null,psec='pedidos',view='home',cat='Todos',LOC=[],L=null,P=[],cart={},modo='retiro',fase='idle',ptab='NUEVO',orders=[],owned='',chan=null,frm={nombre:'',fono:'',dir:'',mesa:''};
+
+/* ===== Inicio ===== */
+const join=(c,e)=>`<a class="join" href="#/unirme/${encodeURIComponent(c)}"><div style="font-size:34px">${e}</div><h3>Tu local aquí</h3><p class="mu" style="margin:0 0 8px">${c} en Quilpué</p><span class="price" style="font-size:14px">Quiero unirme</span></a>`;
+async function home(){
+  view='home';
+  const {data,error}=await sb.from('locales').select('*').eq('activo',true).order('nombre');
+  if(error)throw error;LOC=data||[];
+  const locs=LOC.filter(l=>cat==='Todos'||l.tipo===cat);
+  const libres=CATS.filter(([c])=>(cat==='Todos'||cat===c)&&!LOC.some(l=>l.tipo===c));
+  $('app').innerHTML=`<div class="n">
+  <div class="hero"><div class="em">🌭<br>🍣<br>🍕</div><h1>Pide en tu barrio. El local gana más.</h1><p>Comida de Quilpué directo del local, con la mitad de comisión que las apps grandes.</p><a class="btn dk" href="#loc" onclick="document.getElementById('loc')?.scrollIntoView({behavior:'smooth'});return false">Ver locales</a></div>
+  <div class="chips">${[['Todos','✨'],...CATS].map(([c,e])=>`<button class="chip ${c===cat?'on':''}" onclick="cat='${c}';route()">${e} ${c}</button>`).join('')}</div>
+  ${locs.length?`<h2 class="sec" id="loc">Disponible en Quilpué</h2>${locs.map(l=>`<a class="card loc" href="#/local/${encodeURIComponent(l.slug)}"><div class="cv" style="${bg(l.foto_portada)}">${l.foto_portada?'':emo(l.tipo)}</div><div style="padding:16px 20px"><h2 style="font-size:20px;font-weight:900">${esc(l.nombre)}</h2><div class="tags"><span>🏪 Retiro gratis</span><span>🍽️ Mesa</span><span>🛵 Despacho ${clp(l.costo_envio)}</span></div></div></a>`).join('')}`:''}
+  <h2 class="sec">¿Tienes un local? Súmate</h2>
+  <div class="grid2">${libres.map(([c,e])=>join(c,e)).join('')}${cat==='Todos'?join('otro rubro','🏪'):''}</div>
+  <h2 class="sec">Quédate con más de lo que vendes</h2>
+  <div class="card cmp"><div class="r h"><span></span><span>Apps grandes</span><span class="pf">Portal Food</span></div>
+   <div class="r"><span>Comisión</span><span>hasta 30%</span><b class="pf price">${CFG.com}%</b></div>
+   <div class="r"><span>Te depositamos en</span><span>según contrato</span><b class="pf price" style="font-size:18px">24 horas</b></div></div>
+  <div class="card" style="padding:20px;margin-top:12px"><div class="row"><span class="mu">Tus ventas al mes</span><b id="vv" class="price" style="font-size:22px"></b></div>
+   <input type="range" id="vs" min="500000" max="5000000" step="100000" value="1000000" oninput="calc()" style="width:100%;accent-color:#FFC72C" aria-label="Ventas al mes">
+   <div class="row"><span>Con 30% de comisión te quedan</span><b id="vu"></b></div><div class="row"><span>Con Portal Food te quedan</span><b id="vp" class="price"></b></div><div class="gain" id="vg"></div></div>
+  <div class="card" style="padding:24px;margin-top:24px;text-align:center;border-color:#FFC72C66"><h2 style="font-size:22px;font-weight:900">Migra tu local a Portal Food</h2><p class="mu" style="margin:8px 0 16px">Tu carta, tus clientes y tu dinero en 24 horas. Te ayudamos a armar todo.</p><a class="btn" href="#/unirme">Quiero unirme</a></div>
+  <p class="mu" style="font-size:12px;margin:18px 0 0">Comisiones y plazos de otras plataformas según sus condiciones publicadas; pueden variar por contrato.</p></div>`;
+  calc();
+}
+function calc(){const v=+$('vs').value,u=v*.7,p=v*(1-CFG.com/100);$('vv').textContent=clp(v);$('vu').textContent=clp(u);$('vp').textContent=clp(p);$('vg').textContent='Te quedas con '+clp(p-u)+' más cada mes'}
+
+/* ===== Carta del local ===== */
+async function menu(slug){
+  view='menu';
+  const {data:l}=await sb.from('locales').select('*').eq('slug',slug).eq('activo',true).maybeSingle();
+  if(!l){location.hash='#/';return}
+  if(!L||L.id!==l.id){cart={};cust=null}
+  L=l;
+  const {data:p,error}=await sb.from('productos').select('*').eq('local_id',l.id).eq('activo',true).eq('aprobado',true).order('nombre');
+  if(error)throw error;P=p||[];
+  $('app').innerHTML=`<div class="n"><a href="#/" class="mu" style="display:inline-block;padding:14px 0">‹ Volver a locales</a>
+  <div class="card" style="overflow:hidden"><div class="cv" style="${bg(l.foto_portada)}">${l.foto_portada?'':emo(l.tipo)}</div><div style="padding:18px 20px"><h1 style="font-size:24px;font-weight:900">${esc(l.nombre)}</h1><div class="tags"><span>🏪 Retiro gratis</span><span>🍽️ Mesa</span><span>🛵 Despacho ${clp(l.costo_envio)}</span></div></div></div>
+  ${l.juego_umbral&&l.juego_url?`<div class="card" style="padding:14px 16px;margin-top:12px;border-color:#FFC72C66"><b class="y">🎁 Juega gratis</b><div class="mu" style="margin-top:2px">En compras desde ${clp(l.juego_umbral)} recibes un código para jugar y ganar premios.</div></div>`:''}
+  <h2 class="sec">Carta</h2>
+  ${P.map(x=>`<div class="card prod"><div class="thumb" style="${bg(x.foto_url)}">${x.foto_url?'':emo(l.tipo)}<span id="b${x.id}"></span></div><div><h3 style="font-size:16px">${esc(x.nombre)}</h3><p class="mu" style="margin:2px 0 6px">${esc(x.descripcion)}</p><span class="price" style="font-size:18px">${clp(x.precio)}</span></div><button class="add" onclick="add('${x.id}',1)" aria-label="Agregar ${esc(x.nombre)}">+</button></div>`).join('')||'<p class="mu">Este local aún no tiene productos.</p>'}</div>`;
+  badges();fab();
+}
+const sub=()=>Object.entries(cart).reduce((a,[id,n])=>a+n*P.find(p=>p.id===id).precio,0);
+const cnt=()=>Object.values(cart).reduce((a,b)=>a+b,0);
+const valid=()=>frm.nombre.trim()&&frm.fono.trim().length>=8&&(modo!=='despacho'||frm.dir.trim())&&(modo!=='despacho'||!needCov()||(cust&&cust.ok))&&(modo!=='mesa'||frm.mesa.trim());
+function badges(){P.forEach(p=>{const e=$('b'+p.id);if(e)e.innerHTML=cart[p.id]?`<span class="cnt">${cart[p.id]}</span>`:''})}
+function add(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];badges();fab();if($('drawer').classList.contains('show')){cnt()?drawer():close_()}}
+function fab(){$('fab').classList.toggle('show',view==='menu'&&cnt()>0&&!$('drawer').classList.contains('show'));$('fabN').textContent=cnt();$('fabT').textContent=P.length?clp(sub()):''}
+function open_(){fase='idle';drawer();$('shade').classList.add('show');$('drawer').classList.add('show');fab()}
+function close_(){$('shade').classList.remove('show');$('drawer').classList.remove('show');fab()}
+function drawer(){
+  if(fase==='ok'){$('drawer').innerHTML=`<div class="ok"><div class="dot">✓</div><h2 style="font-size:22px;font-weight:900">¡Pedido enviado!</h2><p class="mu">${esc(L.nombre)} ya lo está viendo.</p><p class="mu" style="margin-top:6px">Pedido N° ${lastNo}. Guárdalo por si necesitas consultarlo.</p>${lastJuego?'<p class="mu" style="color:#7bd88f;margin-top:8px">🎁 ¡Ganaste un juego! El local te enviará tu código cuando entregue tu pedido.</p>':''}<a class="btn" style="margin-top:18px" target="_blank" rel="noopener" href="${wa(L.telefono_local,lastMsg)}">Avisar por WhatsApp al local</a></div>`;return}
+  const s=sub(),e=modo==='despacho'?L.costo_envio:0,t=s+e;
+  const OPTS=[['retiro','🏪','Retiro en local','Gratis'],['mesa','🍽️','Comer en el local','Sin costo'],['despacho','🛵','Despacho a domicilio','+'+clp(L.costo_envio)]];
+  $('drawer').innerHTML=`<h2 style="font-size:21px;font-weight:900;margin-bottom:6px">Tu pedido</h2>
+  ${Object.entries(cart).map(([id,n])=>{const p=P.find(x=>x.id===id);return `<div class="row"><span>${esc(p.nombre)}</span><span class="q"><button onclick="add('${id}',-1)" aria-label="Quitar">−</button><b>${n}</b><button onclick="add('${id}',1)" aria-label="Agregar">+</button><span class="price" style="width:76px;text-align:right">${clp(p.precio*n)}</span></span></div>`}).join('')}
+  ${juegoMsg()}<h3 style="font-size:16px;margin:18px 0 0">¿Cómo lo recibes?</h3>
+  ${OPTS.map(([m,i,t2,pr])=>`<button class="opt ${m===modo?'on':''}" onclick="modo='${m}';drawer()"><span class="oi">${i}</span><b style="flex:1">${t2}</b><span class="${m==='despacho'?'price':'mu'}">${pr}</span></button>`).join('')}
+  <input class="input" placeholder="Tu nombre" value="${esc(frm.nombre)}" oninput="frm.nombre=this.value;chk()">
+  <input class="input" placeholder="Teléfono" inputmode="tel" value="${esc(frm.fono)}" oninput="frm.fono=this.value;chk()">
+  ${modo==='despacho'?`<input class="input" placeholder="Dirección en Quilpué" value="${esc(frm.dir)}" oninput="frm.dir=this.value;chk()">`:''}
+  ${covBlock()}${modo==='mesa'?`<input class="input" placeholder="N° de mesa" value="${esc(frm.mesa)}" oninput="frm.mesa=this.value;chk()">`:''}
+  <div style="margin-top:16px" class="mu"><div class="row"><span>Subtotal</span><span>${clp(s)}</span></div>${e?`<div class="row"><span>Despacho</span><span>${clp(e)}</span></div>`:''}
+  <div class="row" style="color:#fff;font-weight:700;font-size:16px"><span>Total</span><span class="price" style="font-size:24px">${clp(t)}</span></div></div>
+  ${fase==='error'?'<p class="err">No pudimos registrar el pedido. Revisa tus datos e inténtalo de nuevo.</p>':''}${fase==='errorpago'?'<p class="err">No pudimos iniciar el pago. No se hizo ningún cobro. Inténtalo de nuevo.</p>':''}
+  <button class="btn" id="pay" style="width:100%;margin-top:12px" ${valid()?'':'disabled'} onclick="pay()">Pagar ${clp(t)}</button>
+  <p class="mu" style="text-align:center;font-size:12px;margin:8px 0 0">Pago seguro con Webpay de Transbank (débito, crédito o prepago).</p>`;
+}
+function chk(){$('pay').disabled=!valid()}
+async function pay(){
+  $('pay').disabled=true;$('pay').textContent='Conectando con Webpay…';
+  const oid=crypto.randomUUID();const maps=modo==='despacho'?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(frm.dir+', Quilpué, Chile'):null;
+  const {error}=await sb.from('pedidos').insert({id:oid,local_id:L.id,cliente_nombre:frm.nombre.trim(),cliente_fono:frm.fono.trim(),
+    direccion:modo==='despacho'?frm.dir.trim():null,maps_url:maps,modo_entrega:modo,mesa_numero:modo==='mesa'?frm.mesa.trim():null,
+    items:Object.entries(cart).map(([id,n])=>({id,nombre:P.find(p=>p.id===id).nombre,cantidad:n})),
+    total:0,comision_aumven:0,pago_local:0,cliente_lat:modo==='despacho'&&cust?cust.lat:null,cliente_lng:modo==='despacho'&&cust?cust.lng:null}); // la base de datos recalcula los montos; el pedido queda PENDIENTE hasta que Webpay confirme
+  if(error){fase='error';drawer();return}
+  const res=Object.entries(cart).map(([i,n])=>n+'× '+P.find(p=>p.id===i).nombre).join(', '),tot=sub()+(modo==='despacho'?L.costo_envio:0);
+  lastNo=oid.slice(0,6).toUpperCase();
+  lastMsg=`Hola, soy ${frm.nombre.trim()}. Hice el pedido N° ${lastNo} en Portal Food: ${res}. Total ${clp(tot)}. `+(modo==='despacho'?'Despacho a: '+frm.dir.trim():modo==='mesa'?'Mesa '+frm.mesa.trim():'Retiro en el local')+'.';
+  try{
+    const r=await fetch(SUPABASE_URL+'/functions/v1/crear-pago',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY},body:JSON.stringify({pedido_id:oid})});
+    const d=await r.json();if(!r.ok||!d.token||!d.url)throw new Error('pago');
+    try{sessionStorage.setItem('pf_pend',JSON.stringify({no:lastNo,nombre:L.nombre,tel:L.telefono_local,msg:lastMsg}))}catch(e){}
+    const f=document.createElement('form');f.method='POST';f.action=d.url;const i=document.createElement('input');i.type='hidden';i.name='token_ws';i.value=d.token;f.appendChild(i);document.body.appendChild(f);f.submit();
+  }catch(e){fase='errorpago';drawer()}
+}
+/* Pantalla a la que vuelve el cliente desde Webpay (la arma la función confirmar-pago) */
+function retornoPago(q){
+  const st=q.get('pago'),n=(q.get('n')||'').replace(/[^0-9A-Za-z]/g,''),j=q.get('j')==='1';let pend=null;
+  try{pend=JSON.parse(sessionStorage.getItem('pf_pend')||'null')}catch(e){}
+  if(pend&&n&&pend.no!==n)pend=null;
+  history.replaceState(null,'',location.pathname+'#/');view='ret';
+  const back='<button class="btn" style="width:100%;margin-top:18px" onclick="route()">Volver al portal</button>';
+  const wrap=h=>{$('app').innerHTML=`<div class="n"><div class="ok" style="padding:48px 0">${h}</div></div>`};
+  if(st==='ok'){
+    try{sessionStorage.removeItem('pf_pend')}catch(e){}
+    wrap(`<div class="dot">✓</div><h2 style="font-size:22px;font-weight:900">¡Pago recibido!</h2><p class="mu">${pend?esc(pend.nombre):'El local'} ya está viendo tu pedido.</p>${n?`<p class="mu" style="margin-top:6px">Pedido N° ${n}. Guárdalo por si necesitas consultarlo.</p>`:''}${j?'<p class="mu" style="color:#7bd88f;margin-top:8px">🎁 ¡Ganaste un juego! El local te enviará tu código cuando entregue tu pedido.</p>':''}${pend?`<a class="btn" style="margin-top:18px" target="_blank" rel="noopener" href="${wa(pend.tel,pend.msg)}">Avisar por WhatsApp al local</a>`:''}${back}`);
+  }else if(st==='cancel'){
+    wrap(`<h2 style="font-size:22px;font-weight:900">Cancelaste el pago</h2><p class="mu">No se hizo ningún cobro y el local no recibió el pedido.</p>${back}`);
+  }else{
+    wrap(`<h2 style="font-size:22px;font-weight:900">No se pudo completar el pago</h2><p class="mu">Tu banco no autorizó la operación. No se hizo ningún cobro y el local no recibió el pedido. Puedes intentar de nuevo con otra tarjeta.</p>${back}`);
+  }
+}
+
+/* ===== Panel del dueño ===== */
+let AC=null,alarm=false,wl=null,skipA=false;
+function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();[0,.3,.6].forEach(t=>{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=.4;o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.2)})}catch(e){}}
+async function toggleAlarm(){alarm=!alarm;if(alarm){beep();try{wl=await navigator.wakeLock.request('screen')}catch(e){}}else{try{wl&&wl.release()}catch(e){}wl=null}renderPanel()}
+setInterval(()=>{if(alarm&&view==='panel'&&orders.some(o=>o.estado==='NUEVO'))beep()},5000); // suena cada 5 s mientras haya pedidos nuevos sin atender
+document.addEventListener('visibilitychange',async()=>{if(alarm&&document.visibilityState==='visible'){try{wl=await navigator.wakeLock.request('screen')}catch(e){}}});
+function loginView(msg){
+  $('app').innerHTML=`<div class="n" style="padding-top:50px"><h1 style="font-size:24px;font-weight:900">Panel del local</h1><p class="mu">Ingresa con el correo que te creó AUMVEN.</p>
+  <input class="input" id="em" placeholder="Correo" autocomplete="username"><input class="input" id="pw" type="password" placeholder="Contraseña" autocomplete="current-password">
+  <p class="err">${msg||''}</p><button class="btn" style="width:100%" id="go">Entrar</button></div>`;
+  $('go').onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});error?loginView('Correo o contraseña incorrectos.'):route()};
+}
+async function reload(){
+  const {data}=await sb.from('pedidos').select('*').order('created_at',{ascending:false}).limit(100); // RLS: solo pedidos de tus locales
+  orders=data||[];if(view==='panel'&&psec==='pedidos')renderPanel();
+}
+async function panel(){
+  view='panel';
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){loginView();return}
+  const {data:ls}=await sb.from('locales').select('*').eq('owner_id',session.user.id);MYL=(ls||[])[0]||null;
+  owned=(ls||[]).map(l=>l.nombre).join(' · ')||'Mi local';
+  await reload();
+  if(!chan)chan=sb.channel('pedidos').on('postgres_changes',{event:'*',schema:'public',table:'pedidos'},p=>{reload();if(p.eventType==='UPDATE'&&p.new&&p.new.estado==='NUEVO'&&p.new.estado_pago==='PAGADO')beep()}).subscribe();
+}
+const modoL=o=>o.modo_entrega==='retiro'?'🏪 Retiro':o.modo_entrega==='mesa'?'🍽️ Mesa '+esc(o.mesa_numero):'🛵 Despacho';
+function renderPanel(){if(psec==='carta')return cartaView();if(psec==='desp')return despView();
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const t=orders.filter(o=>new Date(o.created_at)>=hoy).reduce((a,o)=>({p:a.p+o.pago_local,c:a.c+o.comision_aumven}),{p:0,c:0});
+  $('app').innerHTML=`${(!alarm&&!skipA)?`<div style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:24px;text-align:center"><div style="max-width:380px"><div style="font-size:56px">🔔</div><h2 style="font-size:26px;font-weight:900;margin:8px 0">Inicia tu turno</h2><p class="mu">Toca el botón para que suene la alarma cada vez que llegue un pedido. Mantén esta pantalla abierta mientras atiendes.</p><button class="btn" style="width:100%;margin-top:18px;padding:16px;font-size:17px" onclick="toggleAlarm()">Iniciar turno y activar alarma</button><button class="ptab" style="width:100%;margin-top:10px;padding:10px;font-size:13px" onclick="skipA=true;renderPanel()">Entrar sin alarma</button></div></div>`:''}<div class="w"><div class="row" style="padding-top:18px"><div><h1 style="font-size:26px;font-weight:900">${esc(owned)}</h1><p class="mu" style="margin:2px 0 0">Panel del local · pedidos en tiempo real</p>${alarm?'':'<p class="err" style="margin:6px 0 0;font-size:12px">Toca “Activar alarma” para que suene cuando llegue un pedido.</p>'}</div><div style="display:flex;gap:8px"><button class="pillb" style="${alarm?'border-color:var(--ac);color:var(--ac)':''}" onclick="toggleAlarm()">${alarm?'Alarma activada':'Activar alarma'}</button><button class="pillb" onclick="salir()">Salir</button></div></div>${subnav()}
+  <div class="sum"><div class="card"><span class="mu">Ventas de hoy</span><b>${clp(t.p+t.c)}</b></div><div class="card"><span class="mu">Te depositamos en 24 h</span><b class="price">${clp(t.p)}</b></div><div class="card"><span class="mu">Comisión Portal Food (${CFG.com}%)</span><b>${clp(t.c)}</b></div></div>
+  <div class="ptabs">${ESTADOS.map(([e,n])=>`<button class="ptab ${e===ptab?'on':''}" onclick="ptab='${e}';renderPanel()">${n} (${orders.filter(o=>o.estado===e).length})</button>`).join('')}</div>
+  <div class="cols">${ESTADOS.map(([e,n])=>{const list=orders.filter(o=>o.estado===e);return `<section class="col ${e===ptab?'on':''}"><div class="ch"><h3>${n}</h3><span class="pill ${e==='NUEVO'&&list.length?'n':''}">${list.length}</span></div>
+  ${list.map(o=>`<div class="card ord"><div class="row" style="padding-top:0"><div><b style="font-size:17px">${esc(o.cliente_nombre)}</b><div class="mu">N° ${o.id.slice(0,6).toUpperCase()}</div></div><span class="pill">${modoL(o)}</span></div>
+  <p class="mu" style="margin:4px 0 0">${(o.items||[]).map(i=>esc(i.cantidad+'× '+i.nombre)).join(', ')}</p>
+  <p class="mu" style="margin:4px 0 0">📞 <a href="tel:${esc(o.cliente_fono)}" style="color:var(--tx)">${esc(o.cliente_fono)}</a></p>
+  ${o.maps_url?`<a href="${esc(o.maps_url)}" target="_blank" rel="noopener" style="color:var(--ac);font-size:14px;display:block;margin-top:8px">📍 ${esc(o.direccion)}</a>`:''}
+  <div class="split"><div><span>Tu ganancia${o.modo_entrega==='despacho'&&o.pago_local+o.comision_aumven+(o.comision_pasarela||0)===o.total?' (incluye despacho)':' (neto)'} · depósito en 24 h</span><b class="price">${clp(o.pago_local)}</b></div><div><span>Comisión (${CFG.com}%)</span><b>${clp(o.comision_aumven)}</b></div></div><div class="mu" style="font-size:11px;margin-top:6px">Descontado: comisión Portal Food ${clp(o.comision_aumven)}${o.comision_pasarela?' + medio de pago '+clp(o.comision_pasarela):''}</div>
+  ${o.codigo_juego?`<div class="y" style="font-size:12px;margin-top:8px">🎁 Pedido con juego · código ${esc(o.codigo_juego)}</div>`:''}${e==='ENTREGADO'&&o.codigo_juego&&MYL&&MYL.juego_url?`<a class="btn" style="display:block;text-align:center;width:100%;margin-top:12px" target="_blank" rel="noopener" href="${waCli(o)}">Enviar juego al cliente</a>`:''}${e==='EN CAMINO'?trackBlock(o):''}${e!=='ENTREGADO'?`<button class="btn" style="width:100%;margin-top:12px" onclick="${e==='EN COCINA'&&o.modo_entrega==='despacho'?`despachar('${o.id}')`:`nxt('${o.id}','${e}')`}">${e==='NUEVO'?'Pasar a cocina':e==='EN COCINA'&&o.modo_entrega==='despacho'?'Despachar':'Marcar entregado'}</button>`:''}</div>`).join('')||'<p class="mu empty">Sin pedidos aquí</p>'}</section>`}).join('')}</div></div>`;
+}
+async function nxt(id,e){await sb.from('pedidos').update({estado:e==='NUEVO'?'EN COCINA':'ENTREGADO'}).eq('id',id);reload()}
+const trackBlock=o=>`<div class="mu" style="margin-top:10px">🛵 ${esc(o.proveedor_envio||'Repartidor')}${o.repartidor_nombre?' · '+esc(o.repartidor_nombre):''}${o.repartidor_fono?' · <a href="tel:'+esc(o.repartidor_fono)+'" style="color:var(--tx)">'+esc(o.repartidor_fono)+'</a>':''}${/^https?:\/\//.test(o.tracking_url||'')?'<br><a href="'+esc(o.tracking_url)+'" target="_blank" rel="noopener" style="color:var(--ac)">Ver seguimiento</a>':''}</div>`;
+function despachar(id){
+  const o=orders.find(x=>x.id===id);if(!o)return;
+  const kit=`PEDIDO N° ${id.slice(0,6).toUpperCase()}\nRetiro en: ${MYL?MYL.nombre+(MYL.direccion?' · '+MYL.direccion:'')+' · '+MYL.telefono_local:''}\nEntregar a: ${o.cliente_nombre} · ${o.cliente_fono}\nDirección: ${o.direccion||''}\nMapa: ${o.maps_url||''}\nProductos: ${(o.items||[]).map(i=>i.cantidad+'× '+i.nombre).join(', ')}`;
+  const d=document.createElement('div');d.id='dsp';d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:60;display:grid;place-items:center;padding:16px';
+  d.innerHTML=`<div class="card" style="width:100%;max-width:460px;max-height:92vh;overflow:auto;padding:20px"><h2 style="font-size:20px;font-weight:900">Despachar pedido</h2><p class="mu" style="margin:4px 0 10px">Pide el repartidor con estos datos y registra su información para cerrar el ciclo.</p>
+   <textarea id="dk" readonly class="input" style="height:150px;margin-top:0;font-size:13px">${esc(kit)}</textarea>
+   <button class="ptab" style="padding:9px 12px;margin-top:8px" onclick="navigator.clipboard.writeText(document.getElementById('dk').value);this.textContent='¡Copiado!'">Copiar datos del pedido</button>
+   <select class="input" id="dv"><option>Repartidor propio</option><option>Uber Direct</option><option>PedidosYa Envíos</option><option>Otro</option></select>
+   <input class="input" id="dn" placeholder="Nombre del repartidor (opcional)"><input class="input" id="dt" placeholder="Teléfono del repartidor (opcional)" inputmode="tel"><input class="input" id="du" placeholder="Enlace de seguimiento (opcional)">
+   <p class="err" id="de" style="margin:8px 0 0"></p><button class="btn" style="width:100%;margin-top:8px" onclick="enCamino('${id}')">Marcar en camino</button><button class="ptab" style="width:100%;margin-top:8px;padding:10px;font-size:13px" onclick="document.getElementById('dsp').remove()">Cancelar</button></div>`;
+  document.body.appendChild(d);
+}
+async function enCamino(id){
+  const v=i=>document.getElementById(i).value.trim();
+  const {error}=await sb.from('pedidos').update({estado:'EN CAMINO',proveedor_envio:v('dv'),repartidor_nombre:v('dn')||null,repartidor_fono:v('dt')||null,tracking_url:v('du')||null}).eq('id',id);
+  if(error){document.getElementById('de').textContent='No se pudo guardar. ¿Ya ejecutaste 006_en_camino.sql en Supabase?';return}
+  document.getElementById('dsp').remove();reload();
+}
+async function salir(){await sb.auth.signOut();location.hash='#/';route()}
+
+/* ===== Quiero unirme (solicitud de locales) ===== */
+let J={rubro:'',reparto:''};
+function pick(b,k){J[k]=b.dataset.v;b.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b))}
+function unirme(rubro){
+  view='join';
+  const rubros=[...CATS.map(c=>c[0]),'Otro'],repartos=['Tengo reparto propio','No tengo reparto','Aún no sé'];
+  J={rubro:rubros.includes(rubro)?rubro:'',reparto:''};
+  const chips=(arr,k,sel)=>arr.map(o=>`<button type="button" class="chip ${o===sel?'on':''}" data-v="${o}" onclick="pick(this,'${k}')">${o}</button>`).join('');
+  $('app').innerHTML=`<div class="n"><a href="#/" class="mu" style="display:inline-block;padding:14px 0">‹ Volver</a>
+  <h1 style="font-size:30px;font-weight:900;letter-spacing:-1px;line-height:1.1">Quiero unirme a Portal Food</h1>
+  <p class="mu" style="margin:8px 0 16px">Cuéntanos de tu local. Te contactamos por WhatsApp para armar tu carta y dejarte listo.</p>
+  <div class="card" style="padding:20px">
+   <input class="input" id="j_local" placeholder="Nombre del local" maxlength="120" style="margin-top:0">
+   <p class="mu" style="margin:16px 0 0">¿Qué vendes?</p><div class="chips" style="padding-top:8px">${chips(rubros,'rubro',J.rubro)}</div>
+   <input class="input" id="j_dueno" placeholder="Tu nombre" maxlength="120">
+   <input class="input" id="j_wa" placeholder="Tu WhatsApp (ej: +56 9 1234 5678)" inputmode="tel" maxlength="30">
+   <input class="input" id="j_mail" placeholder="Correo (opcional)" type="email" maxlength="120">
+   <input class="input" id="j_comuna" placeholder="Comuna" value="Quilpué" maxlength="60">
+   <p class="mu" style="margin:16px 0 0">¿Cómo despachas hoy?</p><div class="chips" style="padding-top:8px">${chips(repartos,'reparto','')}</div>
+   <input class="input" id="j_apps" placeholder="¿En qué apps vendes hoy? (opcional)" maxlength="200">
+   <input class="input" id="j_msg" placeholder="Algo más que quieras contarnos (opcional)" maxlength="500">
+   <input id="j_web" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+   <label class="mu" style="display:flex;gap:10px;align-items:flex-start;margin-top:16px"><input type="checkbox" id="j_ok" style="margin-top:3px;accent-color:#FFC72C">Acepto que AUMVEN me contacte por WhatsApp o correo por esta solicitud.</label>
+   <p class="err" id="j_err" style="margin:12px 0 0"></p>
+   <button class="btn" id="j_go" style="width:100%;margin-top:8px" onclick="enviarJ()">Enviar solicitud</button></div>
+  <p class="mu" style="font-size:12px;margin:14px 0 0">Enviar la solicitud no te compromete a nada. Primero conversamos.</p></div>`;
+}
+async function enviarJ(){
+  if($('j_web').value)return; // trampa anti-spam
+  const v=id=>$(id).value.trim();
+  const d={nombre_local:v('j_local'),rubro:J.rubro,contacto_nombre:v('j_dueno'),whatsapp:v('j_wa'),correo:v('j_mail')||null,comuna:v('j_comuna')||null,reparto:J.reparto||null,apps_actuales:v('j_apps')||null,mensaje:v('j_msg')||null};
+  if(!d.nombre_local||!d.rubro||!d.contacto_nombre||d.whatsapp.replace(/\D/g,'').length<9||!$('j_ok').checked){$('j_err').textContent='Completa el nombre del local, qué vendes, tu nombre, un WhatsApp válido y acepta que te contactemos.';return}
+  $('j_err').textContent='';$('j_go').disabled=true;$('j_go').textContent='Enviando…';
+  const {error}=await sb.from('solicitudes').insert(d);
+  if(error){$('j_err').textContent='No pudimos enviar tu solicitud. Inténtalo de nuevo o escríbenos por WhatsApp.';$('j_go').disabled=false;$('j_go').textContent='Enviar solicitud';return}
+  $('app').innerHTML=`<div class="n"><div class="ok"><div class="dot">✓</div><h1 style="font-size:26px;font-weight:900">¡Recibimos tu solicitud!</h1><p class="mu" style="margin:8px 0 18px">Te contactaremos pronto por WhatsApp para armar la carta de ${esc(d.nombre_local)}.</p><a class="btn" target="_blank" rel="noopener" href="${wa(CFG.wa,'Hola, soy '+d.contacto_nombre+' de '+d.nombre_local+'. Acabo de enviar mi solicitud a Portal Food.')}">Escribirnos por WhatsApp</a><p style="margin-top:20px"><a href="#/" class="mu">Volver al portal</a></p></div></div>`;
+}
+
+/* ===== Autogestión del local: carta con fotos, despacho y radio ===== */
+let cust=null,DL=null,lastMsg='',lastNo='',lastJuego=false;
+const juegoMsg=()=>{if(!L||!L.juego_umbral||!L.juego_url)return '';const f=L.juego_umbral-sub();return f>0?`<p class="mu" style="margin:10px 0 0;color:var(--ac)">🎁 Te faltan ${clp(f)} para jugar gratis</p>`:'<p class="mu" style="margin:10px 0 0;color:#7bd88f">🎁 ¡Con este pedido juegas gratis! El local te enviará tu código al entregarlo.</p>'};
+const waCli=o=>{let n=String(o.cliente_fono).replace(/\D/g,'');if(n.length===9)n='56'+n;return wa(n,`¡Hola ${o.cliente_nombre}! Gracias por tu pedido en ${MYL.nombre}. Aquí está tu código para jugar y ganar premios: ${o.codigo_juego}\nJuega aquí: ${MYL.juego_url}`)};
+const needCov=()=>L&&L.lat!=null&&+L.radio_km>0;
+const km=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+function covBlock(){
+  if(modo!=='despacho'||!needCov())return '';
+  const m=cust?(cust.ok?`<p class="mu" style="color:#7bd88f;margin:8px 0 0">Estás a ${cust.d.toFixed(1)} km: dentro de la zona de reparto.</p>`:`<p class="err" style="margin:8px 0 0">Estás a ${cust.d.toFixed(1)} km y el reparto llega hasta ${+L.radio_km} km. Elige retiro o mesa.</p>`):'<p class="mu" style="margin:8px 0 0">Comparte tu ubicación para confirmar que llegamos hasta ti.</p>';
+  return `<button type="button" class="opt" style="margin-top:10px" onclick="geo()"><span class="oi">📍</span><b style="flex:1">Comprobar si llegan a mi ubicación</b></button>${m}`;
+}
+function geo(){
+  if(!navigator.geolocation){alert('Tu navegador no permite compartir ubicación. Elige retiro o escríbele al local.');return}
+  navigator.geolocation.getCurrentPosition(p=>{const d=km(+L.lat,+L.lng,p.coords.latitude,p.coords.longitude);cust={ok:d<=+L.radio_km,d,lat:p.coords.latitude,lng:p.coords.longitude};drawer()},()=>alert('No pudimos obtener tu ubicación. Revisa el permiso del navegador o elige retiro.'),{enableHighAccuracy:true,timeout:10000});
+}
+const subnav=()=>`<div class="snav">${[['pedidos','Pedidos'],['carta','Mi carta'],['desp','Despacho']].map(([k,t])=>`<button class="ptab ${k===psec?'on':''}" onclick="psec='${k}';renderPanel()">${t}</button>`).join('')}</div>`;
+const sinLocal=()=>'<div class="n"><p class="mu" style="padding:32px 0">Tu cuenta aún no tiene un local asignado. Escríbenos y lo conectamos.</p><button class="pillb" onclick="salir()">Salir</button></div>';
+const resize=(f,max=900)=>new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?ok(b):no(),'image/jpeg',.8)};im.onerror=no;im.src=URL.createObjectURL(f)});
+async function subir(bucket,blob,name){const path=`${MYL.id}/${name}.jpg`,{error}=await sb.storage.from(bucket).upload(path,blob,{contentType:'image/jpeg'});if(error)throw error;return sb.storage.from(bucket).getPublicUrl(path).data.publicUrl}
+async function cartaView(){
+  if(!MYL){$('app').innerHTML=sinLocal();return}
+  const {data}=await sb.from('productos').select('*').eq('local_id',MYL.id).order('nombre'),ps=data||[];
+  $('app').innerHTML=`<div class="n" style="padding-top:18px"><div class="row"><div><h1 style="font-size:26px;font-weight:900">${esc(MYL.nombre)}</h1><p class="mu" style="margin:2px 0 0">Mi carta · los cambios se ven al tiro en tu página</p></div><button class="pillb" onclick="salir()">Salir</button></div>${subnav()}
+  <div class="card" style="padding:18px;margin-top:10px"><h3 style="font-size:16px;font-weight:900">Agregar producto</h3>
+   <input class="input" id="p_n" placeholder="Nombre (ej: Completo Italiano)" maxlength="80"><input class="input" id="p_d" placeholder="Descripción (opcional)" maxlength="160"><input class="input" id="p_p" type="number" inputmode="numeric" placeholder="Precio en pesos (ej: 3500)">
+   <label class="mu" style="display:block;margin-top:12px">Foto (opcional)</label><input id="p_f" type="file" accept="image/*" style="margin-top:6px;color:var(--mu)">
+   <p class="err" id="p_e" style="margin:10px 0 0"></p><button class="btn" id="p_b" style="width:100%;margin-top:8px" onclick="addProd()">Guardar producto</button></div>
+  <h2 class="sec" style="font-size:19px">Tus productos (${ps.length})</h2>
+  ${ps.map(p=>`<div class="card prod" style="${p.activo?'':'opacity:.55'}"><div class="thumb" style="${bg(p.foto_url)}">${p.foto_url?'':esc(p.nombre[0])}</div><div><h3 style="font-size:16px">${esc(p.nombre)}</h3><div class="row" style="padding:6px 0 0;justify-content:flex-start;gap:8px"><span class="mu">$</span><input class="input" style="margin:0;width:110px;padding:8px 12px" type="number" value="${p.precio}" onchange="updP('${p.id}',this.value)" aria-label="Precio de ${esc(p.nombre)}"></div></div><div style="display:grid;gap:6px"><button class="ptab ${p.activo?'on':''}" style="padding:8px 10px" onclick="togP('${p.id}',${!p.activo})">${p.activo?'Disponible':'Agotado'}</button><button class="ptab" style="padding:8px 10px" onclick="delP('${p.id}')">Eliminar</button></div></div>`).join('')||'<p class="mu">Aún no tienes productos. Agrega el primero arriba.</p>'}</div>`;
+}
+async function addProd(){
+  const n=$('p_n').value.trim(),d=$('p_d').value.trim(),pr=Math.round(+$('p_p').value),f=$('p_f').files[0];
+  if(!n||!(pr>0)){$('p_e').textContent='Escribe el nombre y un precio mayor a 0.';return}
+  $('p_b').disabled=true;$('p_b').textContent='Guardando…';
+  try{const url=f?await subir('fotos-productos',await resize(f),crypto.randomUUID()):null;
+    const {error}=await sb.from('productos').insert({local_id:MYL.id,nombre:n,descripcion:d||null,precio:pr,foto_url:url});if(error)throw error;cartaView()}
+  catch(e){$('p_e').textContent='No se pudo guardar. Revisa la foto e inténtalo de nuevo.';$('p_b').disabled=false;$('p_b').textContent='Guardar producto'}
+}
+async function updP(id,v){const n=Math.round(+v);if(n>0)await sb.from('productos').update({precio:n}).eq('id',id)}
+async function togP(id,v){await sb.from('productos').update({activo:v}).eq('id',id);cartaView()}
+async function delP(id){if(confirm('¿Eliminar este producto?')){await sb.from('productos').delete().eq('id',id);cartaView()}}
+function despView(){
+  if(!MYL){$('app').innerHTML=sinLocal();return}
+  const m=MYL;DL=m.lat!=null?{lat:+m.lat,lng:+m.lng}:null;
+  $('app').innerHTML=`<div class="n" style="padding-top:18px"><div class="row"><div><h1 style="font-size:26px;font-weight:900">${esc(m.nombre)}</h1><p class="mu" style="margin:2px 0 0">Despacho y datos del local</p></div><button class="pillb" onclick="salir()">Salir</button></div>${subnav()}
+  <div class="card" style="padding:18px;margin-top:10px">
+   <label class="mu">WhatsApp del local (para avisos del cliente)</label><input class="input" id="d_t" value="${esc(m.telefono_local)}" placeholder="+56 9 1234 5678">
+   <label class="mu" style="display:block;margin-top:14px">Dirección del local (para que el repartidor sepa dónde retirar)</label><input class="input" id="d_a" value="${esc(m.direccion||'')}" placeholder="Calle y número, Quilpué">
+   <label class="mu" style="display:block;margin-top:14px">Costo de despacho ($)</label><input class="input" id="d_c" type="number" value="${m.costo_envio??0}">
+   <label class="mu" style="display:block;margin-top:14px">Radio de reparto (km)</label><input class="input" id="d_r" type="number" step="0.5" value="${m.radio_km??''}" placeholder="Ej: 3">
+   <label class="mu" style="display:block;margin-top:14px">Ubicación del local</label><p class="mu" id="d_u" style="margin:6px 0 8px">${DL?'Guardada ('+DL.lat.toFixed(4)+', '+DL.lng.toFixed(4)+')':'Aún no la defines'}</p>
+   <button class="ptab" style="padding:10px 14px" onclick="miUbic()">Usar mi ubicación actual (estando en el local)</button>
+   <label class="mu" style="display:block;margin-top:14px">Foto de portada (opcional)</label><input id="d_f" type="file" accept="image/*" style="margin-top:6px;color:var(--mu)">
+   <p class="err" id="d_e" style="margin:10px 0 0"></p><button class="btn" id="d_b" style="width:100%;margin-top:8px" onclick="saveD()">Guardar cambios</button></div></div>`;
+}
+function miUbic(){
+  if(!navigator.geolocation){alert('Tu navegador no permite ubicación.');return}
+  navigator.geolocation.getCurrentPosition(p=>{DL={lat:p.coords.latitude,lng:p.coords.longitude};$('d_u').textContent='Lista ('+DL.lat.toFixed(4)+', '+DL.lng.toFixed(4)+'). Pulsa Guardar cambios.'},()=>alert('No pudimos obtener tu ubicación. Revisa el permiso del navegador.'),{enableHighAccuracy:true,timeout:10000});
+}
+async function saveD(){
+  const up={telefono_local:$('d_t').value.trim(),costo_envio:Math.max(0,Math.round(+$('d_c').value)||0),radio_km:$('d_r').value===''?null:Math.max(0,+$('d_r').value)};
+  if(up.telefono_local.replace(/\D/g,'').length<9){$('d_e').textContent='Escribe un WhatsApp válido.';return}
+  if($('d_a').value.trim())up.direccion=$('d_a').value.trim();
+  if(DL){up.lat=DL.lat;up.lng=DL.lng}
+  if(up.radio_km>0&&!DL){$('d_e').textContent='Para usar un radio, define la ubicación del local.';return}
+  $('d_e').textContent='';$('d_b').disabled=true;$('d_b').textContent='Guardando…';
+  try{const f=$('d_f').files[0];if(f)up.foto_portada=await subir('fotos-locales',await resize(f,1200),'portada-'+Date.now());
+    const {error}=await sb.from('locales').update(up).eq('id',MYL.id);if(error)throw error;
+    Object.assign(MYL,up);$('d_b').textContent='¡Guardado!';setTimeout(()=>{$('d_b').disabled=false;$('d_b').textContent='Guardar cambios'},1500)}
+  catch(e){$('d_e').textContent='No se pudo guardar. Inténtalo de nuevo.';$('d_b').disabled=false;$('d_b').textContent='Guardar cambios'}
+}
+
+/* ===== Router ===== */
+async function route(){
+  const qp=new URLSearchParams(location.search);if(qp.get('pago')){retornoPago(qp);return}
+  const h=location.hash||'#/';
+  close_();window.scrollTo(0,0);
+  if(h!=='#/panel'&&chan){sb.removeChannel(chan);chan=null}
+  try{
+    if(SUPABASE_URL.includes('TU-PROYECTO')){$('app').innerHTML='<div class="n"><p class="err" style="padding:32px 0">Falta configurar SUPABASE_URL y SUPABASE_KEY al inicio del script en index.html.</p></div>';return}
+    if(h.startsWith('#/local/'))await menu(decodeURIComponent(h.split('/')[2]));
+    else if(h==='#/panel')await panel();
+    else if(h.startsWith('#/unirme'))unirme(decodeURIComponent(h.split('/')[2]||''));
+    else await home();
+  }catch(e){$('app').innerHTML='<div class="n"><p class="err" style="padding:32px 0">No se pudo cargar. Revisa la conexión con Supabase y que ejecutaste el SQL.</p></div>'}
+  const p=view==='panel';$('nav').textContent=p?'Ver portal':'Panel del local';$('nav').href=p?'#/':'#/panel';fab();
+}
+addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
