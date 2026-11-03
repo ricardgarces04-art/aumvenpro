@@ -322,8 +322,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
         <div style="flex:1;min-width:180px">
           <div style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#a5f3fc">$5.000</div>
           <div style="color:rgba(255,255,255,.7);font-size:.8rem;font-weight:700">por verificación · pago por transferencia</div>
-       <p style="text-align:center; font-size:12px; color:white;">⚠️ Antes de verificar, ten listos los datos del dueño a donde vas a transferir: Nombre completo y RUT</p>
-        </div><a href="https://wa.me/56931341245?text=Hola,%20quiero%20verificar%20a%20un%20arrendador%20de%20temporada.%20Ya%20tengo%20listos%20los%20datos%20del%20due%C3%B1o:%20Nombre%20completo%20del%20due%C3%B1o:%20,%20RUT%20del%20due%C3%B1o:%20,%20%C2%BFA%20qu%C3%A9%20nombre%20y%20RUT%20tengo%20que%20transferir%3F
+        </div>
+        <a href="https://wa.me/56931341245?text=Hola,%20quiero%20verificar%20a%20un%20arrendador%20de%20temporada.%20¿Cómo%20funciona%3F"
            target="_blank"
            style="display:inline-flex;align-items:center;gap:.6rem;background:#25D366;color:#fff;border:none;border-radius:100px;padding:.9rem 1.8rem;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;text-decoration:none;transition:all .2s;white-space:nowrap">
           📲 Verificar ahora por WhatsApp
@@ -1149,6 +1149,15 @@ function onRutInput() {
 // ================================================================
 // REGISTRO DE USUARIO
 // ================================================================
+function conTimeout(promesa, ms) {
+  return Promise.race([promesa, new Promise(function(_, rechazar){ setTimeout(function(){ rechazar(new Error('timeout')); }, ms); })]);
+}
+
+function verAlertaRegistro() {
+  var al = document.getElementById('reg-alert');
+  if(al && al.scrollIntoView) al.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
 async function registrarUsuario() {
   if(!rolSeleccionado) { showAlert('reg-alert', 'Por favor selecciona tu rol primero.', 'error'); return; }
   var nombre = document.getElementById('reg-nombre').value.trim();
@@ -1164,6 +1173,7 @@ if(rolSeleccionado === 'arrendador') {
   if(!docLink) { showAlert('reg-alert', 'Debes subir el link con tu documentación (carnet + selfie + certificado de dominio) antes de continuar.', 'error'); return; }
 }
   var btn = document.getElementById('reg-btn');
+  var btnTxt = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
 
@@ -1172,11 +1182,12 @@ if(rolSeleccionado === 'arrendador') {
 
   if(sb) {
     try {
-      var { data, error } = await sb.auth.signUp({
+      var resSU = await conTimeout(sb.auth.signUp({
   email: email,
   password: password,
   options: { emailRedirectTo: 'https://aumven.cl/arriendo-confiable/', data: { nombre: nombre, rol: rolSeleccionado, telefono: telefono, foto_documento: fotoDocumento, rut: rut } }
-});
+}), 25000);
+var data = resSU.data, error = resSU.error;
 if(error) throw error;
 
       notificarWhatsApp(
@@ -1199,13 +1210,20 @@ if(error) throw error;
         pasos += '<br><br>📩 Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.';
       }
       showAlert('reg-alert', pasos, 'success');
+      verAlertaRegistro();
       btn.innerHTML = '✅ ¡Cuenta creada!';
 
       if(data.session) {
         localStorage.setItem('as_user', JSON.stringify({ id: data.user.id, nombre: nombre, email: email, rol: rolSeleccionado }));
       }
     } catch(e) {
-      showAlert('reg-alert', 'Error: ' + e.message, 'error');
+      console.log(e);
+      var msgErr = String((e && e.message) || e);
+      if(/rate limit/i.test(msgErr) || /not authorized/i.test(msgErr)) msgErr = 'No pudimos enviar el correo de confirmación en este momento. Inténtalo más tarde o escríbenos por WhatsApp.';
+      else if(/timeout/i.test(msgErr)) msgErr = 'La conexión tardó demasiado. Revisa tu internet e inténtalo de nuevo.';
+      showAlert('reg-alert', 'Error: ' + msgErr, 'error');
+      verAlertaRegistro();
+      btn.innerHTML = btnTxt;
       btn.disabled = false;
    
     }
@@ -1301,18 +1319,41 @@ function renderPropiedades(props) {
   }).join('');
 }
 
+function cerrarPropiedad() {
+  var m = document.getElementById('prop-modal');
+  if(m) m.style.display = 'none';
+}
+
 function verPropiedad(id) {
   var p = propiedadesData.find(function(x){ return x.id == id; });
   if(!p) return;
   var precio = precioTexto(p, ' por día', ' por mes');
-  alert('🏠 ' + p.titulo
-    + '\n\n📍 ' + p.comuna + ', ' + p.region
-    + '\n💰 ' + precio
-    + '\n🛏️ ' + p.dormitorios + ' dorm · ' + p.banos + ' baños'
-    + (p.amoblado ? '\n🛋️ Amoblado' : '')
-    + (p.permite_mascotas ? '\n🐾 Permite mascotas' : '')
-    + '\n\n📝 ' + (p.descripcion || '')
-    + '\n\n📞 Para ver el contacto del arrendador suscríbete al plan Arrendatario Pro ($4.990/mes)');
+  var fotos = [p.foto1, p.foto2, p.foto3].map(fotoUrl).filter(Boolean);
+  var fotosHtml = fotos.length
+    ? '<div style="display:flex;gap:.4rem;margin-bottom:.9rem;overflow-x:auto">'
+      + fotos.map(function(u){ return '<img src="' + esc(u) + '" alt="Foto de la propiedad" style="height:150px;border-radius:10px;object-fit:cover;flex:0 0 auto">'; }).join('')
+      + '</div>'
+    : '';
+  var msg = 'Hola, me interesa la propiedad "' + p.titulo + '" en ' + p.comuna + '. Quiero contactar al arrendador.';
+  var wa = 'https://wa.me/56931341245?text=' + encodeURIComponent(msg);
+
+  var m = document.getElementById('prop-modal');
+  if(!m) { m = document.createElement('div'); m.id = 'prop-modal'; document.body.appendChild(m); }
+  m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  m.onclick = function(e){ if(e.target === m) cerrarPropiedad(); };
+  m.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:1.4rem;font-family:inherit">'
+    + fotosHtml
+    + '<div style="display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:.75rem;font-weight:800;padding:.2rem .7rem;border-radius:100px;margin-bottom:.5rem">🛡️ Sello azul</div>'
+    + '<div style="font-family:\'Fredoka One\',cursive;font-size:1.3rem;color:#0e7490;margin-bottom:.3rem">' + esc(p.titulo) + '</div>'
+    + '<div style="font-size:.88rem;color:#64748b;margin-bottom:.6rem">📍 ' + esc(p.comuna) + ', ' + esc(p.region) + '</div>'
+    + '<div style="font-size:1.05rem;font-weight:800;margin-bottom:.5rem">💰 ' + esc(precio) + '</div>'
+    + '<div style="font-size:.88rem;margin-bottom:.5rem">🛏️ ' + esc(p.dormitorios) + ' dorm · 🚿 ' + esc(p.banos) + ' baños'
+      + (p.amoblado ? ' · 🛋️ Amoblado' : '') + (p.permite_mascotas ? ' · 🐾 Mascotas' : '') + '</div>'
+    + '<div style="font-size:.88rem;color:#475569;line-height:1.6;margin-bottom:1rem">' + esc(p.descripcion || '') + '</div>'
+    + '<a href="' + wa + '" target="_blank" style="display:block;text-align:center;background:#25D366;color:#fff;border-radius:100px;padding:.8rem 1rem;font-weight:900;font-size:.92rem;text-decoration:none;margin-bottom:.5rem">📲 Quiero contactar al arrendador</a>'
+    + '<div style="font-size:.74rem;color:#94a3b8;text-align:center;margin-bottom:.7rem">Te respondemos por WhatsApp y te conectamos con el arrendador.</div>'
+    + '<button class="btn btn-secondary" style="width:100%" onclick="cerrarPropiedad()">Cerrar</button>'
+    + '</div>';
 }
 
 function filtrarPropiedades() {
