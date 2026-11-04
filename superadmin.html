@@ -423,7 +423,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 // ================================================================
 // CONFIG
 // ================================================================
-var PASS = 'SUPERRIC2026';
+var MASTER = ''; // clave maestra: se verifica en el servidor, nunca vive en este archivo
 
 // Supabase AUMVEN Pro
 var SB_PRO_URL = 'https://wfosczhszouukypsvasx.supabase.co';
@@ -444,9 +444,12 @@ try {
 // ================================================================
 // LOGIN
 // ================================================================
-function doLogin() {
+async function doLogin() {
   var pass = document.getElementById('login-pass').value;
-  if(pass === PASS) {
+  var okLogin = false;
+  try { var rr = await sbPro.rpc('verificar_master', { p_clave: pass }); okLogin = (rr.data === true); } catch(e) {}
+  if(okLogin) {
+    MASTER = pass;
     document.getElementById('login-wrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     iniciarApp();
@@ -557,13 +560,15 @@ function renderNegocios(data) {
 async function marcarPagadoPro(id) {
   var vence = new Date();
   vence.setDate(vence.getDate() + 30);
-  await sbPro.from('configuraciones').update({activo:true, suscripcion_vence: vence.toISOString().split('T')[0]}).eq('id',id);
+  var rpcRes = await sbPro.rpc('super_set_config', {p_clave: MASTER, p_id: id, p_activo: true, p_vence: vence.toISOString().split('T')[0]});
+  if (rpcRes.error) { toast('⚠️ No se pudo actualizar: '+rpcRes.error.message, 'warn'); return; }
   toast('✅ Negocio '+id+' activado por 30 días', 'ok');
   cargarNegocios();
 }
 
 async function toggleActivoPro(id, activo) {
-  await sbPro.from('configuraciones').update({activo: !activo}).eq('id',id);
+  var rpcRes = await sbPro.rpc('super_set_config', {p_clave: MASTER, p_id: id, p_activo: !activo, p_vence: null});
+  if (rpcRes.error) { toast('⚠️ No se pudo actualizar: '+rpcRes.error.message, 'warn'); return; }
   toast((activo?'⛔ Negocio desactivado':'✅ Negocio activado')+': '+id, activo?'warn':'ok');
   cargarNegocios();
 }
@@ -587,7 +592,8 @@ function verNegocio(id) {
 // ── HISTORIAL ───────────────────────────────────────────────────
 async function cargarHistorial() {
   try {
-    var { data, count } = await sbPro.from('historial').select('*', {count:'exact'}).order('created_at',{ascending:false}).limit(20);
+    var hr = await sbPro.rpc('super_leer_historial', { p_clave: MASTER, p_limit: 20 });
+    var data = hr.data && hr.data.filas, count = hr.data && hr.data.total;
     var tbody = document.getElementById('tbody-hist');
     document.getElementById('cnt-hist').textContent = (count||0) + ' juegos totales';
     if(!data||!data.length){ tbody.innerHTML='<tr><td colspan="6" class="tbl-empty">Sin historial</td></tr>'; return; }
