@@ -174,13 +174,13 @@ async function pay(){
   try{
     const r=await fetch(SUPABASE_URL+'/functions/v1/crear-pago',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY},body:JSON.stringify({pedido_id:oid})});
     const d=await r.json();if(!r.ok||!d.token||!d.url)throw new Error('pago');
-    try{sessionStorage.setItem('pf_pend',JSON.stringify({no:lastNo,nombre:L.nombre,tel:L.telefono_local,msg:lastMsg}))}catch(e){}
+    try{sessionStorage.setItem('pf_pend',JSON.stringify({no:lastNo,nombre:L.nombre,tel:L.telefono_local,msg:lastMsg,juego_url:L.juego_url||''}))}catch(e){}
     const f=document.createElement('form');f.method='POST';f.action=d.url;const i=document.createElement('input');i.type='hidden';i.name='token_ws';i.value=d.token;f.appendChild(i);document.body.appendChild(f);f.submit();
   }catch(e){fase='errorpago';drawer()}
 }
 /* Pantalla a la que vuelve el cliente desde Webpay (la arma la función confirmar-pago) */
 function retornoPago(q){
-  const st=q.get('pago'),n=(q.get('n')||'').replace(/[^0-9A-Za-z]/g,''),j=q.get('j')==='1';let pend=null;
+  const st=q.get('pago'),n=(q.get('n')||'').replace(/[^0-9A-Za-z]/g,''),j=q.get('j')==='1',c=(q.get('c')||'').toUpperCase().replace(/[^0-9A-Z-]/g,'').slice(0,24);let pend=null;
   try{pend=JSON.parse(sessionStorage.getItem('pf_pend')||'null')}catch(e){}
   if(pend&&n&&pend.no!==n)pend=null;
   history.replaceState(null,'',location.pathname+'#/');view='ret';
@@ -188,7 +188,7 @@ function retornoPago(q){
   const wrap=h=>{$('app').innerHTML=`<div class="n"><div class="ok" style="padding:48px 0">${h}</div></div>`};
   if(st==='ok'){
     try{sessionStorage.removeItem('pf_pend')}catch(e){}
-    wrap(`<div class="dot">✓</div><h2 style="font-size:22px;font-weight:900">¡Pago recibido!</h2><p class="mu">${pend?esc(pend.nombre):'El local'} ya está viendo tu pedido.</p>${n?`<p class="mu" style="margin-top:6px">Pedido N° ${n}. Guárdalo por si necesitas consultarlo.</p>`:''}${j?'<p class="mu" style="color:#7bd88f;margin-top:8px">🎁 ¡Ganaste un juego! El local te enviará tu código cuando entregue tu pedido.</p>':''}${pend?`<a class="btn" style="margin-top:18px" target="_blank" rel="noopener" href="${wa(pend.tel,pend.msg)}">Avisar por WhatsApp al local</a>`:''}${back}`);
+    wrap(`<div class="dot">✓</div><h2 style="font-size:22px;font-weight:900">¡Pago recibido!</h2><p class="mu">${pend?esc(pend.nombre):'El local'} ya está viendo tu pedido.</p>${n?`<p class="mu" style="margin-top:6px">Pedido N° ${n}. Guárdalo por si necesitas consultarlo.</p>`:''}${c?`<div class="card" style="margin-top:16px;padding:16px"><p class="mu" style="color:#7bd88f">🎁 ¡Ganaste un juego!</p><p style="font-size:26px;font-weight:900;letter-spacing:.08em;margin:8px 0">${c}</p>${pend&&/^https:\/\/aumven\.cl\/juego\.html\?neg=[a-z0-9-]+$/.test(pend.juego_url||'')?`<a class="btn" style="margin-top:6px" target="_blank" rel="noopener" href="${esc(pend.juego_url)}">Jugar ahora</a><p class="mu" style="margin-top:8px;font-size:12px">Escribe este código en el juego. Guárdalo: sirve una sola vez.</p>`:'<p class="mu">Escribe este código en el juego del local. Guárdalo: sirve una sola vez.</p>'}</div>`:j?'<p class="mu" style="color:#7bd88f;margin-top:8px">🎁 ¡Ganaste un juego! El local te enviará tu código.</p>':''}${pend?`<a class="btn" style="margin-top:18px" target="_blank" rel="noopener" href="${wa(pend.tel,pend.msg)}">Avisar por WhatsApp al local</a>`:''}${back}`);
   }else if(st==='cancel'){
     wrap(`<h2 style="font-size:22px;font-weight:900">Cancelaste el pago</h2><p class="mu">No se hizo ningún cobro y el local no recibió el pedido.</p>${back}`);
   }else{
@@ -224,9 +224,9 @@ async function panel(){
 const modoL=o=>o.modo_entrega==='retiro'?'🏪 Retiro':o.modo_entrega==='mesa'?'🍽️ Mesa '+esc(o.mesa_numero):'🛵 Despacho';
 function renderPanel(){if(psec==='carta')return cartaView();if(psec==='desp')return despView();
   const hoy=new Date();hoy.setHours(0,0,0,0);
-  const t=orders.filter(o=>new Date(o.created_at)>=hoy).reduce((a,o)=>({p:a.p+o.pago_local,c:a.c+o.comision_aumven}),{p:0,c:0});
+  const t=orders.filter(o=>new Date(o.created_at)>=hoy).reduce((a,o)=>({p:a.p+o.pago_local,c:a.c+o.comision_aumven,f:a.f+(o.comision_pasarela||0)}),{p:0,c:0,f:0});
   $('app').innerHTML=`${(!alarm&&!skipA)?`<div style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:24px;text-align:center"><div style="max-width:380px"><div style="font-size:56px">🔔</div><h2 style="font-size:26px;font-weight:900;margin:8px 0">Inicia tu turno</h2><p class="mu">Toca el botón para que suene la alarma cada vez que llegue un pedido. Mantén esta pantalla abierta mientras atiendes.</p><button class="btn" style="width:100%;margin-top:18px;padding:16px;font-size:17px" onclick="toggleAlarm()">Iniciar turno y activar alarma</button><button class="ptab" style="width:100%;margin-top:10px;padding:10px;font-size:13px" onclick="skipA=true;renderPanel()">Entrar sin alarma</button></div></div>`:''}<div class="w"><div class="row" style="padding-top:18px"><div><h1 style="font-size:26px;font-weight:900">${esc(owned)}</h1><p class="mu" style="margin:2px 0 0">Panel del local · pedidos en tiempo real</p>${alarm?'':'<p class="err" style="margin:6px 0 0;font-size:12px">Toca “Activar alarma” para que suene cuando llegue un pedido.</p>'}</div><div style="display:flex;gap:8px"><button class="pillb" style="${alarm?'border-color:var(--ac);color:var(--ac)':''}" onclick="toggleAlarm()">${alarm?'Alarma activada':'Activar alarma'}</button><button class="pillb" onclick="salir()">Salir</button></div></div>${subnav()}
-  <div class="sum"><div class="card"><span class="mu">Ventas de hoy</span><b>${clp(t.p+t.c)}</b></div><div class="card"><span class="mu">Te depositamos en 24 h</span><b class="price">${clp(t.p)}</b></div><div class="card"><span class="mu">Comisión Portal Food (${CFG.com}%)</span><b>${clp(t.c)}</b></div></div>
+  <div class="sum"><div class="card"><span class="mu">Ventas de hoy</span><b>${clp(t.p+t.c+t.f)}</b></div><div class="card"><span class="mu">Te depositamos en 24 h</span><b class="price">${clp(t.p)}</b></div><div class="card"><span class="mu">Comisión Portal Food (${CFG.com}%)</span><b>${clp(t.c)}</b></div></div>
   <div class="ptabs">${ESTADOS.map(([e,n])=>`<button class="ptab ${e===ptab?'on':''}" onclick="ptab='${e}';renderPanel()">${n} (${orders.filter(o=>o.estado===e).length})</button>`).join('')}</div>
   <div class="cols">${ESTADOS.map(([e,n])=>{const list=orders.filter(o=>o.estado===e);return `<section class="col ${e===ptab?'on':''}"><div class="ch"><h3>${n}</h3><span class="pill ${e==='NUEVO'&&list.length?'n':''}">${list.length}</span></div>
   ${list.map(o=>`<div class="card ord"><div class="row" style="padding-top:0"><div><b style="font-size:17px">${esc(o.cliente_nombre)}</b><div class="mu">N° ${o.id.slice(0,6).toUpperCase()}</div></div><span class="pill">${modoL(o)}</span></div>
