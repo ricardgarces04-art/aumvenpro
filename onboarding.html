@@ -247,7 +247,7 @@ textarea{resize:vertical;min-height:72px;line-height:1.5}
       <div class="link-label">&#9881;&#65039; Tu panel Admin (m&#233;tricas + configuraci&#243;n)</div>
       <div class="link-box" id="link-admin"></div>
       <p style="font-size:.75rem;color:var(--mt);margin:-.3rem 0 .45rem">
-        &#128274; Ingresa con el c&#243;digo: <strong style="color:var(--pk2);letter-spacing:.1em">ADMIN123</strong>
+        &#128274; Ingresa con el c&#243;digo: <strong id="clave-admin" style="color:var(--pk2);letter-spacing:.1em">----------</strong> <span style="font-size:.8em">(gu&#225;rdala ahora: solo se muestra esta vez)</span>
       </p>
       <button class="copy-btn" onclick="copiar('link-admin',this)">&#128203; Copiar link admin</button>
 
@@ -409,33 +409,25 @@ async function activarTienda() {
     var vence = new Date(); vence.setDate(vence.getDate()+30);
     var venceStr = vence.toISOString().split('T')[0];
 
-    var res = await sb.from('configuraciones').insert({
+    var res = await sb.rpc('crear_negocio', { p_payload: {
       id: slug, nombre: nombre, juego: juego, premios: premiosArr,
       consolacion: consolacion, wa: wa, prefijo: prefijo,
       meta: meta, adicional: adicional, ticket: ticket,
-      ventasGuard: ventas, pedidosGuard: pedidos,
-      activo: true, suscripcion_vence: venceStr
-    });
-    if (res.error) throw new Error(res.error.message);
+      ventasGuard: ventas, pedidosGuard: pedidos
+    } });
+    if (res.error) {
+      if (String(res.error.message).indexOf('CUPOS_LLENOS') !== -1) throw new Error('Los 5 cupos del piloto gratuito ya se completaron. Escríbenos por WhatsApp para un plan de pago.');
+      throw new Error(res.error.message);
+    }
+    var claveAdmin = (res.data && res.data.clave) || '';
     var linkJuego = BASE_URL + '/juego.html?neg=' + slug;
 
-    // ── NOTIFICACIÓN AUTOMÁTICA A RIC VÍA WHATSAPP (CallMeBot) ──
-    try {
-      var msgNotif = encodeURIComponent(
-        '⚡ NUEVO NEGOCIO EN AUMVEN Pro!\n' +
-        '🏪 ' + nombre + '\n' +
-        '📱 +' + wa + '\n' +
-        '🎮 Juego: ' + juego + '\n' +
-        '🔑 Prefijo: ' + prefijo + '\n' +
-        '🔗 ' + linkJuego + '\n' +
-        '📅 Vence: ' + venceStr
-      );
-      fetch('https://api.callmebot.com/whatsapp.php?phone=56931341245&text=' + msgNotif + '&apikey=8153793');
-    } catch(notifErr) { console.log('Notif error (no crítico):', notifErr); }
+    // (el aviso a AUMVEN lo envía el servidor al crear el negocio)
 
     document.getElementById('link-juego').textContent = linkJuego;
     document.getElementById('link-admin').textContent = linkJuego;
-    document.getElementById('cod-ejemplo').textContent = prefijo+'001, '+prefijo+'002, '+prefijo+'003...';
+    document.getElementById('clave-admin').textContent = claveAdmin;
+    document.getElementById('cod-ejemplo').textContent = prefijo+'-7K2Q9M, '+prefijo+'-X4B8TD, ...';
     document.getElementById('btn-ir-admin').href = linkJuego;
     document.getElementById('qr-neg-nombre').textContent = nombre;
     
