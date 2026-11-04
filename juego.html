@@ -458,7 +458,7 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
       <option value="3_cofres">&#129521; 3 Cofres &#8212; elige uno</option>
       <option value="globos" selected>&#127880; Globos &#8212; pincha uno</option>
       <option value="raspe">&#128133; Raspa y Gana</option>
-      <option value="monedas">&#129689; Monedas de Oro &#8212; junta y canjea</option>
+      
     </select>
     <label>Premios Mayores (3 a 5, separados por coma)</label>
     <p class="l-hint" style="margin-top:0">De <strong>menor a mayor costo</strong>: 1&#xBA; y 2&#xBA; = 60%, 3&#xBA; y 4&#xBA; = 30%, 5&#xBA; = 10%.</p>
@@ -511,6 +511,7 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
 const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var ADMIN_CLAVE = ''; // clave de admin del negocio (se verifica en el servidor; solo vive en memoria)
 
 // ================================================================
 //  MULTI-NEGOCIO: leer slug desde ?neg=slug
@@ -824,15 +825,25 @@ function toast(msg) {
 // ================================================================
 //  ENTRAR — validación centralizada en Supabase (anti-fraude real)
 // ================================================================
+async function intentarAdmin(raw) {
+  try {
+    var neg = NEG_SLUG || 'carinito';
+    var r = await supabaseClient.rpc('verificar_admin', { p_neg: neg, p_clave: raw });
+    if (!r.error && r.data === true) {
+      ADMIN_CLAVE = raw;
+      document.getElementById('cod-in').value = '';
+      abrirAdmin();
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 async function entrar() {
   var raw = document.getElementById('cod-in').value.trim().toUpperCase();
   if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
 
-  if (raw === 'ADMIN123') {
-    document.getElementById('cod-in').value = '';
-    abrirAdmin();
-    return;
-  }
+  // (la entrada de admin ya no es una clave fija: se verifica en el servidor más abajo)
 
   var cfg = getCfg() || CFG0;
   var esMonedas = (cfg.juego || CFG0.juego) === 'monedas';
@@ -847,20 +858,7 @@ async function entrar() {
     }
   }
 
-  var pfx = (cfg.prefijo || CFG0.prefijo || 'CARI').trim().toUpperCase();
-
-  if (pfx) {
-    var re = new RegExp('^' + pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\d+$');
-    if (!re.test(raw)) {
-      alerta('\u274C C\xF3digo inv\xE1lido. Formato: ' + pfx + '001');
-      return;
-    }
-  } else {
-    if (typeof DEMO !== 'undefined' && !DEMO[raw]) {
-      alerta('\u274C C\xF3digo inv\xE1lido. Verifica con tu vendedor.');
-      return;
-    }
-  }
+  // La validez del código la decide el servidor (canjear_codigo): aquí solo se descarta lo vacío.
 
   // 1. Verificar en localStorage primero (rápido, sin internet)
   var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
@@ -875,32 +873,27 @@ async function entrar() {
 
   try {
     var negocioId = NEG_SLUG || 'carinito';
-    var { data: codUsado, error: errCheck } = await supabaseClient
-      .from('codigos_usados')
-      .select('id')
-      .eq('negocio_id', negocioId)
-      .eq('codigo', raw)
-      .maybeSingle();
-
-    if (!errCheck && codUsado) {
-      // Código ya usado en Supabase — quemar también en localStorage
+    var { data: estadoCodigo, error: errCanje } = await supabaseClient.rpc('canjear_codigo', { p_neg: negocioId, p_codigo: raw });
+    if (errCanje) {
+      alerta('\u26A0\uFE0F No pudimos verificar el c\xF3digo. Revisa tu conexi\xF3n e int\xE9ntalo de nuevo.');
+      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
+      return;
+    }
+    if (estadoCodigo === 'usado') {
       listaNegra.push(raw);
       localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
       alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
       if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
       return;
     }
-
-    // 3. Código válido — quemar en Supabase ANTES de lanzar el juego
-    var { error: errInsert } = await supabaseClient
-      .from('codigos_usados')
-      .insert({ negocio_id: negocioId, codigo: raw });
-
-    if (errInsert) {
-      console.warn('No se pudo quemar en Supabase, continuando con localStorage:', errInsert.message);
+    if (estadoCodigo !== 'ok') {
+      // No es un código de juego: ¿es la clave de admin del negocio?
+      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
+      if (!(await intentarAdmin(raw))) { alerta('\u274C C\xF3digo inv\xE1lido. Revisa el c\xF3digo que recibiste.'); }
+      return;
     }
 
-    // 4. Quemar también en localStorage como respaldo
+        // 4. Quemar también en localStorage como respaldo
     listaNegra.push(raw);
     localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
     localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
@@ -918,20 +911,9 @@ async function entrar() {
     }
 
   } catch(e) {
-    // Si Supabase falla (sin internet), usar solo localStorage como respaldo
-    console.warn('Supabase no disponible, validando solo localmente:', e);
-    listaNegra.push(raw);
-    localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
-    localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
-    cod = raw;
-    addUsd(raw);
+    console.warn('No se pudo verificar el c\xF3digo:', e);
+    alerta('\u26A0\uFE0F No pudimos verificar el c\xF3digo. Revisa tu conexi\xF3n e int\xE9ntalo de nuevo.');
     if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-    if (esMonedas) {
-      document.getElementById('tel-in').value = '';
-      procesarMoneda(telRaw, raw);
-    } else {
-      launchGame();
-    }
   }
 }
 
@@ -1668,8 +1650,7 @@ async function guardarCfg() {
       premios_meta2: cfg.premiosMeta2
     };
     var idActualizar = NEG_SLUG || 'carinito';
-    var q = supabaseClient.from('configuraciones').update(updatePayload).eq('id', idActualizar);
-    var { error: updErr } = await q;
+    var { error: updErr } = await supabaseClient.rpc('guardar_config', { p_neg: idActualizar, p_clave: ADMIN_CLAVE, p_payload: updatePayload });
     if (updErr) {
       console.error("Error al actualizar Supabase:", updErr.message);
       toast('\u26A0\uFE0F Guardado local OK, pero Supabase fall\xF3: ' + updErr.message);
@@ -1788,11 +1769,7 @@ async function renderKPIs() {
   // --- Comportamiento original para 3_cofres / globos / raspe (sin tocar) ---
   var hAll = [];
   try {
-    var { data: rows, error } = await supabaseClient
-      .from('historial')
-      .select('*')
-      .eq('negocio_id', negocioId)
-      .order('ts', { ascending: false });
+    var { data: rows, error } = await supabaseClient.rpc('leer_historial', { p_neg: negocioId, p_clave: ADMIN_CLAVE, p_asc: false });
     if (!error && rows) {
       hAll = rows.map(function(r){
         return {
@@ -1902,10 +1879,7 @@ async function exportCSV() {
   var negocioId = NEG_SLUG || 'carinito';
   var hAll = [];
   try {
-    var { data: rows, error } = await supabaseClient
-      .from('historial').select('*')
-      .eq('negocio_id', negocioId)
-      .order('ts', { ascending: true });
+    var { data: rows, error } = await supabaseClient.rpc('leer_historial', { p_neg: negocioId, p_clave: ADMIN_CLAVE, p_asc: true });
     if (!error && rows) {
       hAll = rows.map(function(r){
         return { txt: r.premio, gano: r.gano, cod: r.codigo,
@@ -2033,12 +2007,19 @@ function mostrarBases() {
 // ================================================================
 //  IMPRIMIR LOTE DE 500 CÓDIGOS
 // ================================================================
-function imprimirLote() {
+async function imprimirLote() {
   var pfx = (CFG0.prefijo || 'CARI').toUpperCase();
   var negocio = CFG0.nombre || 'Mi Negocio';
   var codigos = [];
-  for (var i = 1; i <= 500; i++) {
-    codigos.push(pfx + String(i).padStart(3, '0'));
+  var ventana = window.open('', '_blank'); // se abre de inmediato para que el navegador no la bloquee
+  try {
+    var rl = await supabaseClient.rpc('generar_lote', { p_neg: NEG_SLUG || 'carinito', p_clave: ADMIN_CLAVE, p_cantidad: 500 });
+    if (rl.error) {
+      if (String(rl.error.message).indexOf('MODO_ABIERTO') === -1) { if (ventana) ventana.close(); alerta('\u26A0\uFE0F No se pudo generar el lote: ' + rl.error.message); return; }
+    } else { codigos = rl.data || []; }
+  } catch (e) { if (ventana) ventana.close(); alerta('\u26A0\uFE0F No se pudo generar el lote.'); return; }
+  if (!codigos.length) { // negocios con códigos impresos antiguos (PREFIJO + número)
+    for (var i = 1; i <= 500; i++) { codigos.push(pfx + String(i).padStart(3, '0')); }
   }
 
   var filas = '';
@@ -2051,7 +2032,6 @@ function imprimirLote() {
     filas += '</tr>';
   }
 
-  var ventana = window.open('', '_blank');
   ventana.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'
     + '<title>C\xF3digos ' + negocio + '</title>'
     + '<style>'
