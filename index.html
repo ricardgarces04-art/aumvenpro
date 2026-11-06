@@ -1,2088 +1,714 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
- <meta property="og:title" content="🎈 ¡Juega y Gana en tu Almacén Favorito! 🎈">
-<meta property="og:description" content="Ingresa tu código de boleta y descubre tu premio al instante con AUMVEN Pro.">
-<meta property="og:image" content="https://aumven.cl">
- 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUMVEN</title>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>AUMVEN — Herramientas digitales para negocios independientes en Chile</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0714;--sf:rgba(26,21,48,.80);--sf2:rgba(35,29,64,.92);
+  --bg:#0a0714;
   --ac:#7c3aed;--ac2:#a855f7;--pk:#ec4899;--pk2:#f472b6;
-  --gd:#f59e0b;--gr:#10b981;--rd:#ef4444;
+  --gd:#f59e0b;--gr:#10b981;
   --tx:#f1f0ff;--mt:#9e97c4;
-  --r:22px;--rs:13px;--rx:8px;
-  --gb:rgba(168,85,247,.22);--gs:0 8px 32px rgba(124,58,237,.22);
+  --sf:rgba(26,21,48,.80);
+  --gb:rgba(168,85,247,.20);
+  --r:20px;--rs:13px;
 }
+
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font-family:'Nunito',sans-serif;
-  min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;
-  padding:1rem;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 70% 55% at 15% 5%,rgba(124,58,237,.32) 0%,transparent 65%),
-    radial-gradient(ellipse 55% 60% at 85% 95%,rgba(168,85,247,.24) 0%,transparent 65%),
-    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(236,72,153,.10) 0%,transparent 60%)}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
-.app{position:relative;z-index:1;width:100%;max-width:440px;padding-bottom:5rem}
-.screen{display:none}.screen.active{display:block}
 
-/* GLASS CARD */
-.card{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--gb);border-radius:var(--r);padding:1.4rem;margin-bottom:1rem;box-shadow:var(--gs)}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:'Nunito',sans-serif;
+  overflow-x:hidden;
+}
 
-/* FORM ELEMENTS */
-.sec{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--ac2);margin-bottom:.85rem;
-  display:flex;align-items:center;gap:.4rem}
-label{display:block;font-size:.73rem;font-weight:700;color:var(--mt);
-  letter-spacing:.06em;text-transform:uppercase;margin-bottom:.25rem}
-input[type=text],input[type=number],select,textarea{
-  width:100%;background:rgba(10,7,20,.75);border:1.5px solid rgba(124,58,237,.28);
-  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
-  font-size:.93rem;font-weight:600;padding:.72rem 1rem;outline:none;
-  transition:border-color .2s,box-shadow .2s;margin-bottom:.75rem}
-input:focus,select:focus,textarea:focus{border-color:var(--ac2);box-shadow:0 0 0 3px rgba(168,85,247,.16)}
-select{cursor:pointer}
-textarea{resize:vertical;min-height:68px;line-height:1.5}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+/* FONDO ANIMADO */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.25;animation:drift 18s ease-in-out infinite}
+.orb1{width:600px;height:600px;background:#7c3aed;top:-200px;left:-200px;animation-delay:0s}
+.orb2{width:500px;height:500px;background:#ec4899;bottom:-150px;right:-150px;animation-delay:-6s}
+.orb3{width:400px;height:400px;background:#f59e0b;top:40%;left:50%;animation-delay:-12s}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(30px,-40px) scale(1.05)}
+  66%{transform:translate(-20px,30px) scale(.95)}
+}
 
-/* BUTTONS */
-.btn{border:none;border-radius:var(--rs);cursor:pointer;font-family:'Nunito',sans-serif;
-  font-weight:800;padding:.82rem 1.15rem;transition:transform .15s,box-shadow .15s,filter .15s;
-  font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;gap:.42rem}
-.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.btn:active{transform:scale(.97)}
-.btn-pk{width:100%;background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
-  letter-spacing:.02em;font-size:1.02rem;
-  box-shadow:0 4px 24px rgba(236,72,153,.54),inset 0 0 0 1px rgba(255,255,255,.07)}
-.btn-pk:hover{box-shadow:0 6px 32px rgba(236,72,153,.70)}
-.btn-gd{width:100%;background:linear-gradient(135deg,#d97706,var(--gd));color:#fff;
-  box-shadow:0 4px 20px rgba(245,158,11,.32)}
-.btn-tl{width:100%;background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;
-  box-shadow:0 4px 16px rgba(20,184,166,.32)}
-.btn-wa{width:100%;background:#25D366;color:#fff;text-decoration:none;
-  box-shadow:0 4px 20px rgba(37,211,102,.32)}
-.btn-wa:hover{box-shadow:0 6px 28px rgba(37,211,102,.50)}
-.btn-gh{background:transparent;border:1.5px solid rgba(124,58,237,.40);color:var(--mt)}
-.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
-.btn-dr{background:rgba(239,68,68,.13);border:1.5px solid rgba(239,68,68,.28);color:#fca5a5}
-.divider{height:1px;background:rgba(124,58,237,.18);margin:.1rem 0 .85rem}
-.wa-ico{width:19px;height:19px;flex-shrink:0}
+/* LAYOUT */
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 1.5rem}
 
-/* ALERTS */
-.alert{display:none;align-items:center;gap:.45rem;border-radius:var(--rs);
-  font-size:.86rem;font-weight:600;margin-bottom:.85rem;padding:.7rem .95rem}
-.alert.show{display:flex}
-.a-err{background:rgba(239,68,68,.11);border:1px solid rgba(239,68,68,.32);color:#fca5a5}
-.a-ok{background:rgba(16,185,129,.11);border:1px solid rgba(16,185,129,.32);color:#6ee7b7}
-
-/* LOGIN */
-#sc-login{display:none;padding-top:1.5rem}
-#sc-login.active{display:flex;flex-direction:column;align-items:center;
-  justify-content:center;min-height:90dvh}
-.lw{width:100%;max-width:380px}
-.aumven-wrap{text-align:center;margin-bottom:2rem}
-.aumven-brand{font-family:'Fredoka One',cursive;font-size:3.6rem;letter-spacing:.04em;
-  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
-.aumven-tag{color:var(--mt);font-size:.83rem;font-weight:600;
-  margin-top:.35rem;letter-spacing:.06em;text-transform:uppercase}
-.login-card{background:var(--sf);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  border:1px solid rgba(168,85,247,.32);border-radius:var(--r);padding:2rem 1.75rem 1.75rem;
-  box-shadow:0 0 60px rgba(124,58,237,.24),inset 0 0 0 1px rgba(255,255,255,.04)}
-.login-sub{color:var(--mt);font-size:.86rem;margin-bottom:1.5rem;text-align:center}
-.cod-in{width:100%;background:rgba(10,7,20,.78);border:1.5px solid rgba(124,58,237,.36);
-  border-radius:var(--rs);color:var(--tx);font-family:'Nunito',sans-serif;
-  font-size:1.25rem;font-weight:800;letter-spacing:.2em;padding:1.05rem 1.2rem;
-  text-align:center;text-transform:uppercase;outline:none;
-  transition:border-color .2s,box-shadow .2s;margin-bottom:1rem}
-.cod-in::placeholder{letter-spacing:.05em;font-weight:400;color:var(--mt);
-  text-transform:none;font-size:.95rem}
-.cod-in:focus{border-color:var(--pk2);
-  box-shadow:0 0 0 3px rgba(244,114,182,.24),0 0 20px rgba(168,85,247,.18)}
-
-/* GAME */
-.game-wrap{background:var(--sf);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--gb);border-radius:var(--r);overflow:hidden;box-shadow:var(--gs)}
-.game-hdr{display:flex;align-items:center;justify-content:center;flex-direction:column;
-  padding:1.4rem 1rem .85rem;text-align:center;gap:.4rem;
-  border-bottom:1px solid rgba(124,58,237,.16);
-  background:linear-gradient(180deg,rgba(124,58,237,.09) 0%,transparent 100%)}
-.b-logo{max-height:60px;max-width:170px;object-fit:contain;border-radius:10px}
-.b-emoji{font-size:3rem;line-height:1;filter:drop-shadow(0 2px 10px rgba(0,0,0,.45))}
-.b-name{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--tx)}
-.game-ins{background:rgba(124,58,237,.10);border-bottom:1px solid rgba(124,58,237,.15);
-  color:var(--mt);font-size:.87rem;font-weight:600;padding:.6rem 1rem;text-align:center}
-#game-zone{padding:.5rem}
-
-/* BALLOONS */
-.bal-area{background:linear-gradient(180deg,rgba(10,7,20,.95),rgba(26,21,48,.88));
-  border-radius:var(--rs);height:340px;overflow:hidden;position:relative}
-.balloon{position:absolute;bottom:-80px;cursor:pointer;animation:floatUp linear infinite;user-select:none}
-.balloon:hover{filter:brightness(1.18) drop-shadow(0 0 6px rgba(255,255,255,.3))}
-.balloon.popped{animation:popA .4s ease-out forwards!important;pointer-events:none}
-@keyframes floatUp{0%{bottom:-80px;transform:translateX(0);opacity:1}
-  50%{transform:translateX(10px)}100%{bottom:110%;transform:translateX(0);opacity:.75}}
-@keyframes popA{0%{transform:scale(1);opacity:1}30%{transform:scale(1.6);opacity:.8}
-  100%{transform:scale(.1);opacity:0}}
-
-/* CHEST */
-.chest-area{display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.8rem;padding:1.4rem 0 1.8rem}
-.chests-row{display:flex;align-items:flex-end;justify-content:center;gap:1rem}
-.chest-btn{cursor:pointer;user-select:none;transition:transform .15s,opacity .5s;flex-shrink:0;
-  display:flex;flex-direction:column;align-items:center;gap:.4rem;
-  background:none;border:none;padding:.4rem}
-.chest-btn:hover:not(.locked):not(.opened){transform:scale(1.08) translateY(-5px)}
-.chest-btn:active:not(.locked){transform:scale(.96)}
-.chest-btn.locked{opacity:.2;pointer-events:none}
-.chest-icon{transition:filter .3s}
-.chest-btn:not(.locked):not(.opened) .chest-icon{
-  filter:drop-shadow(0 0 10px rgba(245,158,11,.54));
-  animation:chPulse 2s ease-in-out infinite}
-@keyframes chPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(245,158,11,.42))}
-  50%{filter:drop-shadow(0 0 20px rgba(245,158,11,.80))}}
-.chest-btn.opened .chest-icon{
-  animation:chOpen .5s ease-out forwards;
-  filter:drop-shadow(0 0 18px rgba(245,158,11,.90))}
-@keyframes chOpen{0%{transform:scale(1)}40%{transform:scale(1.22) rotate(-3deg)}
-  70%{transform:scale(.95) rotate(2deg)}100%{transform:scale(1.05)}}
-.chest-lbl{color:var(--mt);font-size:.72rem;font-weight:700}
-.chest-hint{color:var(--mt);font-size:.87rem;font-weight:600}
-
-/* SCRATCH */
-.scratch-area{display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.75rem;padding:.6rem 0 1.6rem}
-.scratch-wrap{position:relative;border-radius:var(--rs);overflow:hidden;
-  box-shadow:0 8px 32px rgba(0,0,0,.50);cursor:crosshair;touch-action:none}
-.scratch-cv{display:block;position:absolute;top:0;left:0;border-radius:var(--rs)}
-.scratch-rev{display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:8px}
-.sc-prog{background:rgba(124,58,237,.20);border-radius:100px;height:6px;overflow:hidden;width:220px}
-.sc-bar{background:linear-gradient(90deg,var(--pk),var(--ac2));
-  border-radius:100px;height:100%;transition:width .2s;width:0%}
-.sc-hint{color:var(--mt);font-size:.83rem;font-weight:600;text-align:center}
-
-/* MONEDAS DE ORO */
-.mon-area{display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.9rem;padding:1.5rem 1.2rem 1.8rem;text-align:center}
-
-/* ROCKOLA DE PROGRESO */
-.rockola-wrap{width:100%;background:linear-gradient(180deg,rgba(25,18,50,.96),rgba(15,10,32,.98));
-  border:1px solid rgba(245,158,11,.22);border-radius:var(--rs);padding:1.1rem 1.15rem;text-align:left}
-.rockola-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
-.rockola-title{font-family:'Fredoka One',cursive;font-size:.92rem;letter-spacing:.03em;
-  color:var(--gd);text-transform:uppercase}
-.rockola-pct{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--gd)}
-.rockola-barwrap{background:rgba(0,0,0,.45);border-radius:100px;height:14px;overflow:hidden;margin-bottom:.9rem}
-.rockola-barfill{height:100%;background:linear-gradient(90deg,#f59e0b,#facc15);
-  border-radius:100px;transition:width .4s ease}
-.rockola-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
-.rockola-stat{background:rgba(0,0,0,.35);border:1px solid rgba(245,158,11,.14);
-  border-radius:10px;padding:.6rem .4rem;text-align:center}
-.rockola-stat-lbl{color:var(--mt);font-size:.62rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:.04em;margin-bottom:.3rem}
-.rockola-stat-val{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--tx);
-  display:flex;align-items:center;justify-content:center;gap:.25rem}
-.rockola-stat-val img{width:18px;height:18px;object-fit:contain}
-.rockola-grid{display:flex;flex-wrap:wrap;gap:.4rem}
-.rockola-coin{width:30px;height:30px;object-fit:contain;
-  filter:drop-shadow(0 2px 6px rgba(245,158,11,.4))}
-.rockola-more{color:var(--mt);font-size:.78rem;font-weight:700;align-self:center;margin-left:.2rem}
-
-.mon-coin-wrap{position:relative;width:150px;height:150px}
-.mon-coin-wrap img{width:100%;height:100%;object-fit:contain;
-  filter:drop-shadow(0 6px 22px rgba(245,158,11,.45))}
-.mon-coin-wrap.brillar img{animation:monBrillo 1.1s ease-in-out infinite}
-@keyframes monBrillo{0%,100%{filter:drop-shadow(0 6px 22px rgba(245,158,11,.45)) brightness(1)}
-  50%{filter:drop-shadow(0 10px 34px rgba(245,158,11,.85)) brightness(1.25)}}
-.mon-cuenta{font-family:'Fredoka One',cursive;font-size:1.7rem;color:var(--gd)}
-.mon-cuenta small{font-family:'Nunito',sans-serif;font-size:.95rem;color:var(--mt);font-weight:700}
-.mon-prog-wrap{width:100%;max-width:280px;background:rgba(124,58,237,.14);
-  border-radius:100px;height:12px;overflow:hidden}
-.mon-prog-bar{height:100%;background:linear-gradient(90deg,#f59e0b,#facc15);
-  border-radius:100px;transition:width .4s ease}
-.mon-msg{color:var(--mt);font-size:.9rem;font-weight:700}
-.mon-btns{display:flex;flex-direction:column;gap:.55rem;width:100%;max-width:280px}
-
-/* RESULT */
-.result-card{background:var(--sf);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  border-radius:var(--r);padding:2.4rem 1.75rem;text-align:center;
-  border:1px solid rgba(236,72,153,.26);
-  box-shadow:0 0 60px rgba(124,58,237,.22),inset 0 0 0 1px rgba(255,255,255,.04)}
-.r-trophy{font-size:5.5rem;line-height:1;margin-bottom:.5rem;display:block;
-  animation:bncIn .65s cubic-bezier(.175,.885,.32,1.275) forwards}
-@keyframes bncIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.18);opacity:1}
-  100%{transform:scale(1)}}
-.r-title{font-family:'Fredoka One',cursive;font-size:1.85rem;margin-bottom:.4rem;color:var(--gd)}
-.r-prize{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(236,72,153,.10));
-  border:1px solid rgba(245,158,11,.28);border-radius:var(--rs);
-  font-size:1.15rem;font-weight:800;margin:.7rem 0;padding:.88rem 1.2rem}
-.r-sub{color:var(--mt);font-size:.86rem;margin-bottom:1.2rem}
-.con-badge{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);
-  border-radius:100px;color:var(--mt);display:inline-block;
-  font-size:.76rem;font-weight:700;margin-bottom:.65rem;padding:.26rem .76rem}
-
-/* ADMIN */
-#sc-admin{padding-top:.75rem}
-.adm-top{display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:1.1rem;gap:.65rem}
-.adm-title{font-family:'Fredoka One',cursive;font-size:1.5rem;
-  background:linear-gradient(135deg,var(--ac2),var(--pk2));
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(10,7,20,.85);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(168,85,247,.15);
+  padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:'Fredoka One',cursive;font-size:1.5rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.adm-badge{background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.28);
-  border-radius:100px;color:var(--ac2);font-size:.69rem;font-weight:700;
-  letter-spacing:.07em;padding:.2rem .6rem;text-transform:uppercase}
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}
-.kpi-card{background:rgba(25,18,50,.92);backdrop-filter:blur(10px);
-  border:1px solid rgba(124,58,237,.22);border-radius:var(--rs);padding:.9rem;text-align:center}
-.kpi-val{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--gd);
-  line-height:1;margin-bottom:.16rem}
-.kpi-lbl{color:var(--mt);font-size:.70rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.04em}
-.h-list{list-style:none;display:flex;flex-direction:column;gap:.3rem;
-  max-height:170px;overflow-y:auto;padding-right:.2rem}
-.h-list::-webkit-scrollbar{width:4px}
-.h-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.40);border-radius:2px}
-.h-item{background:rgba(25,18,50,.88);border-radius:var(--rx);
-  display:flex;align-items:center;justify-content:space-between;
-  gap:.45rem;font-size:.79rem;font-weight:600;padding:.44rem .68rem}
-.h-date{color:var(--mt);font-size:.68rem;white-space:nowrap}
-.empty{color:var(--mt);font-size:.83rem;text-align:center;padding:.85rem}
-.f-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem}
-.f-row select{margin-bottom:0;flex:1;font-size:.85rem;padding:.56rem .85rem}
-.calc-r{background:linear-gradient(135deg,rgba(124,58,237,.13),rgba(236,72,153,.09));
-  border:1px solid rgba(124,58,237,.28);border-radius:var(--rs);
-  padding:.85rem;margin-bottom:.75rem;font-size:.87rem;font-weight:700;
-  line-height:1.65;display:none}
-.calc-r.show{display:block}
-.c-hi{color:var(--gd);font-size:1rem}
-.prob-leg{display:flex;flex-direction:column;gap:.32rem;
-  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.20);
-  border-radius:var(--rx);padding:.65rem .85rem;margin-bottom:.78rem;
-  font-size:.75rem;font-weight:700}
-.prob-row{display:flex;align-items:center;gap:.5rem}
-.prob-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.toast{position:fixed;bottom:1.5rem;left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:var(--gr);color:#fff;border-radius:100px;
-  padding:.62rem 1.4rem;font-weight:800;font-size:.87rem;
-  z-index:9999;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);
-  white-space:nowrap;pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.pop-pt{position:fixed;width:8px;height:8px;border-radius:50%;
-  pointer-events:none;animation:ptA .5s ease-out forwards;z-index:9999}
-@keyframes ptA{0%{transform:scale(1) translate(0,0);opacity:1}
-  100%{transform:scale(0) translate(var(--tx),var(--ty));opacity:0}}
-.rst-btn{background:transparent;border:1px solid rgba(255,255,255,.07);
-  border-radius:8px;bottom:.65rem;color:rgba(255,255,255,.15);cursor:pointer;
-  font-family:'Nunito',sans-serif;font-size:.65rem;padding:.2rem .48rem;
-  position:fixed;right:.65rem;transition:color .2s;z-index:100}
-.rst-btn:hover{color:rgba(255,255,255,.44)}
-.l-hint{font-size:.74rem;color:var(--mt);margin-top:-.5rem;margin-bottom:.72rem;line-height:1.5}
-.lp-wrap{display:none;text-align:center;margin-bottom:.8rem}
-.lp-wrap img{max-height:56px;border-radius:10px;border:1px solid rgba(124,58,237,.28)}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
+.nav-links a{color:var(--mt);font-size:.88rem;font-weight:700;text-decoration:none;
+  transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+.nav-cta{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff!important;
+  padding:.48rem 1.1rem;border-radius:100px;font-size:.83rem!important}
+.nav-cta:hover{filter:brightness(1.1)}
+@media(max-width:600px){.nav-links{gap:.85rem}.nav-links a:not(.nav-cta){display:none}}
+
+/* ── HERO ── */
+.hero{min-height:100dvh;display:flex;align-items:center;
+  padding:7rem 0 4rem;text-align:center}
+.hero-inner{max-width:760px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.30);
+  border-radius:100px;padding:.3rem .9rem;font-size:.75rem;font-weight:800;
+  color:var(--ac2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-title{font-family:'Fredoka One',cursive;font-size:clamp(2.4rem,7vw,4.4rem);
+  line-height:1.08;margin-bottom:1.1rem;
+  background:linear-gradient(135deg,#f1f0ff 0%,#c4b5fd 45%,#f472b6 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--mt);font-size:clamp(.95rem,2.5vw,1.18rem);
+  line-height:1.7;max-width:580px;margin:0 auto 2.2rem}
+.hero-sub strong{color:var(--tx)}
+.hero-btns{display:flex;gap:.85rem;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.4rem;
+  border:none;border-radius:100px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-weight:800;
+  padding:.85rem 1.8rem;font-size:.95rem;text-decoration:none;
+  transition:transform .15s,filter .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn-pk{background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
+  box-shadow:0 4px 24px rgba(236,72,153,.45)}
+.btn-gh{background:transparent;border:1.5px solid rgba(168,85,247,.40);
+  color:var(--mt);padding:.82rem 1.6rem}
+.btn-gh:hover{border-color:var(--ac2);color:var(--tx)}
+
+/* TICKER STATS */
+.stats{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap;
+  margin-top:3.5rem;padding-top:3rem;border-top:1px solid rgba(124,58,237,.15)}
+.stat-item{text-align:center}
+.stat-val{font-family:'Fredoka One',cursive;font-size:2.2rem;
+  background:linear-gradient(135deg,var(--gd),var(--pk2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1}
+.stat-lbl{color:var(--mt);font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;margin-top:.3rem}
+
+/* ── SECTIONS ── */
+section{padding:5rem 0}
+.sec-badge{display:inline-block;background:rgba(124,58,237,.12);
+  border:1px solid rgba(124,58,237,.25);border-radius:100px;
+  color:var(--ac2);font-size:.72rem;font-weight:800;
+  letter-spacing:.08em;padding:.25rem .75rem;text-transform:uppercase;margin-bottom:.85rem}
+.sec-title{font-family:'Fredoka One',cursive;font-size:clamp(1.7rem,4vw,2.6rem);
+  margin-bottom:.75rem;
+  background:linear-gradient(135deg,#f1f0ff,#c4b5fd);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-desc{color:var(--mt);font-size:1rem;line-height:1.75;max-width:600px}
+
+/* ── PROBLEMA/SOLUCION ── */
+.pain-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:2.5rem}
+.pain-card{background:var(--sf);backdrop-filter:blur(16px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.5rem}
+.pain-card.red{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.06)}
+.pain-card.green{border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.06)}
+.pain-ico{font-size:1.8rem;margin-bottom:.65rem;display:block}
+.pain-label{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:.6rem}
+.pain-card.red .pain-label{color:#fca5a5}
+.pain-card.green .pain-label{color:#6ee7b7}
+.pain-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.pain-list li{font-size:.88rem;color:var(--mt);line-height:1.5;
+  display:flex;align-items:flex-start;gap:.45rem}
+.pain-list li::before{content:'';flex-shrink:0;margin-top:.45rem;
+  width:6px;height:6px;border-radius:50%}
+.pain-card.red .pain-list li::before{background:#ef4444}
+.pain-card.green .pain-list li::before{background:#10b981}
+@media(max-width:640px){.pain-grid{grid-template-columns:1fr}}
+
+/* ── COMO FUNCIONA ── */
+.steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1.1rem;margin-top:2.5rem;position:relative}
+.step-card{background:var(--sf);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.4rem;
+  position:relative;overflow:hidden}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--ac),var(--pk))}
+.step-n{font-family:'Fredoka One',cursive;font-size:2.8rem;
+  color:rgba(168,85,247,.15);line-height:1;margin-bottom:.5rem}
+.step-ico{font-size:1.6rem;margin-bottom:.5rem;display:block}
+.step-title{font-weight:800;font-size:.95rem;margin-bottom:.35rem}
+.step-desc{color:var(--mt);font-size:.82rem;line-height:1.6}
+
+/* ── ECOSISTEMA ── */
+.eco-wrap{margin-top:3rem}
+.eco-matrix{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(236,72,153,.10));
+  border:2px solid rgba(168,85,247,.35);border-radius:var(--r);
+  padding:1.8rem;text-align:center;margin-bottom:2rem;position:relative}
+.eco-matrix::after{content:'';position:absolute;bottom:-2rem;left:50%;
+  transform:translateX(-50%);width:2px;height:2rem;
+  background:linear-gradient(180deg,rgba(168,85,247,.6),transparent)}
+.eco-matrix-name{font-family:'Fredoka One',cursive;font-size:2rem;
+  background:linear-gradient(135deg,#f472b6,#a855f7,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.eco-matrix-tag{color:var(--mt);font-size:.78rem;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;margin-top:.2rem}
+.eco-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.85rem}
+.eco-card{background:var(--sf);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);
+  padding:1.2rem;position:relative;overflow:hidden;
+  transition:transform .2s,border-color .2s,box-shadow .2s}
+.eco-card:hover{transform:translateY(-4px);border-color:rgba(168,85,247,.45);
+  box-shadow:0 8px 32px rgba(124,58,237,.25)}
+.eco-card.active{border-color:rgba(16,185,129,.35);
+  background:rgba(16,185,129,.06)}
+.eco-card.active::before{content:'✅ ACTIVO';position:absolute;top:.65rem;right:.65rem;
+  background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.30);
+  border-radius:100px;color:#6ee7b7;font-size:.6rem;font-weight:800;
+  letter-spacing:.06em;padding:.1rem .5rem}
+.eco-card.soon::before{content:'🔒 PRÓXIMO';position:absolute;top:.65rem;right:.65rem;
+  background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.22);
+  border-radius:100px;color:var(--ac2);font-size:.6rem;font-weight:800;
+  letter-spacing:.06em;padding:.1rem .5rem}
+.eco-ico{font-size:1.8rem;margin-bottom:.5rem;display:block}
+.eco-name{font-weight:900;font-size:.92rem;margin-bottom:.25rem}
+.eco-desc{color:var(--mt);font-size:.78rem;line-height:1.55}
+
+/* ── PRECIOS ── */
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.1rem;margin-top:2.5rem}
+.price-card{background:var(--sf);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.8rem;
+  position:relative;overflow:hidden}
+.price-card.featured{border-color:rgba(236,72,153,.40);
+  background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(236,72,153,.08))}
+.price-card.featured::before{content:'MÁS POPULAR';position:absolute;top:1rem;right:1rem;
+  background:linear-gradient(135deg,#ec4899,#f472b6);color:#fff;
+  font-size:.6rem;font-weight:800;letter-spacing:.08em;
+  padding:.2rem .6rem;border-radius:100px}
+.price-name{font-weight:900;font-size:1.05rem;margin-bottom:.4rem}
+.price-val{font-family:'Fredoka One',cursive;font-size:2.4rem;
+  color:var(--gd);line-height:1;margin-bottom:.2rem}
+.price-period{color:var(--mt);font-size:.75rem;font-weight:700;margin-bottom:1.1rem}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.4rem}
+.price-features li{font-size:.84rem;color:var(--mt);display:flex;gap:.45rem;align-items:flex-start}
+.price-features li::before{content:'✓';color:var(--gr);font-weight:900;flex-shrink:0}
+
+/* ── TESTIMONIOS (placeholder) ── */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1rem;margin-top:2.5rem}
+.testi{background:var(--sf);border:1px solid var(--gb);border-radius:var(--r);
+  padding:1.4rem;position:relative}
+.testi::before{content:'"';position:absolute;top:.5rem;left:1rem;
+  font-family:'Fredoka One',cursive;font-size:3rem;
+  color:rgba(168,85,247,.20);line-height:1}
+.testi-txt{color:var(--mt);font-size:.88rem;line-height:1.65;
+  margin-bottom:.85rem;padding-top:.5rem}
+.testi-who{font-weight:800;font-size:.82rem}
+.testi-biz{color:var(--mt);font-size:.75rem}
+
+/* ── CTA FINAL ── */
+.cta-section{padding:5rem 0;text-align:center}
+.cta-box{background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(236,72,153,.12));
+  border:1px solid rgba(168,85,247,.28);border-radius:calc(var(--r)*1.5);
+  padding:3.5rem 2rem;max-width:680px;margin:0 auto}
+.cta-title{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,4vw,2.6rem);
+  background:linear-gradient(135deg,#f472b6,#a855f7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.75rem}
+.cta-desc{color:var(--mt);font-size:1rem;line-height:1.7;margin-bottom:1.8rem}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(124,58,237,.15);padding:2rem 1.5rem;
+  text-align:center;color:rgba(158,151,196,.45);font-size:.75rem;line-height:1.8}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.25),transparent);
+  margin:0}
+
+/* ── MÓDULOS (Ecosistema Aumven: Elige tu solución) ── */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;margin-top:2.5rem}
+@media(max-width:820px){.module-grid{grid-template-columns:1fr}}
+.module-card{background:var(--sf);backdrop-filter:blur(16px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:1.8rem;
+  position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.module-card:hover{transform:translateY(-4px)}
+.module-card__icon{font-size:2rem;margin-bottom:.7rem;display:block}
+.module-card__title{font-family:'Fredoka One',cursive;font-size:1.15rem;margin-bottom:.5rem;line-height:1.25}
+.module-card__subtitle{color:var(--mt);font-size:.85rem;line-height:1.55;margin-bottom:1rem}
+.module-card__features{list-style:none;display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.4rem}
+.module-card__features li{font-size:.83rem;color:var(--mt);display:flex;gap:.45rem;align-items:flex-start}
+.module-card__features li::before{content:'✓';font-weight:900;flex-shrink:0}
+.module-card__btn{display:block;text-align:center;width:100%;padding:.75rem 1.2rem;font-size:.85rem}
+.module-card--pink{border-color:rgba(236,72,153,.30)}
+.module-card--pink:hover{border-color:rgba(236,72,153,.55);box-shadow:0 8px 32px rgba(236,72,153,.22)}
+.module-card--pink .module-card__features li::before{color:var(--pk2)}
+.module-card__btn--pink{background:linear-gradient(135deg,#be185d,#ec4899,#f472b6);color:#fff;
+  box-shadow:0 4px 24px rgba(236,72,153,.35)}
+.module-card--purple{border-color:rgba(124,58,237,.30)}
+.module-card--purple:hover{border-color:rgba(124,58,237,.55);box-shadow:0 8px 32px rgba(124,58,237,.22)}
+.module-card--purple .module-card__features li::before{color:var(--ac2)}
+.module-card__btn--purple{background:linear-gradient(135deg,#6d28d9,#7c3aed,#a855f7);color:#fff;
+  box-shadow:0 4px 24px rgba(124,58,237,.35)}
+.module-card--soon{opacity:.6;filter:grayscale(.35)}
+.module-card--soon:hover{transform:none}
+.module-card__soon-badge{position:absolute;top:1rem;right:1rem;
+  background:rgba(158,151,196,.18);border:1px solid rgba(158,151,196,.30);
+  border-radius:100px;color:var(--mt);font-size:.62rem;font-weight:800;
+  letter-spacing:.07em;padding:.2rem .65rem}
+.module-card__btn--ghost{background:transparent;border:1.5px solid rgba(158,151,196,.35);color:var(--mt)}
+.module-card__btn--ghost:hover{border-color:var(--mt);color:var(--tx)}
+.module-card--green{border-color:rgba(16,185,129,.30)}
+.module-card--green:hover{border-color:rgba(16,185,129,.55);box-shadow:0 8px 32px rgba(16,185,129,.22)}
+.module-card--green .module-card__features li::before{color:#6ee7b7}
+.module-card__btn--green{background:linear-gradient(135deg,#047857,#10b981,#34d399);color:#fff;
+  box-shadow:0 4px 24px rgba(16,185,129,.35)}
+
+/* ── CONTADOR DE VISITAS (oculto salvo ?stats=1) ── */
+.visit-count{display:none;font-size:.72rem;color:var(--mt);margin-bottom:.8rem}
+.stats-on .visit-count{display:block}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
 
-<!-- ========== LOGIN ========== -->
-<div class="screen active" id="sc-login">
-  <div class="lw">
-    <div class="aumven-wrap">
-      <img id="app-logo-aumven" src="logo_aumven.png" alt="AUMVEN"
-        style="max-height:130px;width:auto;display:inline-block;margin-bottom:10px;
-               filter:drop-shadow(0 0 15px rgba(255,65,108,0.5))"
-        onerror="this.style.display='none';document.getElementById('aumven-fb').style.display='block'">
-      <div id="aumven-fb" class="aumven-brand" style="display:none">&#127880; AUMVEN &#127880;</div>
-      <p class="aumven-tag" id="store-title-display">Sucursal AUMVEN PRO</p>
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-brand">AUMVEN</div>
+  <div class="nav-links">
+    <a href="#ecosistema">Productos</a>
+    <a href="#como-funciona">Cómo funciona</a>
+    <a href="#precios">Precios</a>
+    <a href="/inicio/" class="nav-cta btn">Quiero probarlo</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-badge">🇨🇱 Tecnología para el comercio local chileno</div>
+      <h1 class="hero-title">Menos trabajo manual.<br>Más clientes que vuelven.</h1>
+      <p class="hero-sub">Creamos herramientas digitales específicas para automatizar la gestión, agendamiento y fidelización de negocios independientes en Chile. Elige tu módulo y activa tu prueba gratis en 5 minutos.</p>
+      <div class="hero-btns">
+        <a href="/inicio/" class="btn btn-pk">🚀 Comenzar gratis 30 días</a>
+        <a href="#ecosistema" class="btn btn-gh">Ver productos →</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-val">+30%</div>
+          <div class="stat-lbl">Ticket promedio</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">5 min</div>
+          <div class="stat-lbl">Para activar tu tienda</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">$0</div>
+          <div class="stat-lbl">Para comenzar</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">100%</div>
+          <div class="stat-lbl">Hecho para Chile</div>
+        </div>
+      </div>
     </div>
-    <div class="login-card">
-      <p class="login-sub">Ingresa tu c&#xF3;digo &#xFA;nico para jugar y ganar</p>
-      <div id="alerta" class="alert a-err"></div>
-      <input class="cod-in" type="text" id="cod-in"
-        placeholder="Tu c&#xF3;digo aqu&#xED;" maxlength="14"
-        autocomplete="off" autocapitalize="characters" spellcheck="false">
-      <input class="cod-in" type="tel" id="tel-in"
-        placeholder="Tu WhatsApp (Ej: 912345678)" maxlength="20"
-        style="display:none;font-size:1rem;letter-spacing:normal;text-transform:none;font-weight:700"
-        autocomplete="off">
-      <button class="btn btn-pk" onclick="entrar()">&#10024; Ingresar y Jugar</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     INICIO SECCIÓN MÓDULOS — Ecosistema Aumven: Elige tu solución
+     Grid de 3 columnas (desktop) / 1 columna (móvil).
+     Para agregar un nuevo módulo: duplica cualquier bloque de
+     tarjeta (INICIO TARJETA N / FIN TARJETA N) y edita el
+     contenido. Para activar una tarjeta "PRÓXIMAMENTE", quita
+     la clase module-card--soon y el badge correspondiente.
+     ═══════════════════════════════════════════════════════════ -->
+<section id="modulos">
+  <div class="wrap">
+    <div class="sec-badge">El ecosistema AUMVEN</div>
+    <h2 class="sec-title">Ecosistema Aumven: Elige tu solución</h2>
+    <p class="sec-desc">Activa solo la herramienta que tu negocio necesita hoy. Sin contratos, sin instalaciones complejas.</p>
+
+    <div class="module-grid">
+
+      <!-- INICIO TARJETA 1 — Agenda Inteligente (acento fucsia) -->
+      <div class="module-card module-card--pink">
+        <div class="module-card__icon">💅</div>
+        <h3 class="module-card__title">Módulo Agenda Inteligente</h3>
+        <p class="module-card__subtitle">Diseñado para Manicuristas, Estilistas, Barberías y Centros de Estética.</p>
+        <ul class="module-card__features">
+          <li>Elimina los "no-shows"</li>
+          <li>Automatiza recordatorios por WhatsApp</li>
+          <li>Gestiona tus citas 24/7</li>
+        </ul>
+        <span class="visit-count" data-pagina="manicure"></span>
+        <a href="/manicure/" class="btn module-card__btn module-card__btn--pink">Probar Módulo Agenda</a>
+      </div>
+      <!-- FIN TARJETA 1 -->
+
+      <!-- INICIO TARJETA 2 — Retail y Fidelización / Omepro (acento morado) -->
+      <div class="module-card module-card--purple">
+        <div class="module-card__icon">🎮</div>
+        <h3 class="module-card__title">Módulo Retail y Fidelización (Omepro)</h3>
+        <p class="module-card__subtitle">Diseñado para Almacenes, Minimarkets, Botillerías y Comercio Local.</p>
+        <ul class="module-card__features">
+          <li>Aumenta el ticket promedio</li>
+          <li>Juegos de gamificación</li>
+          <li>Fideliza a tus clientes recurrentes</li>
+        </ul>
+        <span class="visit-count" data-pagina="aumven-pro"></span>
+        <a href="#precios" class="btn module-card__btn module-card__btn--purple">Probar Módulo Retail</a>
+      </div>
+      <!-- FIN TARJETA 2 -->
+
+      <!-- INICIO TARJETA 4 — Arriendo Confiable (acento verde) -->
+      <div class="module-card module-card--green">
+        <div class="module-card__icon">🏠</div>
+        <h3 class="module-card__title">Arriendo Confiable</h3>
+        <p class="module-card__subtitle">Para arrendadores y arrendatarios que quieren arrendar sin caer en estafas.</p>
+        <ul class="module-card__features">
+          <li>Verificación de identidad y RUT</li>
+          <li>Reportes de estafas de la comunidad</li>
+          <li>Propiedades verificadas</li>
+        </ul>
+        <span class="visit-count" data-pagina="arriendo-confiable"></span>
+        <a href="/arriendo-confiable/" class="btn module-card__btn module-card__btn--green">Ver Arriendo Confiable</a>
+      </div>
+      <!-- FIN TARJETA 4 -->
+
+      <!-- INICIO TARJETA 3 FUTURA — Gestión Financiera y Boleta (estado: Coming Soon) -->
+      <div class="module-card module-card--soon">
+        <span class="module-card__soon-badge">PRÓXIMAMENTE</span>
+        <div class="module-card__icon">🧾</div>
+        <h3 class="module-card__title">Módulo de Gestión Financiera y Boleta</h3>
+        <p class="module-card__subtitle">Diseñado para automatizar tus cuentas, gastos diarios y sincronización local.</p>
+        <a href="#" class="btn module-card__btn module-card__btn--ghost">Quiero ser Beta Tester</a>
+      </div>
+      <!-- FIN TARJETA 3 FUTURA -->
+
     </div>
-    <p style="text-align:center;margin-top:1.1rem">
-      <a href="#" onclick="mostrarBases();return false;"
-        style="color:rgba(158,151,196,0.55);font-size:.72rem;font-weight:600;
-               text-decoration:none;letter-spacing:.04em;
-               transition:color .2s"
-        onmouseover="this.style.color='rgba(168,85,247,0.8)'"
-        onmouseout="this.style.color='rgba(158,151,196,0.55)'">
-        &#128196; Bases Legales y Condiciones SERNAC
-      </a>
+  </div>
+</section>
+<!-- FIN SECCIÓN MÓDULOS -->
+
+<div class="divider"></div>
+
+<!-- ── PROBLEMA / SOLUCIÓN ── -->
+<section>
+  <div class="wrap">
+    <div class="sec-badge">El problema real</div>
+    <h2 class="sec-title">Tu negocio tiene clientes.<br>Nosotros te ayudamos a venderles más.</h2>
+    <p class="sec-desc">Los grandes supermercados gastan millones en sistemas de fidelización y gamificación. AUMVEN lleva esa misma tecnología a tu almacén, restaurant o botillería — a una fracción del costo.</p>
+
+    <div class="pain-grid">
+      <div class="pain-card red">
+        <span class="pain-ico">😔</span>
+        <div class="pain-label">Sin AUMVEN</div>
+        <ul class="pain-list">
+          <li>El cliente compra lo justo y se va</li>
+          <li>No hay razón para volver antes</li>
+          <li>Compites solo por precio con el supermercado</li>
+          <li>No sabes cuánto vendes realmente por cliente</li>
+          <li>La fidelización te cuesta tiempo y dinero</li>
+        </ul>
+      </div>
+      <div class="pain-card green">
+        <span class="pain-ico">🚀</span>
+        <div class="pain-label">Con AUMVEN</div>
+        <ul class="pain-list">
+          <li>El cliente gasta un poco más para poder jugar</li>
+          <li>La emoción del juego lo trae de vuelta</li>
+          <li>Compites con experiencia, no solo precio</li>
+          <li>Métricas reales en tu panel: ticket, utilidad, proyecciones</li>
+          <li>Sistema automático que trabaja por ti</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CÓMO FUNCIONA ── -->
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="sec-badge">Cómo funciona</div>
+    <h2 class="sec-title">En 4 pasos, tu negocio<br>empieza a ganar más</h2>
+
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-n">01</div>
+        <span class="step-ico">⚙️</span>
+        <div class="step-title">Configuras en 5 minutos</div>
+        <div class="step-desc">Ingresas tus premios, el monto mínimo para jugar y tu WhatsApp. Sin instalar nada — solo un link.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-n">02</div>
+        <span class="step-ico">🧾</span>
+        <div class="step-title">El cliente compra sobre el monto</div>
+        <div class="step-desc">El cajero le entrega un código único. El cliente lo ingresa en su celular y juega al instante.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-n">03</div>
+        <span class="step-ico">🎰</span>
+        <div class="step-title">Juega y gana un premio</div>
+        <div class="step-desc">Globos, cofres o raspe digital. El resultado llega a tu WhatsApp automáticamente para canjear.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-n">04</div>
+        <span class="step-ico">📊</span>
+        <div class="step-title">Tú ves todo en tu panel</div>
+        <div class="step-desc">Juegos, premios entregados, utilidad acumulada y proyecciones — en tiempo real desde cualquier dispositivo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── ECOSISTEMA ── -->
+<section id="ecosistema">
+  <div class="wrap">
+    <div class="sec-badge">El ecosistema AUMVEN</div>
+    <h2 class="sec-title">Una familia de productos<br>para el comercio local</h2>
+    <p class="sec-desc">AUMVEN no es un solo producto — es un ecosistema de herramientas simples, cada una resolviendo un dolor real del comercio independiente chileno.</p>
+
+    <div class="eco-wrap">
+      <!-- MATRIZ -->
+      <div class="eco-matrix">
+        <div class="eco-matrix-name">AUMVEN</div>
+        <div class="eco-matrix-tag">Ecosistema de tecnología para el comercio local · Chile</div>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div class="eco-grid">
+
+        <div class="eco-card active">
+          <span class="eco-ico">🎮</span>
+          <div class="eco-name">AUMVEN Pro</div>
+          <div class="eco-desc">Gamificación para aumentar el ticket promedio. Juegos de globos, cofres y raspe digital en la caja. Premios configurables, métricas en tiempo real.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">🛒</span>
+          <div class="eco-name">AUMVEN Tiendas</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">⚡</span>
+          <div class="eco-name">AUMVEN Venta Veloz</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">🤖</span>
+          <div class="eco-name">AUMVEN CaseroBot</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">💸</span>
+          <div class="eco-name">AUMVEN PagaFácil</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+        <div class="eco-card" style="position:relative;">
+          <span class="eco-badge active" style="background:#10b981;color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;position:absolute;top:10px;right:10px;font-weight:bold;">ACTIVO</span>
+          <span class="eco-ico">💅</span>
+          <div class="eco-name">AUMVEN Manicure</div>
+          <div class="eco-desc" style="color:#fff;margin-top:8px;">Plataforma de agendamiento online 24/7. Diseñada para blindar la agenda de estéticas, manicuristas y home studios eliminando las pérdidas por clientas que te dejan plantada.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">🚗</span>
+          <div class="eco-name">AUMVEN Car Wash</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+        <div class="eco-card soon" style="display:none">
+          <span class="eco-ico">📡</span>
+          <div class="eco-name">AUMVEN Radar</div>
+          <div class="eco-desc" style="filter:blur(4px);user-select:none;pointer-events:none">Solución exclusiva para suscriptores AUMVEN. Disponible próximamente.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PRECIOS ── -->
+<section id="precios">
+  <div class="wrap">
+    <div class="sec-badge">Precios simples</div>
+    <h2 class="sec-title">Sin letras chicas.<br>Sin sorpresas.</h2>
+    <p class="sec-desc">Comienza gratis y paga solo cuando veas resultados reales en tu negocio.</p>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Piloto Gratuito</div>
+        <div class="price-val">$0</div>
+        <div class="price-period">30 días sin costo</div>
+        <ul class="price-features">
+          <li>AUMVEN Pro completo</li>
+          <li>Juegos ilimitados</li>
+          <li>Panel Admin con métricas</li>
+          <li>Soporte por WhatsApp</li>
+          <li>Sin tarjeta de crédito</li>
+        </ul>
+        <a href="#contacto" class="btn btn-gh" style="width:100%;justify-content:center">Comenzar gratis</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-name">Plan Comercio</div>
+        <div class="price-val">$7.990</div>
+        <div class="price-period">CLP / mes · cancela cuando quieras</div>
+        <ul class="price-features">
+          <li>Todo del plan gratuito</li>
+          <li>Dashboard de métricas avanzado</li>
+          <li>QR personalizado incluido</li>
+          <li>Historial centralizado en la nube</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <a href="#contacto" class="btn btn-pk" style="width:100%;justify-content:center">Activar mi tienda</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Plan Cadena</div>
+        <div class="price-val">$20.990</div>
+        <div class="price-period">CLP / mes · hasta 3 sucursales</div>
+        <ul class="price-features">
+          <li>Todo del Plan Comercio</li>
+          <li>Hasta 3 sucursales en un plan</li>
+          <li>Panel unificado multi-local</li>
+          <li>Métricas comparativas por local</li>
+          <li>Acceso anticipado a nuevos productos</li>
+        </ul>
+        <a href="#contacto" class="btn btn-gh" style="width:100%;justify-content:center">Consultar</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── TESTIMONIOS ── -->
+<section>
+  <div class="wrap">
+    <div class="sec-badge">Primeros pilotos</div>
+    <h2 class="sec-title">Negocios que ya están<br>usando AUMVEN Pro</h2>
+
+    <div class="testi-grid">
+      <div class="testi">
+        <p class="testi-txt">Mis clientes se entusiasman cuando les digo que pueden jugar. Empezaron a comprar un poco más solo para llegar al monto. En dos semanas noté la diferencia.</p>
+        <div class="testi-who">Piloto activo</div>
+        <div class="testi-biz">Comercio local · Chile</div>
+      </div>
+      <div class="testi">
+        <p class="testi-txt">Lo que me gustó es que no tuve que instalar nada. Solo un link y ya estaba funcionando. El panel me muestra todo lo que necesito saber.</p>
+        <div class="testi-who">Piloto activo</div>
+        <div class="testi-biz">Comercio local · Chile</div>
+      </div>
+      <div class="testi">
+        <p class="testi-txt">La idea de que el cliente gana siempre algo, aunque sea pequeño, lo hace volver. Es psicología pura y funciona.</p>
+        <div class="testi-who">Piloto activo</div>
+        <div class="testi-biz">Comercio local · Chile</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTA FINAL ── -->
+<section class="cta-section" id="contacto">
+  <div class="wrap">
+    <div class="cta-box">
+      <div class="cta-title">¿Listo para vender más<br>a los clientes que ya tienes?</div>
+      <p class="cta-desc">Comenta la palabra <strong style="color:var(--pk2)">"PILOTO"</strong> por WhatsApp y te activamos tu tienda gratis por 30 días. Sin tarjeta, sin compromiso.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/56931341245?text=PILOTO" target="_blank" class="btn btn-pk" style="font-size:1.05rem;padding:1rem 2.2rem">
+          💬 Escribir "PILOTO" por WhatsApp
+        </a>
+      </div>
+      <p style="margin-top:1.2rem;color:var(--mt);font-size:.78rem">
+        Solo quedan <strong style="color:var(--gd)">7 cupos</strong> disponibles para el piloto gratuito de julio 2026
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <p>Ecosistema de tecnología para el comercio local chileno</p>
+    <p style="margin-top:.4rem">
+      <a href="/aumvenpro" style="color:rgba(168,85,247,.6);text-decoration:none">AUMVEN Pro</a>
+      &nbsp;·&nbsp;
+      <a href="/terminos.html" style="color:rgba(168,85,247,.6);text-decoration:none">Términos y condiciones</a>
+      &nbsp;·&nbsp;
+      <a href="https://wa.me/56931341245" style="color:rgba(168,85,247,.6);text-decoration:none">WhatsApp</a>
+      &nbsp;·&nbsp;
+      <span>Chile 🇨🇱 2026</span>
     </p>
+    <span class="visit-count" data-pagina="landing-principal" style="margin-top:.4rem"></span>
   </div>
-</div>
-
-<!-- ========== GAME ========== -->
-<div class="screen" id="sc-game">
-  <div class="game-wrap">
-    <div class="game-hdr" id="game-hdr"></div>
-    <div class="game-ins" id="game-ins"></div>
-    <div id="game-zone"></div>
-  </div>
-</div>
-
-<!-- ========== MONEDAS (pantalla de progreso) ========== -->
-<div class="screen" id="sc-monedas">
-  <div class="game-wrap">
-    <div class="game-hdr" id="monedas-hdr"></div>
-    <div id="monedas-zone"></div>
-  </div>
-</div>
-
-<!-- ========== RESULT ========== -->
-<div class="screen" id="sc-result">
-  <div class="result-card" id="result-card"></div>
-</div>
-
-<!-- ========== ADMIN ========== -->
-<div class="screen" id="sc-admin">
-  <div class="adm-top">
-    <div>
-      <div class="adm-title">&#9881;&#65039; Panel Admin</div>
-      <span class="adm-badge">AUMVEN Pro</span>
-    </div>
-    <div style="display:flex;gap:.5rem;align-items:center">
-      <a href="/guia-aumven.html" target="_blank" class="btn btn-gh" style="width:auto;text-decoration:none;display:inline-flex;align-items:center">&#10067; Ver gu&#237;a</a>
-      <button class="btn btn-gh" style="width:auto" onclick="goLogin()">&#8592; Salir</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec">&#128202; M&#xe9;tricas de la Tienda</div>
-    <div class="f-row">
-      <label style="margin:0;white-space:nowrap">Per&#xED;odo:</label>
-      <select id="kpi-fil" onchange="renderKPIs()">
-        <option value="hoy">Hoy</option>
-        <option value="semana">Esta Semana (7 d&#xED;as)</option>
-        <option value="mes" selected>Este Mes</option>
-      </select>
-    </div>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-val" id="kpi-tot">0</div>
-        <div class="kpi-lbl" id="kpi-tot-lbl">Juegos totales</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-val" id="kpi-prem">0</div>
-        <div class="kpi-lbl">Premios entregados</div>
-      </div>
-      <div class="kpi-card" style="grid-column:span 2">
-        <div class="kpi-val" id="kpi-ing" style="font-size:1.35rem">$0</div>
-        <div class="kpi-lbl">Utilidad acumulada real (80% neto)</div>
-      </div>
-      <div class="kpi-card" style="grid-column:span 2;background:rgba(16,185,129,.10);border-color:rgba(16,185,129,.28)">
-        <div class="kpi-val" id="kpi-proy" style="font-size:1.15rem;color:#10b981">—</div>
-        <div class="kpi-lbl" style="color:#6ee7b7">Proyecci&#xF3;n 30 d&#xED;as &#x2022; juegos &#xD7; utilidad</div>
-      </div>
-    </div>
-    <div class="sec" style="margin-top:.1rem">&#127885; Historial de Premios</div>
-    <ul class="h-list" id="h-list">
-      <li class="empty">Sin registros en el per&#xED;odo</li>
-    </ul>
-    <div style="height:.75rem"></div>
-    <button class="btn btn-tl" onclick="exportCSV()">&#128202; Exportar a Excel (.csv)</button>
-    <div style="height:.5rem"></div>
-    <button class="btn btn-gd" onclick="imprimirLote()">&#128424;&#65039; Imprimir Lote de 500 C&#xF3;digos</button>
-  </div>
-
-  <div class="card">
-    <div class="sec">&#129518; Calculadora de Ticket Promedio</div>
-    <label>Per&#xED;odo de los datos</label>
-    <select id="calc-per" oninput="calcTicket()">
-      <option value="1">1 D&#xED;a</option>
-      <option value="7">7 D&#xED;as (Semana)</option>
-      <option value="30" selected>30 D&#xED;as (Mes)</option>
-    </select>
-    <div class="row2">
-      <div><label>Ventas del per&#xED;odo ($)</label>
-        <input type="number" id="c-ventas" placeholder="Ej: 350000" oninput="calcTicket()"></div>
-      <div><label>N&#xBA; de pedidos</label>
-        <input type="number" id="c-ped" placeholder="Ej: 28" oninput="calcTicket()"></div>
-    </div>
-    <div class="calc-r" id="calc-r"></div>
-    <label>Meta de compra para el juego ($) <span style="color:var(--ac2);font-size:.72rem;font-weight:700">(se calcula autom&#xe1;ticamente: Ticket + Variable X)</span></label>
-    <input type="number" id="f-meta" placeholder="Se llena en vivo" style="opacity:.8;background:rgba(124,58,237,.08)" readonly>
-  </div>
-
-  <div class="card">
-    <div class="sec">&#127978; Configuraci&#xF3;n del Negocio</div>
-    <label>Nombre del Negocio</label>
-    <input type="text" id="f-nom" placeholder="Ej: Cari&#xF1;itos Box">
-    <label>Tel&#xe9;fono WhatsApp (c&#xF3;digo pa&#xED;s + n&#xFA;mero)</label>
-    <input type="text" id="f-wa" placeholder="Ej: 56912345678">
-    <label>Monto Adicional requerido por juego ($)</label>
-    <input type="number" id="cfg-adicional" placeholder="Ej: 2500 (piso si vac&#xED;o)" oninput="calcTicket()">
-    <p class="l-hint">&#128176; Dinero extra exigido al cliente para jugar. Meta = Ticket + este monto. Utilidad = monto &#xD7; 80%.</p>
-    <label>Prefijo de C&#xF3;digos</label>
-    <input type="text" id="f-pre" placeholder="Ej: CARI"
-      style="text-transform:uppercase;letter-spacing:.1em"
-      autocapitalize="characters" spellcheck="false">
-    <p class="l-hint">&#128273; Clientes usan prefijo + n&#xFA;meros (ej: <strong>CARI025</strong>). Cada c&#xF3;digo se bloquea individualmente.</p>
-    <div class="divider"></div>
-    <div class="sec" style="font-size:.93rem">&#128444;&#65039; Marca Visual</div>
-    <label>URL o nombre de archivo de logo</label>
-    <input type="text" id="f-logo" placeholder="https://... &#xF3; logo.png" oninput="prevLogo(this.value)">
-    <p class="l-hint">&#128161; URL externa o nombre de archivo local en la misma carpeta.</p>
-    <div class="lp-wrap" id="lp-wrap"><img id="lp-img" src="" alt="Logo"></div>
-    <input type="file" id="f-logofile" accept="image/*" style="display:none" onchange="loadLogoFile(event)">
-    <button class="btn btn-gh"
-      style="width:auto;margin-bottom:.75rem;font-size:.82rem;padding:.5rem .9rem"
-      onclick="document.getElementById('f-logofile').click()">
-      &#128193; Cargar imagen desde dispositivo
-    </button>
-    <label>Emoji de Marca (respaldo si no hay logo)</label>
-    <input type="text" id="f-emo" placeholder="Ej: &#127838; &#128599; &#128142;" maxlength="4">
-    <div class="divider"></div>
-    <div class="sec" style="font-size:.93rem">&#127918; Din&#xe1;mica del Juego</div>
-    <label>Tipo de juego activo</label>
-    <select id="f-juego" onchange="toggleMonedasCfg()">
-      <option value="3_cofres">&#129521; 3 Cofres &#8212; elige uno</option>
-      <option value="globos" selected>&#127880; Globos &#8212; pincha uno</option>
-      <option value="raspe">&#128133; Raspa y Gana</option>
-      
-    </select>
-    <label>Premios Mayores (3 a 5, separados por coma)</label>
-    <p class="l-hint" style="margin-top:0">De <strong>menor a mayor costo</strong>: 1&#xBA; y 2&#xBA; = 60%, 3&#xBA; y 4&#xBA; = 30%, 5&#xBA; = 10%.</p>
-    <textarea id="f-prem"
-      placeholder="Ej: &#127838; Pan gratis, &#9749; Caf&#xe9;, &#128666; Env&#xED;o, &#128176; 10% dcto, &#127881; VIP"
-      oninput="renderLeyenda()"></textarea>
-    <div class="prob-leg" id="prob-leg"></div>
-    <label>Premio de Consolaci&#xF3;n (20% &#8212; siempre seguro)</label>
-    <input type="text" id="f-con"
-      placeholder="Ej: &#127903;&#65039; Cup&#xF3;n 10% en tu pr&#xF3;xima compra">
-
-    <div id="monedas-cfg" style="display:none">
-      <div class="divider"></div>
-      <div class="sec" style="font-size:.93rem">&#129689; Configuraci&#xF3;n Monedas de Oro</div>
-      <label>Valor de 1 Moneda de Oro ($)</label>
-      <input type="number" id="f-valormoneda" placeholder="Ej: 2000, 3500, 5000" oninput="calcTicket()">
-      <p class="l-hint">&#128176; Monto extra que el cliente gasta para ganar 1 moneda. Utilidad = este valor &#xD7; 80%.</p>
-      <p class="l-hint" id="mon-sugerencia" style="color:var(--gd)"></p>
-      <div class="row2">
-        <div>
-          <label>Meta 1 &#8212; N&#xB0; monedas (premio bajo)</label>
-          <input type="number" id="f-meta1mon" placeholder="5" value="5">
-        </div>
-        <div>
-          <label>Meta 2 &#8212; N&#xB0; monedas (premio alto)</label>
-          <input type="number" id="f-meta2mon" placeholder="10" value="10">
-        </div>
-      </div>
-      <label>Premios Meta 1 (3 a 5, separados por coma)</label>
-      <textarea id="f-premmeta1" placeholder="Ej: &#127838; Snack gratis, &#9749; Caf&#xe9;, &#127873; Sorpresa"></textarea>
-      <label>Premios Meta 2 (3 a 5, separados por coma)</label>
-      <textarea id="f-premmeta2" placeholder="Ej: &#128176; 10% dcto, &#127829; Combo gratis, &#127942; Premio VIP"></textarea>
-      <p class="l-hint">&#127895; Usa el mismo Premio de Consolaci&#xF3;n de arriba para cuando no caiga premio mayor en el canje.</p>
-    </div>
-
-    <button class="btn btn-gd" onclick="guardarCfg()">&#128190; Guardar Configuraci&#xF3;n</button>
-  </div>
-
-  <button class="btn btn-dr" style="width:100%" onclick="goLogin()">&#128274; Cerrar Sesi&#xF3;n de Admin</button>
-</div>
-
-</div><!-- /app -->
-<button class="rst-btn" onclick="devReset()">&#9881; Reset</button>
-<div class="toast" id="toast"></div>
+</footer>
 
 <script>
-// ================================================================
-//  SUPABASE
-// ================================================================
-const SUPABASE_URL = "https://wfosczhszouukypsvasx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-var ADMIN_CLAVE = ''; // clave de admin del negocio (se verifica en el servidor; solo vive en memoria)
-
-// ================================================================
-//  MULTI-NEGOCIO: leer slug desde ?neg=slug
-// ================================================================
-function getSlug() {
-  try {
-    var params = new URLSearchParams(window.location.search);
-    var s = (params.get('neg') || '').trim().toLowerCase();
-    return s.replace(/[^a-z0-9\-_]/g, '');
-  } catch(e) { return ''; }
-}
-var NEG_SLUG = getSlug();
-var SLUG_SUFFIX = NEG_SLUG ? ('_' + NEG_SLUG) : '';
-
-// ================================================================
-//  LOCALSTORAGE -- LLAVES POR NEGOCIO (multi-tenant)
-// ================================================================
-var K_CFG = 'av_cfg' + SLUG_SUFFIX;
-var K_USD = 'av_usd' + SLUG_SUFFIX;
-var K_HST = 'av_hst' + SLUG_SUFFIX;
-var K_BLK = 'av_black_list' + SLUG_SUFFIX;
-
-function sanitizeForJSON(val) {
-  // Elimina surrogates solitarios (emojis corruptos) que rompen JSON.parse al recuperar
-  function fixStr(s) {
-    return s.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g, '');
-  }
-  if (typeof val === 'string') return fixStr(val);
-  if (Array.isArray(val)) return val.map(sanitizeForJSON);
-  if (val && typeof val === 'object') {
-    var out = {};
-    for (var k in val) out[k] = sanitizeForJSON(val[k]);
-    return out;
-  }
-  return val;
-}
-function lsR(k, fb) {
-  try { var v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : fb; }
-  catch(e) { console.error("lsR JSON.parse fall\xF3 para", k, e); return fb; }
-}
-function lsW(k, val) {
-  try { localStorage.setItem(k, JSON.stringify(sanitizeForJSON(val))); } catch(e) { console.error("lsW fall\xF3 para", k, e); }
-}
-
-function getCfg()   { return lsR(K_CFG, null); }
-function getUsd()   { return lsR(K_USD, []); }
-function getHst()   { return lsR(K_HST, []); }
-function addUsd(c)  { var a = getUsd(); a.push(c); lsW(K_USD, a); }
-function addHst(e) {
-  try {
-    var a = lsR(K_HST, []);
-    if (e && typeof e === 'object') {
-      if (!e.ts) e.ts = Date.now();
-      if (!e.Fecha) e.Fecha = new Date().toISOString().split('T')[0];
+// Animación suave de entrada al hacer scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
     }
-    a.push(e);
-    lsW(K_HST, a);
-    console.log("addHst guardado. Total registros av_hst:", a.length, "ultimo:", e);
-  } catch(err) {
-    console.error("Error guardando historial local:", err);
-  }
+  });
+}, { threshold: 0.1 });
 
-  // Guardar también en Supabase (historial centralizado por negocio)
-  // Si el internet es lento o falla, el juego ya quedó en localStorage — no bloquea nada
+document.querySelectorAll('.eco-card, .step-card, .price-card, .testi, .pain-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity .5s ease, transform .5s ease';
+  observer.observe(el);
+});
+</script>
+
+<!-- ── CONTADOR DE VISITAS (Supabase) ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const _sb = supabase.createClient(
+    'https://wfosczhszouukypsvasx.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indmb3Njemhzem91dWt5cHN2YXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTIxMDksImV4cCI6MjA5NjM2ODEwOX0.irw7oCErUA91KtCCRN1gDsHHl-0dl0niwEi6URWhFuY'
+  );
+
   try {
-    var negocioId = NEG_SLUG || 'carinito';
-    supabaseClient.from('historial').insert({
-      negocio_id: negocioId,
-      codigo:  e.cod    || e.Codigo  || '',
-      premio:  e.txt    || e.Premio  || '',
-      tipo:    e.Tipo   || (e.gano ? 'Premio Mayor' : 'Consolación'),
-      gano:    e.gano   || false,
-      fecha:   e.Fecha  || e.fecha   || '',
-      hora:    e.Hora   || e.hora    || '',
-      ts:      e.ts     || Date.now()
-    }).then(function(res){
-      if (res.error) {
-        console.error("Error guardando en Supabase historial:", res.error.message);
-      } else {
-        console.log("Juego guardado en Supabase historial para negocio:", negocioId);
-      }
-    });
-  } catch(err) {
-    console.error("Error crítico Supabase historial:", err);
-  }
-}
-
-var CFG0 = {
-  nombre: 'Cargando...', logo: '', logoData: '', emoji: '🏪',
-  juego: 'globos', premios: [], consolacion: '', wa: '56926221935',
-  meta: 15000, ticket: 0, adicional: 2500, prefijo: '',
-  valorMoneda: 0, meta1Monedas: 5, meta2Monedas: 10, premiosMeta1: [], premiosMeta2: []
-};
-
-var inq = { premios: [], consolacion: '', wa: '' };
-var cod = null;
-var used = false;
-
-var DEMO = {
-  PAN123:{nombre:'La Panader\xEDa',   emoji:'\uD83E\uDD56', wa:'56912345678'},
-  TIE123:{nombre:'Tienda de Ropa',    emoji:'\uD83D\uDC57', wa:'56912345679'},
-  JOY123:{nombre:'Joyer\xEDa Oro&Co',emoji:'\uD83D\uDC8E', wa:'56912345680'}
-};
-
-let whatsappReal = "56926221935";
-let premiosReales = ["Premio A", "Premio B", "Premio C"];
-
-// ================================================================
-//  INICIALIZACION -- TABLA 'configuraciones', columnas reales
-// ================================================================
-async function inicializarPlataformaAumven() {
-  try {
-    // Siempre busca por columna 'id' (PK de texto):
-    // - Con ?neg=carinito → busca id='carinito'
-    // - Sin parámetro    → busca id='carinito' (piloto por defecto)
-    var idBuscar = NEG_SLUG || 'carinito';
-    var { data, error } = await supabaseClient
-      .from('configuraciones')
-      .select('*')
-      .eq('id', idBuscar)
-      .maybeSingle();
-
-    console.log("Supabase id buscado:", idBuscar, "data:", data, "error:", error);
-
-    if (error) {
-      console.error("Error de Supabase:", error.message);
-      if (NEG_SLUG) {
-        // Slug indicado pero no encontrado: avisar claramente
-        alerta('\u26A0\uFE0F Negocio "' + NEG_SLUG + '" no encontrado. Verifica el link.');
-      }
-      arrancarConDatosLocales();
-      actualizarTituloTienda();
-      return;
-    }
-
-    if (data) {
-      CFG0.nombre = sanitizeForJSON(data.nombre || CFG0.nombre);
-      CFG0.juego  = data.juego  || 'globos';
-      CFG0.consolacion = sanitizeForJSON(data.consolacion || CFG0.consolacion);
-      CFG0.prefijo = (data.prefijo || CFG0.prefijo || 'CARI').trim().toUpperCase();
-
-      if (Array.isArray(data.premios)) {
-        premiosReales = sanitizeForJSON(data.premios.map(function(p){ return String(p).trim(); }).filter(Boolean));
-      } else if (typeof data.premios === 'string') {
-        premiosReales = sanitizeForJSON(data.premios.split(',').map(function(p){ return p.trim(); }).filter(Boolean));
-      } else {
-        premiosReales = ["Premio A", "Premio B", "Premio C"];
-      }
-      CFG0.premios = premiosReales;
-
-      whatsappReal = data.wa || data.telefono_whatsapp || data.whatsapp || whatsappReal;
-      CFG0.wa = whatsappReal;
-
-      window.whatsappReal = whatsappReal;
-      window.telefonoWhatsApp = whatsappReal;
-      window.premiosReales = premiosReales;
-
-      inq.premios = premiosReales;
-      inq.consolacion = CFG0.consolacion;
-      inq.wa = whatsappReal;
-
-      // Monedas de Oro — nuevos campos (no afectan a los otros juegos)
-      CFG0.valorMoneda = Number(data.valor_moneda) || 0;
-      CFG0.meta1Monedas = Number(data.meta1_monedas) || 5;
-      CFG0.meta2Monedas = Number(data.meta2_monedas) || 10;
-      CFG0.premiosMeta1 = normalizarLista(data.premios_meta1);
-      CFG0.premiosMeta2 = normalizarLista(data.premios_meta2);
-    }
-
-    arrancarConDatosLocales();
-    actualizarTituloTienda();
-    toggleTelInput();
-    console.log("CFG0 final tras inicializaci\xF3n:", CFG0);
-  } catch (e) {
-    console.error("Error cr\xEDtico en inicializaci\xF3n:", e.message);
-    arrancarConDatosLocales();
-    actualizarTituloTienda();
-    toggleTelInput();
-  }
-}
-
-// Convierte jsonb/array/string de Supabase a array limpio de strings
-function normalizarLista(val) {
-  if (Array.isArray(val)) return val.map(function(p){ return String(p).trim(); }).filter(Boolean);
-  if (typeof val === 'string' && val.trim()) {
-    try {
-      var parsed = JSON.parse(val);
-      if (Array.isArray(parsed)) return parsed.map(function(p){ return String(p).trim(); }).filter(Boolean);
-    } catch(e) {}
-    return val.split(',').map(function(p){ return p.trim(); }).filter(Boolean);
-  }
-  return [];
-}
-
-// ================================================================
-//  TÍTULO DINÁMICO DE LA TIENDA (sin texto fijo "Cariñitos Box")
-//  Pinta "SUCURSAL " + nombre real en mayúsculas, o el branding
-//  por defecto "SUCURSAL AUMVEN PRO" si no hay negocio configurado.
-// ================================================================
-function actualizarTituloTienda() {
-  var el = document.getElementById('store-title-display');
-  if (!el) return;
-  var nombre = (CFG0 && CFG0.nombre && CFG0.nombre !== 'Cargando...') ? CFG0.nombre.trim() : '';
-  el.textContent = nombre ? ('SUCURSAL ' + nombre.toUpperCase()) : 'SUCURSAL AUMVEN PRO';
-}
-
-// Muestra/oculta el campo de WhatsApp en el login según el juego activo
-// (solo Monedas de Oro lo necesita, para acumular monedas entre visitas)
-function toggleTelInput() {
-  var tel = document.getElementById('tel-in');
-  if (!tel) return;
-  tel.style.display = (CFG0.juego === 'monedas') ? 'block' : 'none';
-}
-
-function arrancarConDatosLocales() {
-  // Si hay configuracion guardada localmente (panel admin), prevalece
-  var local = getCfg();
-  if (local) {
-    if (local.nombre) CFG0.nombre = local.nombre;
-    if (local.juego) CFG0.juego = local.juego;
-    if (local.consolacion) CFG0.consolacion = local.consolacion;
-    if (local.premios && local.premios.length) {
-      CFG0.premios = local.premios;
-      premiosReales = local.premios;
-    }
-    if (local.wa) {
-      CFG0.wa = local.wa;
-      whatsappReal = local.wa;
-      window.whatsappReal = local.wa;
-    }
-    if (local.logo) CFG0.logo = local.logo;
-    if (local.logoData) CFG0.logoData = local.logoData;
-    if (local.emoji) CFG0.emoji = local.emoji;
-    if (local.prefijo) CFG0.prefijo = local.prefijo;
-    if (local.adicional) CFG0.adicional = local.adicional;
-    if (local.ticket) CFG0.ticket = local.ticket;
-    if (local.valorMoneda) CFG0.valorMoneda = local.valorMoneda;
-    if (local.meta1Monedas) CFG0.meta1Monedas = local.meta1Monedas;
-    if (local.meta2Monedas) CFG0.meta2Monedas = local.meta2Monedas;
-    if (local.premiosMeta1 && local.premiosMeta1.length) CFG0.premiosMeta1 = local.premiosMeta1;
-    if (local.premiosMeta2 && local.premiosMeta2.length) CFG0.premiosMeta2 = local.premiosMeta2;
-
-    inq.premios = CFG0.premios;
-    inq.consolacion = CFG0.consolacion;
-    inq.wa = CFG0.wa;
-  }
-}
-
-window.addEventListener('load', inicializarPlataformaAumven);
-
-// ================================================================
-//  RECLAMO POR WHATSAPP -- 100% DINAMICO
-// ================================================================
-function reclamarPremioPorWhatsApp(premioGanado) {
-  let telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
-  // Limpiar: dejar solo dígitos (quita espacios, +, guiones, etc.)
-  telefonoDestino = String(telefonoDestino).replace(/[^0-9]/g, '');
-  if (!telefonoDestino) telefonoDestino = "56926221935";
-
-  const premioTexto = (premioGanado && premioGanado !== 'undefined') ? premioGanado : "mi premio del juego";
-
-  // Código jugado: primero intenta la casilla .cod-in en vivo, si está vacía usa el guardado
-  var inputCod = document.querySelector('.cod-in');
-  var codigoJugado = (inputCod && inputCod.value.trim())
-    ? inputCod.value.trim().toUpperCase()
-    : (localStorage.getItem('aumven_cod_actual' + SLUG_SUFFIX) || '').toUpperCase();
-
-  const mensajeTexto = encodeURIComponent("¡Hola! Gané el premio: " + premioTexto + " con mi código " + codigoJugado + " 🎉");
-  const linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoDestino + "&text=" + mensajeTexto;
-
-  console.log("Abriendo WhatsApp:", linkWhatsApp);
-  window.open(linkWhatsApp, '_blank');
-}
-
-// ================================================================
-//  NAVEGACION
-// ================================================================
-function goScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-function goLogin() {
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  var ls = document.getElementById('sc-login');
-  if (ls) ls.classList.add('active');
-  var inp = document.getElementById('cod-in');
-  if (inp) inp.value = '';
-  toggleTelInput();
-  window.scrollTo(0, 0);
-}
-
-// ================================================================
-//  ALERTAS
-// ================================================================
-function alerta(msg, tipo) {
-  var el = document.getElementById('alerta');
-  el.textContent = msg;
-  el.className = 'alert show ' + (tipo === 'ok' ? 'a-ok' : 'a-err');
-  clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.classList.remove('show'); }, 3800);
-}
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(function(){ t.classList.remove('show'); }, 2600);
-}
-
-// ================================================================
-//  ENTRAR — validación centralizada en Supabase (anti-fraude real)
-// ================================================================
-async function intentarAdmin(raw) {
-  try {
-    var neg = NEG_SLUG || 'carinito';
-    var r = await supabaseClient.rpc('verificar_admin', { p_neg: neg, p_clave: raw });
-    if (!r.error && r.data === true) {
-      ADMIN_CLAVE = raw;
-      document.getElementById('cod-in').value = '';
-      abrirAdmin();
-      return true;
+    if (!sessionStorage.getItem('v_landing')) {
+      sessionStorage.setItem('v_landing', '1');
+      _sb.rpc('sumar_visita', { p: 'landing-principal' });
     }
   } catch (e) {}
-  return false;
-}
 
-async function entrar() {
-  var raw = document.getElementById('cod-in').value.trim().toUpperCase();
-  if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
-
-  // (la entrada de admin ya no es una clave fija: se verifica en el servidor más abajo)
-
-  var cfg = getCfg() || CFG0;
-  var esMonedas = (cfg.juego || CFG0.juego) === 'monedas';
-
-  // Monedas de Oro necesita el WhatsApp del cliente para acumular entre visitas
-  var telRaw = '';
-  if (esMonedas) {
-    telRaw = document.getElementById('tel-in').value.replace(/[^0-9]/g, '');
-    if (telRaw.length < 8) {
-      alerta('\u26A0\uFE0F Ingresa tu WhatsApp (solo n\xFAmeros)');
-      return;
-    }
-  }
-
-  // La validez del código la decide el servidor (canjear_codigo): aquí solo se descarta lo vacío.
-
-  // 1. Verificar en localStorage primero (rápido, sin internet)
-  var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
-  if (listaNegra.indexOf(raw) !== -1) {
-    alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
-    return;
-  }
-
-  // 2. Verificar en Supabase (anti-fraude real, entre dispositivos)
-  var btnEntrar = document.querySelector('.btn-pk');
-  if (btnEntrar) { btnEntrar.textContent = '⏳ Verificando...'; btnEntrar.disabled = true; }
-
-  try {
-    var negocioId = NEG_SLUG || 'carinito';
-    var { data: estadoCodigo, error: errCanje } = await supabaseClient.rpc('canjear_codigo', { p_neg: negocioId, p_codigo: raw });
-    if (errCanje) {
-      alerta('\u26A0\uFE0F No pudimos verificar el c\xF3digo. Revisa tu conexi\xF3n e int\xE9ntalo de nuevo.');
-      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-      return;
-    }
-    if (estadoCodigo === 'usado') {
-      listaNegra.push(raw);
-      localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
-      alerta('\uD83D\uDD12 C\xF3digo ya usado. Cada c\xF3digo es de un solo uso.');
-      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-      return;
-    }
-    if (estadoCodigo !== 'ok') {
-      // No es un código de juego: ¿es la clave de admin del negocio?
-      if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-      if (!(await intentarAdmin(raw))) { alerta('\u274C C\xF3digo inv\xE1lido. Revisa el c\xF3digo que recibiste.'); }
-      return;
-    }
-
-        // 4. Quemar también en localStorage como respaldo
-    listaNegra.push(raw);
-    localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
-    localStorage.setItem('aumven_cod_actual' + SLUG_SUFFIX, raw);
-
-    cod = raw;
-    addUsd(raw);
-
-    if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-
-    if (esMonedas) {
-      document.getElementById('tel-in').value = '';
-      procesarMoneda(telRaw, raw);
-    } else {
-      launchGame();
-    }
-
-  } catch(e) {
-    console.warn('No se pudo verificar el c\xF3digo:', e);
-    alerta('\u26A0\uFE0F No pudimos verificar el c\xF3digo. Revisa tu conexi\xF3n e int\xE9ntalo de nuevo.');
-    if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-  }
-}
-
-document.getElementById('cod-in').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') entrar();
-});
-
-// ================================================================
-//  LANZAR JUEGO
-// ================================================================
-function launchGame() {
-  var t = inq && inq.premios && inq.premios.length ? Object.assign({}, CFG0, inq) : CFG0;
-
-  if (!t.nombre) t.nombre = 'Mi Negocio';
-  if (!t.emoji) t.emoji = '✨';
-  if (!t.juego) t.juego = 'globos';
-
-  var lh = t.logoData || t.logo
-    ? '<img class="b-logo" src="' + (t.logoData || t.logo) + '" alt="' + t.nombre
-      + '" onerror="this.style.display=\'none\';document.getElementById(\'fb\').style.display=\'block\'">'
-      + '<span id="fb" class="b-emoji" style="display:none">' + t.emoji + '</span>'
-    : '<span class="b-emoji">' + t.emoji + '</span>';
-  document.getElementById('game-hdr').innerHTML = lh + '<div class="b-name">' + t.nombre + '</div>';
-
-  var ins = {
-    '3_cofres': '\uD83E\uDE99 Elige un cofre del tesoro',
-    globos:     '\uD83C\uDF88 Pincha un globo para descubrir tu premio',
-    raspe:      '\uD83D\uDC85 Raspa la tarjeta para revelar tu premio'
-  };
-  document.getElementById('game-ins').textContent = ins[t.juego] || '\xA1Juega para ganar!';
-
-  var zone = document.getElementById('game-zone');
-  zone.innerHTML = '';
-  used = false;
-
-  if      (t.juego === '3_cofres') renderCofres(zone);
-  else if (t.juego === 'globos')   renderGlobos(zone);
-  else                             renderRaspe(zone);
-
-  goScreen('sc-game');
-}
-
-// ================================================================
-//  MOTOR DE PREMIOS
-//  premiosOverride / consolacionOverride: usados por Monedas de Oro
-//  para sortear con la lista de Meta 1 o Meta 2 en vez de la lista
-//  global. Si no se pasan, se comporta EXACTAMENTE igual que antes.
-// ================================================================
-function sortearPremio(premiosOverride, consolacionOverride) {
-  var p = (premiosOverride && premiosOverride.length) ? premiosOverride
-        : ((inq && inq.premios && inq.premios.length) ? inq.premios : CFG0.premios);
-  var c = consolacionOverride
-        || ((inq && inq.consolacion) ? inq.consolacion : CFG0.consolacion);
-  var n = p.length;
-  var r = Math.random();
-
-  if (r >= 0.80) return { gano:false, txt:c };
-
-  var inner = Math.random();
-  if (n <= 2) return { gano:true, txt:p[Math.floor(Math.random()*n)] };
-  if (n === 3) {
-    return inner < 0.90
-      ? { gano:true, txt:p[Math.floor(Math.random()*2)] }
-      : { gano:true, txt:p[2] };
-  }
-  if (n === 4) {
-    return inner < 0.60
-      ? { gano:true, txt:p[Math.floor(Math.random()*2)] }
-      : { gano:true, txt:p[2+Math.floor(Math.random()*2)] };
-  }
-  if (inner < 0.60) return { gano:true, txt:p[Math.floor(Math.random()*2)] };
-  if (inner < 0.90) return { gano:true, txt:p[2+Math.floor(Math.random()*2)] };
-  return { gano:true, txt:p[4] };
-}
-
-// ================================================================
-//  MOSTRAR RESULTADO
-// ================================================================
-function mostrarRes(premio) {
-  console.log("mostrarRes llamado. used=", used, "premio=", premio);
-  if (used) { console.log("Bloqueado: ya se registró este juego."); return; }
-  used = true;
-
-  const codActual = (localStorage.getItem('aumven_cod_actual' + SLUG_SUFFIX) || '').toUpperCase();
-
-  // Quemar el código aquí (juego completado), no al ingresar — evita que un
-  // fallo de carga del juego deje al cliente sin su única jugada.
-  if (codActual) {
-    var listaNegra = JSON.parse(localStorage.getItem(K_BLK) || '[]');
-    if (listaNegra.indexOf(codActual) === -1) {
-      listaNegra.push(codActual);
-      localStorage.setItem(K_BLK, JSON.stringify(listaNegra));
-    }
-  }
-
-  var ahora = new Date();
-  var fechaChile = ahora.toLocaleDateString('es-CL');
-  var horaChile = ahora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-
-  var entrada = {
-    txt:    premio.txt,
-    gano:   premio.gano,
-    cod:    codActual,
-    ts:     Date.now(),
-    fecha:  fechaChile + ' ' + horaChile,
-    Premio: premio.txt,
-    Tipo:   premio.gano ? 'Ganador' : 'No Ganador',
-    Codigo: codActual,
-    Fecha:  fechaChile,
-    Hora:   horaChile
-  };
-
-  addHst(entrada);
-  if (typeof renderKPIs === 'function') renderKPIs();
-  if (typeof calcDinamica === 'function') calcDinamica();
-
-  var card = document.getElementById('result-card');
-  var ico  = '<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
-
-  // Construir link de WhatsApp directo como <a href> (evita bloqueo de pop-ups)
-  var telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
-  telefonoDestino = String(telefonoDestino).replace(/[^0-9]/g, '');
-  if (!telefonoDestino) telefonoDestino = "56926221935";
-  var mensajeTexto = encodeURIComponent("¡Hola! Gané el premio: " + premio.txt + " con mi código " + codActual + " 🎉");
-  var linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoDestino + "&text=" + mensajeTexto;
-
-  if (premio.gano) {
-    if (typeof sndWin === 'function') sndWin();
-    setTimeout(function(){
-      try {
-        confetti({particleCount:160,spread:90,origin:{y:.4}, colors:['#7c3aed','#a855f7','#ec4899','#f59e0b','#10b981']});
-        confetti({particleCount:70,angle:60, spread:55,origin:{x:0}});
-        confetti({particleCount:70,angle:120,spread:55,origin:{x:1}});
-      } catch(e) {}
-    }, 200);
-    card.innerHTML = '<span class="r-trophy">🏆</span>'
-      + '<div class="r-title">¡Felicitaciones!</div>'
-      + '<div class="r-prize">' + premio.txt + '</div>'
-      + '<p class="r-sub">Muestra este mensaje al vendedor 🎉</p>'
-      + '<a class="btn btn-wa" id="btn-wa-canjear" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Canjear por WhatsApp</a>';
-  } else {
-    if (typeof sndPop === 'function') sndPop();
-    card.innerHTML = '<span class="r-trophy">🎁</span>'
-      + '<span class="con-badge">Premio de consolación</span>'
-      + '<div class="r-title" style="color:var(--ac2)">¡Casi!</div>'
-      + '<div class="r-prize">' + premio.txt + '</div>'
-      + '<p class="r-sub">Válido en tu próxima compra.</p>'
-      + '<a class="btn btn-wa" id="btn-wa-canjear" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Mostrar al vendedor</a>';
-  }
-  setTimeout(function(){ goScreen('sc-result'); }, premio.gano ? 600 : 300);
-}
-
-// ================================================================
-//  AUDIO
-// ================================================================
-var _ac = null;
-function ac() { if(!_ac) _ac = new(window.AudioContext||window.webkitAudioContext)(); return _ac; }
-function sndPop() {
-  try { var c=ac(),o=c.createOscillator(),g=c.createGain();
-    o.connect(g);g.connect(c.destination);o.type='sine';
-    o.frequency.setValueAtTime(640,c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(180,c.currentTime+.16);
-    g.gain.setValueAtTime(.42,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);
-    o.start();o.stop(c.currentTime+.2); } catch(e){}
-}
-function sndOpen() {
-  try { var c=ac(); [0,.08,.16].forEach(function(t,i){
-    var o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
-    o.type='triangle'; o.frequency.setValueAtTime([400,620,920][i],c.currentTime+t);
-    g.gain.setValueAtTime(.28,c.currentTime+t);
-    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.2);
-    o.start(c.currentTime+t);o.stop(c.currentTime+t+.2); }); } catch(e){}
-}
-function sndWin() {
-  try { var c=ac(); [523,659,784,1047].forEach(function(f,i){
-    var o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
-    o.type='sine'; o.frequency.setValueAtTime(f,c.currentTime+i*.14);
-    g.gain.setValueAtTime(.36,c.currentTime+i*.14);
-    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.14+.26);
-    o.start(c.currentTime+i*.14);o.stop(c.currentTime+i*.14+.26); }); } catch(e){}
-}
-
-// ================================================================
-//  JUEGO: 3 COFRES
-// ================================================================
-function renderCofres(zone) {
-  var premio = sortearPremio();
-  var sz = Math.min(96, Math.floor((window.innerWidth - 110) / 3));
-
-  function svgCofre(uid) {
-    return '<svg width="' + sz + '" height="' + Math.round(sz*150/180) + '" viewBox="0 0 180 150">'
-    + '<defs>'
-    + '<radialGradient id="gL' + uid + '" cx="50%" cy="30%">'
-    + '<stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#d97706"/></radialGradient>'
-    + '<radialGradient id="gT' + uid + '" cx="50%" cy="20%">'
-    + '<stop offset="0%" stop-color="#92400e"/><stop offset="100%" stop-color="#451a03"/></radialGradient>'
-    + '<radialGradient id="gB' + uid + '" cx="50%" cy="70%">'
-    + '<stop offset="0%" stop-color="#78350f"/><stop offset="100%" stop-color="#2c1503"/></radialGradient>'
-    + '</defs>'
-    + '<g id="lid' + uid + '">'
-    + '<rect x="15" y="18" width="150" height="55" rx="12" fill="url(#gT' + uid + ')"/>'
-    + '<rect x="15" y="18" width="150" height="10" rx="6" fill="#d97706" opacity=".38"/>'
-    + '<rect x="20" y="55" width="140" height="8" rx="4" fill="#92400e" opacity=".48"/>'
-    + '<rect x="35" y="25" width="6" height="40" rx="3" fill="#d97706" opacity=".38"/>'
-    + '<rect x="139" y="25" width="6" height="40" rx="3" fill="#d97706" opacity=".38"/>'
-    + '</g>'
-    + '<rect x="15" y="72" width="150" height="65" rx="10" fill="url(#gB' + uid + ')"/>'
-    + '<rect x="15" y="95" width="150" height="8" rx="4" fill="#d97706" opacity=".48"/>'
-    + '<rect x="15" y="118" width="150" height="8" rx="4" fill="#d97706" opacity=".48"/>'
-    + '<rect x="82" y="72" width="16" height="30" rx="4" fill="#d97706" opacity=".38"/>'
-    + '<circle cx="90" cy="63" r="14" fill="url(#gL' + uid + ')" stroke="#d97706" stroke-width="2"/>'
-    + '<circle cx="90" cy="60" r="6" fill="none" stroke="#92400e" stroke-width="2.5"/>'
-    + '<rect x="86" y="61" width="8" height="9" rx="2" fill="#92400e"/>'
-    + '<rect x="20" y="68" width="16" height="8" rx="4" fill="#d97706"/>'
-    + '<rect x="144" y="68" width="16" height="8" rx="4" fill="#d97706"/>'
-    + '<ellipse cx="50" cy="32" rx="12" ry="5" fill="white" opacity=".06"/>'
-    + '</svg>';
-  }
-
-  var html = '<div class="chest-area"><div class="chests-row">';
-  for (var i = 0; i < 3; i++) {
-    html += '<button class="chest-btn" id="cb' + i + '" onclick="abrirCofre(' + i + ')">'
-          + '<div class="chest-icon" id="ci' + i + '">' + svgCofre('c' + i) + '</div>'
-          + '<div class="chest-lbl">Cofre ' + (i+1) + '</div>'
-          + '</button>';
-  }
-  html += '</div><p class="chest-hint">&#128070; Elige un cofre para abrirlo</p></div>';
-  zone.innerHTML = html;
-  zone.dataset.pr = JSON.stringify(premio);
-}
-
-function abrirCofre(idx) {
-  if (used) return;
-  var zone  = document.getElementById('game-zone');
-  var pr    = JSON.parse(zone.dataset.pr || '{}');
-  var btn   = document.getElementById('cb' + idx);
-  var icon  = document.getElementById('ci' + idx);
-
-  btn.classList.add('opened');
-  var lid = icon.querySelector('[id^="lid"]');
-  if (lid) {
-    lid.style.transition = 'transform .5s cubic-bezier(.25,.46,.45,.94)';
-    lid.style.transformOrigin = '90px 73px';
-    lid.style.transform = 'rotate(-108deg)';
-  }
-
-  for (var i = 0; i < 3; i++) {
-    if (i !== idx) {
-      var ob = document.getElementById('cb' + i);
-      if (ob) ob.classList.add('locked');
-    }
-  }
-
-  sndOpen();
-  var prCopy = pr;
-  setTimeout(function(){ mostrarRes(prCopy); }, 600);
-}
-
-// ================================================================
-//  JUEGO: GLOBOS
-// ================================================================
-var BC=[['#ef4444','#dc2626'],['#f97316','#ea580c'],['#eab308','#ca8a04'],
-  ['#22c55e','#16a34a'],['#06b6d4','#0891b2'],['#8b5cf6','#7c3aed'],
-  ['#ec4899','#db2777'],['#14b8a6','#0d9488'],['#f43f5e','#e11d48'],['#a78bfa','#7c3aed']];
-
-function renderGlobos(zone) {
-  zone.innerHTML = '<div class="bal-area" id="bal-area"></div>';
-  var area = document.getElementById('bal-area');
-  var pr = sortearPremio();
-  for (var i = 0; i < 10; i++) {
-    (function(idx){
-      var c1=BC[idx][0], c2=BC[idx][1];
-      var sz=44+Math.random()*22, lft=4+idx*9.2+Math.random()*3;
-      var dly=Math.random()*4, dur=4.5+Math.random()*4;
-      var b = document.createElement('div');
-      b.className = 'balloon';
-      b.style.cssText = 'left:'+lft+'%;animation-duration:'+dur+'s;animation-delay:-'+dly+'s;width:'+sz+'px;';
-      b.innerHTML = '<svg width="'+sz+'" height="'+(sz*1.3)+'" viewBox="0 0 50 65">'
-        + '<ellipse cx="25" cy="22" rx="20" ry="22" fill="'+c1+'"/>'
-        + '<ellipse cx="17" cy="13" rx="6" ry="7" fill="'+c2+'" opacity=".28"/>'
-        + '<polygon points="22,44 25,51 28,44" fill="'+c1+'"/>'
-        + '<path stroke="rgba(255,255,255,.32)" stroke-width="1.5" fill="none" d="M25 51 Q20 58 25 64"/>'
-        + '</svg>';
-      b.addEventListener('click', function(e){
-        if (b.classList.contains('popped') || used) return;
-        b.classList.add('popped');
-        for(var j=0;j<8;j++){
-          var p=document.createElement('div'); p.className='pop-pt';
-          p.style.cssText='left:'+e.clientX+'px;top:'+e.clientY+'px;background:'+c1
-            +';--tx:'+((Math.random()-.5)*80)+'px;--ty:'+((Math.random()-.5)*80)+'px;';
-          document.body.appendChild(p);
-          (function(el){ setTimeout(function(){ el.remove(); },600); })(p);
-        }
-        sndPop(); mostrarRes(pr);
+  if (new URLSearchParams(location.search).get('stats') === '1') {
+    document.body.classList.add('stats-on');
+    _sb.from('visitas_landing').select('pagina,visitas').then(({ data }) => {
+      (data || []).forEach(r => {
+        document.querySelectorAll('[data-pagina="' + r.pagina + '"]').forEach(el => {
+          el.textContent = '👁 ' + r.visitas + ' visitas';
+        });
       });
-      area.appendChild(b);
-    })(i);
-  }
-}
-
-// ================================================================
-//  JUEGO: RASPE Y GANA
-// ================================================================
-function renderRaspe(zone) {
-  var pr = sortearPremio();
-  var W=Math.min(300,window.innerWidth-64), H=160;
-  zone.innerHTML = '<div class="scratch-area">'
-    + '<div class="scratch-wrap" style="width:'+W+'px;height:'+H+'px;">'
-    + '<div class="scratch-rev" id="s-rev" style="width:'+W+'px;height:'+H+'px;background:linear-gradient(135deg,#1a1530,#231d40);">'
-    + '<span style="font-size:2.4rem">'+(pr.gano?'\uD83C\uDFC6':'\uD83C\uDF9F\uFE0F')+'</span>'
-    + '<div style="font-size:.93rem;font-weight:800;color:'+(pr.gano?'#f59e0b':'#a855f7')
-    + ';padding:0 1rem;text-align:center">'+pr.txt+'</div></div>'
-    + '<canvas class="scratch-cv" id="s-cv" width="'+W+'" height="'+H+'"></canvas></div>'
-    + '<div class="sc-prog"><div class="sc-bar" id="sc-bar"></div></div>'
-    + '<p class="sc-hint">&#9757;&#65039; Arrastra para raspar</p></div>';
-
-  var cv=document.getElementById('s-cv'), ctx=cv.getContext('2d');
-  var gr=ctx.createLinearGradient(0,0,W,H);
-  gr.addColorStop(0,'#4b5563');gr.addColorStop(.45,'#6b7280');gr.addColorStop(1,'#4b5563');
-  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
-  for(var i=0;i<28;i++){ctx.fillStyle='rgba(255,255,255,.055)';
-    ctx.fillRect(Math.random()*W,Math.random()*H,2+Math.random()*5,1);}
-  ctx.fillStyle='#d1d5db';ctx.font='bold 13px Nunito,sans-serif';ctx.textAlign='center';
-  ctx.fillText('\u2728 RASPA AQU\xCD \u2728',W/2,H/2-6);
-  ctx.fillStyle='#9ca3af';ctx.font='11px Nunito,sans-serif';
-  ctx.fillText('Desliza para revelar tu premio',W/2,H/2+14);
-  ctx.globalCompositeOperation='destination-out';
-
-  var drw=false,rev=false,R=22;
-  function gp(e){var r=cv.getBoundingClientRect();
-    return e.touches?{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}
-                    :{x:e.clientX-r.left,y:e.clientY-r.top};}
-  function rasp(x,y){ctx.beginPath();ctx.arc(x,y,R,0,Math.PI*2);ctx.fill();}
-  function chk(){if(rev)return;
-    var d=ctx.getImageData(0,0,W,H).data,t=0;
-    for(var ii=3;ii<d.length;ii+=4)if(d[ii]<128)t++;
-    var pct=t/(W*H);
-    document.getElementById('sc-bar').style.width=Math.min(100,pct*100)+'%';
-    if(pct>.55){rev=true;cv.style.transition='opacity .5s';cv.style.opacity='0';
-      sndPop();(function(p){setTimeout(function(){mostrarRes(p);},400);})(pr);}}
-  cv.addEventListener('mousedown', function(e){drw=true;var p=gp(e);rasp(p.x,p.y);});
-  cv.addEventListener('mousemove', function(e){if(!drw)return;var p=gp(e);rasp(p.x,p.y);chk();});
-  cv.addEventListener('mouseup',   function(){drw=false;});
-  cv.addEventListener('mouseleave',function(){drw=false;});
-  cv.addEventListener('touchstart',function(e){e.preventDefault();drw=true;var p=gp(e);rasp(p.x,p.y);},{passive:false});
-  cv.addEventListener('touchmove', function(e){e.preventDefault();if(!drw)return;var p=gp(e);rasp(p.x,p.y);chk();},{passive:false});
-  cv.addEventListener('touchend',  function(){drw=false;});
-}
-
-// ================================================================
-//  JUEGO: MONEDAS DE ORO
-// ================================================================
-
-// Se llama desde entrar() justo después de validar y quemar el código.
-// 1) Suma 1 moneda al saldo del cliente (por teléfono) en Supabase.
-// 2) Registra la fila en monedas_historial (para el Panel Admin en vivo).
-// 3) Pinta la pantalla de progreso.
-async function procesarMoneda(telefono, codigo) {
-  var negocioId = NEG_SLUG || 'carinito';
-  var meta1 = CFG0.meta1Monedas || 5;
-  var meta2 = CFG0.meta2Monedas || 10;
-
-  var monedas = 1;
-  var meta1Perdida = false;
-
-  try {
-    var { data: cliente, error: errSel } = await supabaseClient
-      .from('monedas_clientes')
-      .select('*')
-      .eq('negocio_id', negocioId)
-      .eq('telefono', telefono)
-      .maybeSingle();
-
-    if (!errSel && cliente) {
-      monedas = (cliente.monedas || 0) + 1;
-      meta1Perdida = !!cliente.meta1_perdida;
-      await supabaseClient.from('monedas_clientes')
-        .update({ monedas: monedas, updated_at: new Date().toISOString() })
-        .eq('negocio_id', negocioId).eq('telefono', telefono);
-    } else {
-      await supabaseClient.from('monedas_clientes')
-        .insert({ negocio_id: negocioId, telefono: telefono, monedas: 1, meta1_perdida: false });
-    }
-  } catch(e) {
-    console.error('Error actualizando saldo de monedas:', e);
-  }
-
-  var ahora = new Date();
-  var metaAlcanzada = null;
-  if (monedas >= meta2) metaAlcanzada = 'META2';
-  else if (monedas >= meta1 && !meta1Perdida) metaAlcanzada = 'META1';
-
-  try {
-    await supabaseClient.from('monedas_historial').insert({
-      negocio_id: negocioId,
-      telefono: telefono,
-      codigo: codigo,
-      monedas_acumuladas: monedas,
-      meta_alcanzada: metaAlcanzada,
-      fecha: ahora.toLocaleDateString('es-CL'),
-      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
-      ts: Date.now()
-    });
-  } catch(e) {
-    console.error('Error guardando historial de monedas:', e);
-  }
-
-  window._monTelActual = telefono;
-  renderPantallaMonedas(monedas, meta1Perdida);
-  if (typeof renderKPIs === 'function') renderKPIs();
-}
-
-function renderPantallaMonedas(monedas, meta1Perdida) {
-  var meta1 = CFG0.meta1Monedas || 5;
-  var meta2 = CFG0.meta2Monedas || 10;
-  var t = CFG0;
-
-  var lh = t.logoData || t.logo
-    ? '<img class="b-logo" src="' + (t.logoData || t.logo) + '" alt="' + t.nombre
-      + '" onerror="this.style.display=\'none\';document.getElementById(\'fbm\').style.display=\'block\'">'
-      + '<span id="fbm" class="b-emoji" style="display:none">' + (t.emoji||'✨') + '</span>'
-    : '<span class="b-emoji">' + (t.emoji||'✨') + '</span>';
-  document.getElementById('monedas-hdr').innerHTML = lh + '<div class="b-name">' + (t.nombre||'Mi Negocio') + '</div>';
-
-  var metaObjetivo = meta1Perdida ? meta2 : meta1;
-  var yaListoMeta1 = (monedas >= meta1 && !meta1Perdida);
-  var yaListoMeta2 = (monedas >= meta2);
-  var pct = Math.min(100, Math.round((monedas / metaObjetivo) * 100));
-  var faltan = Math.max(0, metaObjetivo - monedas);
-
-  // Cuadrícula de monedas — tope visual de 30 íconos para no sobrecargar el celular,
-  // el resto se resume como "+N más" (igual que tu referencia)
-  var TOPE_GRID = 30;
-  var monedasAMostrar = Math.min(monedas, TOPE_GRID);
-  var extraGrid = monedas - monedasAMostrar;
-  var iconosHtml = '';
-  for (var gi = 0; gi < monedasAMostrar; gi++) {
-    iconosHtml += '<img class="rockola-coin" src="moneda_oro.png" alt="moneda" onerror="this.style.display=\'none\'">';
-  }
-  if (extraGrid > 0) iconosHtml += '<span class="rockola-more">+' + extraGrid + ' más</span>';
-
-  var html = '<div class="mon-area">';
-  html += '<div class="rockola-wrap">'
-        + '<div class="rockola-hdr"><span class="rockola-title">🪙 Rockola de Progreso</span>'
-        + '<span class="rockola-pct">' + pct + '%</span></div>'
-        + '<div class="rockola-barwrap"><div class="rockola-barfill" style="width:' + pct + '%"></div></div>'
-        + '<div class="rockola-stats">'
-        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Monedas</div>'
-        + '<div class="rockola-stat-val">' + monedas + ' <img src="moneda_oro.png" alt="" onerror="this.style.display=\'none\'"></div></div>'
-        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Faltan</div>'
-        + '<div class="rockola-stat-val">' + faltan + '</div></div>'
-        + '<div class="rockola-stat"><div class="rockola-stat-lbl">Meta</div>'
-        + '<div class="rockola-stat-val">' + metaObjetivo + '</div></div>'
-        + '</div>'
-        + '<div class="rockola-grid">' + iconosHtml + '</div>'
-        + '</div>';
-
-  if (yaListoMeta2) {
-    html += '<div class="mon-msg" style="color:var(--gd)">🎉 ¡Meta lograda! Puedes canjear tu premio mayor.</div>';
-    html += '<div class="mon-btns"><button class="btn btn-gd" onclick="canjearMoneda(2)">🏆 Canjear premio Meta 2</button></div>';
-  } else if (yaListoMeta1) {
-    html += '<div class="mon-msg">✨ ¡Llegaste a la Meta 1! ¿Canjeas ahora o sigues juntando?</div>';
-    html += '<div class="mon-btns">'
-          + '<button class="btn btn-gd" onclick="canjearMoneda(1)">🎁 Canjear premio Meta 1</button>'
-          + '<button class="btn btn-gh" onclick="seguirJuntando()">🪙 Seguir juntando hacia Meta 2</button>'
-          + '</div>';
-  } else {
-    html += '<div class="mon-msg">Te faltan ' + faltan + ' moneda' + (faltan===1?'':'s') + ' para tu próximo premio</div>';
-  }
-  html += '</div>';
-
-  document.getElementById('monedas-zone').innerHTML = html;
-  goScreen('sc-monedas');
-}
-
-async function seguirJuntando() {
-  var negocioId = NEG_SLUG || 'carinito';
-  var tel = window._monTelActual;
-  if (!tel) return;
-  try {
-    await supabaseClient.from('monedas_clientes')
-      .update({ meta1_perdida: true, updated_at: new Date().toISOString() })
-      .eq('negocio_id', negocioId).eq('telefono', tel);
-  } catch(e) { console.error('Error marcando meta1 perdida:', e); }
-
-  try {
-    var { data: cliente } = await supabaseClient
-      .from('monedas_clientes').select('monedas')
-      .eq('negocio_id', negocioId).eq('telefono', tel).maybeSingle();
-    renderPantallaMonedas((cliente && cliente.monedas) || 0, true);
-  } catch(e) {
-    renderPantallaMonedas(CFG0.meta1Monedas || 5, true);
-  }
-}
-
-async function canjearMoneda(metaNum) {
-  var negocioId = NEG_SLUG || 'carinito';
-  var tel = window._monTelActual;
-  var listaPremios = metaNum === 1 ? CFG0.premiosMeta1 : CFG0.premiosMeta2;
-  var premio = sortearPremio(listaPremios, CFG0.consolacion);
-
-  // Resetea el saldo del cliente para empezar un nuevo ciclo
-  try {
-    if (tel) {
-      await supabaseClient.from('monedas_clientes')
-        .update({ monedas: 0, meta1_perdida: false, updated_at: new Date().toISOString() })
-        .eq('negocio_id', negocioId).eq('telefono', tel);
-    }
-  } catch(e) { console.error('Error reseteando saldo tras canje:', e); }
-
-  var ahora = new Date();
-  try {
-    await supabaseClient.from('monedas_historial').insert({
-      negocio_id: negocioId,
-      telefono: tel || '',
-      codigo: '(canje)',
-      monedas_acumuladas: 0,
-      meta_alcanzada: 'META' + metaNum + '_CANJEADA',
-      fecha: ahora.toLocaleDateString('es-CL'),
-      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
-      ts: Date.now()
-    });
-  } catch(e) { console.error('Error guardando canje en historial:', e); }
-
-  mostrarResMoneda(premio, metaNum);
-  if (typeof renderKPIs === 'function') renderKPIs();
-}
-
-function mostrarResMoneda(premio, metaNum) {
-  var card = document.getElementById('result-card');
-  var ico  = '<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
-
-  var telefonoDestino = window.whatsappReal || (CFG0 && CFG0.wa) || "56926221935";
-  telefonoDestino = String(telefonoDestino).replace(/[^0-9]/g, '');
-  if (!telefonoDestino) telefonoDestino = "56926221935";
-  var mensajeTexto = encodeURIComponent("¡Hola! Alcancé la Meta " + metaNum + " de Monedas de Oro y gané: " + premio.txt + " 🎉");
-  var linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoDestino + "&text=" + mensajeTexto;
-
-  if (premio.gano) {
-    if (typeof sndWin === 'function') sndWin();
-    setTimeout(function(){
-      try {
-        confetti({particleCount:160,spread:90,origin:{y:.4}, colors:['#f59e0b','#facc15','#a855f7','#ec4899']});
-      } catch(e) {}
-    }, 200);
-    card.innerHTML = '<span class="r-trophy">🏆</span>'
-      + '<div class="r-title">¡Felicitaciones!</div>'
-      + '<div class="r-prize">' + premio.txt + '</div>'
-      + '<p class="r-sub">Muestra este mensaje al vendedor 🎉</p>'
-      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Canjear por WhatsApp</a>';
-  } else {
-    if (typeof sndPop === 'function') sndPop();
-    card.innerHTML = '<span class="r-trophy">🎁</span>'
-      + '<span class="con-badge">Premio de consolación</span>'
-      + '<div class="r-title" style="color:var(--ac2)">¡Casi!</div>'
-      + '<div class="r-prize">' + premio.txt + '</div>'
-      + '<p class="r-sub">Válido en tu próxima compra.</p>'
-      + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Mostrar al vendedor</a>';
-  }
-  goScreen('sc-result');
-}
-
-// ================================================================
-//  ADMIN
-// ================================================================
-async function abrirAdmin() {
-  goScreen('sc-admin');
-  await loadForm();
-  renderKPIs();
-}
-
-function toggleMonedasCfg() {
-  var sel = document.getElementById('f-juego');
-  var block = document.getElementById('monedas-cfg');
-  if (!sel || !block) return;
-  block.style.display = (sel.value === 'monedas') ? 'block' : 'none';
-}
-
-async function loadForm() {
-  // Primero carga desde localStorage como base inmediata
-  var c = getCfg() || CFG0;
-  _llenarFormulario(c);
-
-  // Luego sobreescribe con datos frescos de Supabase (fuente de verdad)
-  try {
-    var idBuscar = NEG_SLUG || 'carinito';
-    var { data, error } = await supabaseClient
-      .from('configuraciones')
-      .select('*')
-      .eq('id', idBuscar)
-      .maybeSingle();
-
-    if (!error && data) {
-      // Mapear columnas de Supabase al formato del formulario
-      var remoto = {
-        nombre:      data.nombre      || c.nombre      || '',
-        wa:          data.wa          || c.wa          || '',
-        prefijo:     data.prefijo     || c.prefijo     || '',
-        logo:        data.logo        || c.logo        || '',
-        logoData:    data.logoData    || c.logoData    || '',
-        emoji:       data.emoji       || c.emoji       || '',
-        juego:       data.juego       || c.juego       || 'globos',
-        premios:     Array.isArray(data.premios) ? data.premios : (c.premios || []),
-        consolacion: data.consolacion || c.consolacion || '',
-        adicional:   data.adicional   || c.adicional   || 2500,
-        meta:        data.meta        || c.meta        || 0,
-        ventasGuard: data.ventasGuard || c.ventasGuard || 0,
-        pedidosGuard:data.pedidosGuard|| c.pedidosGuard|| 0,
-        ticket:      data.ticket      || c.ticket      || 0,
-        valorMoneda:  Number(data.valor_moneda) || c.valorMoneda || 0,
-        meta1Monedas: Number(data.meta1_monedas) || c.meta1Monedas || 5,
-        meta2Monedas: Number(data.meta2_monedas) || c.meta2Monedas || 10,
-        premiosMeta1: normalizarLista(data.premios_meta1).length ? normalizarLista(data.premios_meta1) : (c.premiosMeta1 || []),
-        premiosMeta2: normalizarLista(data.premios_meta2).length ? normalizarLista(data.premios_meta2) : (c.premiosMeta2 || [])
-      };
-      _llenarFormulario(remoto);
-      // Sincronizar CFG0 con datos reales de Supabase
-      Object.assign(CFG0, remoto);
-      console.log("Panel Admin pre-llenado desde Supabase:", idBuscar);
-    }
-  } catch(e) {
-    console.error("Error cargando datos admin desde Supabase:", e);
-  }
-}
-
-function _llenarFormulario(c) {
-  document.getElementById('f-nom').value         = c.nombre      || '';
-  document.getElementById('f-wa').value          = c.wa          || '';
-  document.getElementById('f-pre').value         = c.prefijo     || '';
-  document.getElementById('f-logo').value        = c.logo        || '';
-  document.getElementById('f-emo').value         = c.emoji       || '';
-  document.getElementById('f-juego').value       = c.juego       || 'globos';
-  document.getElementById('f-prem').value        = (c.premios||[]).join(', ');
-  document.getElementById('f-con').value         = c.consolacion || '';
-  document.getElementById('cfg-adicional').value = c.adicional   || '';
-  document.getElementById('f-meta').value        = '';
-  document.getElementById('c-ventas').value      = c.ventasGuard || '';
-  document.getElementById('c-ped').value         = c.pedidosGuard|| '';
-  document.getElementById('f-valormoneda').value = c.valorMoneda  || '';
-  document.getElementById('f-meta1mon').value    = c.meta1Monedas || 5;
-  document.getElementById('f-meta2mon').value    = c.meta2Monedas || 10;
-  document.getElementById('f-premmeta1').value   = (c.premiosMeta1||[]).join(', ');
-  document.getElementById('f-premmeta2').value   = (c.premiosMeta2||[]).join(', ');
-  document.getElementById('calc-r').classList.remove('show');
-  toggleMonedasCfg();
-  if (c.ventasGuard || c.meta) { calcTicket(); }
-  c.logoData ? prevLogo(c.logoData) : (c.logo ? prevLogo(c.logo) : hideLogo());
-  renderLeyenda();
-}
-
-async function guardarCfg() {
-  var pRaw   = document.getElementById('f-prem').value;
-  var premios = pRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-  var ex     = getCfg() || CFG0;
-
-  var premiosMeta1 = document.getElementById('f-premmeta1').value
-    .split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-  var premiosMeta2 = document.getElementById('f-premmeta2').value
-    .split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-
-  var cfg = {
-    nombre:      document.getElementById('f-nom').value.trim()   || ex.nombre      || CFG0.nombre,
-    wa:          document.getElementById('f-wa').value.trim()    || ex.wa          || CFG0.wa,
-    prefijo:     document.getElementById('f-pre').value.trim().toUpperCase() || '',
-    logo:        document.getElementById('f-logo').value.trim()  || '',
-    logoData:    ex.logoData || '',
-    emoji:       document.getElementById('f-emo').value.trim()   || ex.emoji       || CFG0.emoji,
-    juego:       document.getElementById('f-juego').value        || CFG0.juego,
-    premios:     premios.length ? premios : (ex.premios || CFG0.premios),
-    consolacion: document.getElementById('f-con').value.trim()   || ex.consolacion || CFG0.consolacion,
-    adicional:   parseFloat(document.getElementById('cfg-adicional').value)  || ex.adicional || 2500,
-    meta:        (function(){
-                   var v = parseFloat(document.getElementById('c-ventas').value) || 0;
-                   var p = Math.max(parseFloat(document.getElementById('c-ped').value) || 1, 1);
-                   var tk = v > 0 ? Math.round(v / p) : Math.max(parseFloat(ex.ticket)||0, 0);
-                   var add = parseFloat(document.getElementById('cfg-adicional').value) || ex.adicional || 2500;
-                   return tk + Math.round(add);
-                 })(),
-    ventasGuard: parseFloat(document.getElementById('c-ventas').value)       || ex.ventasGuard || 0,
-    pedidosGuard:parseFloat(document.getElementById('c-ped').value)          || ex.pedidosGuard|| 0,
-    ticket:      parseFloat(ex.ticket) || 0,
-    valorMoneda:  parseFloat(document.getElementById('f-valormoneda').value) || ex.valorMoneda  || 0,
-    meta1Monedas: parseInt(document.getElementById('f-meta1mon').value, 10)  || ex.meta1Monedas || 5,
-    meta2Monedas: parseInt(document.getElementById('f-meta2mon').value, 10)  || ex.meta2Monedas || 10,
-    premiosMeta1: premiosMeta1.length ? premiosMeta1 : (ex.premiosMeta1 || []),
-    premiosMeta2: premiosMeta2.length ? premiosMeta2 : (ex.premiosMeta2 || [])
-  };
-
-  localStorage.removeItem(K_CFG);
-  localStorage.setItem(K_CFG, JSON.stringify(cfg));
-
-  // Sincronizar variables en memoria con la nueva configuracion
-  CFG0.nombre = cfg.nombre;
-  actualizarTituloTienda();
-  CFG0.wa = cfg.wa;
-  CFG0.prefijo = cfg.prefijo;
-  CFG0.logo = cfg.logo;
-  CFG0.logoData = cfg.logoData;
-  CFG0.emoji = cfg.emoji;
-  CFG0.juego = cfg.juego;
-  CFG0.premios = cfg.premios;
-  CFG0.consolacion = cfg.consolacion;
-  CFG0.adicional = cfg.adicional;
-  CFG0.meta = cfg.meta;
-  CFG0.ticket = cfg.ticket;
-  CFG0.valorMoneda = cfg.valorMoneda;
-  CFG0.meta1Monedas = cfg.meta1Monedas;
-  CFG0.meta2Monedas = cfg.meta2Monedas;
-  CFG0.premiosMeta1 = cfg.premiosMeta1;
-  CFG0.premiosMeta2 = cfg.premiosMeta2;
-
-  whatsappReal = cfg.wa;
-  window.whatsappReal = cfg.wa;
-  premiosReales = cfg.premios;
-  window.premiosReales = cfg.premios;
-
-  inq.premios = cfg.premios;
-  inq.consolacion = cfg.consolacion;
-  inq.wa = cfg.wa;
-
-  // Persistir en Supabase: por slug si existe, sino fila id=1
-  try {
-    var updatePayload = {
-      nombre: cfg.nombre,
-      juego: cfg.juego,
-      premios: cfg.premios,
-      consolacion: cfg.consolacion,
-      wa: cfg.wa,
-      prefijo: cfg.prefijo,
-      valor_moneda: cfg.valorMoneda,
-      meta1_monedas: cfg.meta1Monedas,
-      meta2_monedas: cfg.meta2Monedas,
-      premios_meta1: cfg.premiosMeta1,
-      premios_meta2: cfg.premiosMeta2
-    };
-    var idActualizar = NEG_SLUG || 'carinito';
-    var { error: updErr } = await supabaseClient.rpc('guardar_config', { p_neg: idActualizar, p_clave: ADMIN_CLAVE, p_payload: updatePayload });
-    if (updErr) {
-      console.error("Error al actualizar Supabase:", updErr.message);
-      toast('\u26A0\uFE0F Guardado local OK, pero Supabase fall\xF3: ' + updErr.message);
-    } else {
-      console.log("Supabase actualizado correctamente.");
-    }
-  } catch(e) {
-    console.error("Error cr\xEDtico guardando en Supabase:", e);
-  }
-
-  renderLeyenda();
-  renderKPIs();
-  toast('\u2705 Guardado \u2014 ' + premios.length
-        + ' premios, prefijo: ' + (cfg.prefijo || 'ninguno'));
-}
-
-function filtrHst(h, periodo) {
-  var now   = new Date();
-  var hoyMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
-
-  if (periodo === 'hoy') {
-    return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= hoyMs; });
-  }
-  if (periodo === 'semana') {
-    var s7 = new Date(now.getFullYear(), now.getMonth(), now.getDate()-6, 0,0,0,0).getTime();
-    return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= s7; });
-  }
-  var s30 = new Date(now.getFullYear(), now.getMonth(), now.getDate()-29, 0,0,0,0).getTime();
-  return h.filter(function(e){ return typeof e.ts === 'number' && e.ts >= s30; });
-}
-
-function calcDinamica() {
-  var ventas  = parseFloat((document.getElementById('c-ventas')      || {}).value) || 0;
-  var pedidos = parseFloat((document.getElementById('c-ped')         || {}).value) || 1;
-  var cfg     = getCfg() || CFG0;
-
-  var TK = ventas > 0 ? Math.round(ventas / pedidos) : Math.max(parseFloat(cfg.ticket) || 0, 0);
-
-  var cfgAdicEl = document.getElementById('cfg-adicional');
-  var adicional = cfgAdicEl && cfgAdicEl.value
-    ? Math.round(parseFloat(cfgAdicEl.value))
-    : Math.round(parseFloat(cfg.adicional) || 2500);
-  if (!adicional || adicional < 1) adicional = 2500;
-
-  var meta          = TK + adicional;
-  var utilidadJuego = Math.round(adicional * 0.8);
-
-  return { TK: TK, adicional: adicional, meta: meta, utilidadJuego: utilidadJuego, cfg: cfg };
-}
-
-// ================================================================
-//  KPIs — con rama especial para Monedas de Oro (Acotación 9)
-//  Cuando el juego activo es "monedas": la tarjeta que antes decía
-//  "Juegos totales" pasa a contar monedas ganadas en el período, y
-//  la utilidad se calcula como monedas_ganadas × valor_moneda × 0.8
-//  en vez de usar el "adicional" de los otros 3 juegos.
-//  Supuesto a confirmar contigo: "premios entregados" = N° de CANJES
-//  (Meta 1 o Meta 2) en el período, no cada moneda individual.
-// ================================================================
-async function renderKPIs() {
-  var per  = document.getElementById('kpi-fil').value;
-  var negocioId = NEG_SLUG || 'carinito';
-  var esMonedas = CFG0.juego === 'monedas';
-
-  document.getElementById('kpi-tot-lbl').textContent = esMonedas ? 'Monedas ganadas' : 'Juegos totales';
-  document.getElementById('kpi-proy').parentElement.querySelector('.kpi-lbl').textContent =
-    esMonedas ? 'Proyección 30 días • monedas × utilidad' : 'Proyección 30 días • juegos × utilidad';
-
-  if (esMonedas) {
-    var hAllM = [];
-    try {
-      var { data: rowsM, error: errM } = await supabaseClient
-        .from('monedas_historial')
-        .select('*')
-        .eq('negocio_id', negocioId)
-        .order('ts', { ascending: false });
-      if (!errM && rowsM) hAllM = rowsM;
-    } catch(e) { console.error('Error leyendo monedas_historial:', e); }
-
-    var hFM = filtrHst(hAllM.map(function(r){ return { ts: r.ts, meta_alcanzada: r.meta_alcanzada, codigo: r.codigo, telefono: r.telefono, fecha: r.fecha, hora: r.hora }; }), per);
-
-    var monedasGanadas = hFM.filter(function(r){ return r.codigo !== '(canje)'; }).length;
-    var canjes = hFM.filter(function(r){ return r.meta_alcanzada && r.meta_alcanzada.indexOf('CANJEADA') !== -1; }).length;
-
-    var valorMoneda = CFG0.valorMoneda || 0;
-    var utilidadPorMoneda = Math.round(valorMoneda * 0.8);
-    var utilidadAcumuladaM = monedasGanadas * utilidadPorMoneda;
-    var monedasMensuales = monedasGanadas * 30;
-    var utilidadMensualM = monedasMensuales * utilidadPorMoneda;
-
-    document.getElementById('kpi-tot').textContent  = monedasGanadas;
-    document.getElementById('kpi-prem').textContent = canjes;
-    document.getElementById('kpi-ing').textContent  =
-      '$' + utilidadAcumuladaM.toLocaleString('es-CL')
-      + ' \u2022 $' + utilidadPorMoneda.toLocaleString('es-CL') + '/moneda';
-    document.getElementById('kpi-proy').textContent =
-      monedasMensuales + ' monedas \u2192 $' + utilidadMensualM.toLocaleString('es-CL');
-
-    var listaM = document.getElementById('h-list');
-    if (!hFM.length) {
-      listaM.innerHTML = '<li class="empty">Sin registros en el per\xEDodo seleccionado</li>';
-      return;
-    }
-    var htmlM = '';
-    hFM.slice().reverse().forEach(function(r){
-      var etiqueta = r.codigo === '(canje)'
-        ? ('\uD83C\uDFC6 Canje ' + (r.meta_alcanzada || '').replace('_CANJEADA',''))
-        : ('\uD83E\uDE99 +1 moneda \u2014 ' + (r.telefono || ''));
-      htmlM += '<li class="h-item"><span style="flex:1">' + etiqueta + '</span>'
-             + '<span class="h-date">' + (r.fecha || '&#8212;') + '</span></li>';
-    });
-    listaM.innerHTML = htmlM;
-    return;
-  }
-
-  // --- Comportamiento original para 3_cofres / globos / raspe (sin tocar) ---
-  var hAll = [];
-  try {
-    var { data: rows, error } = await supabaseClient.rpc('leer_historial', { p_neg: negocioId, p_clave: ADMIN_CLAVE, p_asc: false });
-    if (!error && rows) {
-      hAll = rows.map(function(r){
-        return {
-          txt: r.premio, gano: r.gano, cod: r.codigo,
-          fecha: r.fecha + (r.hora ? ' ' + r.hora : ''),
-          ts: r.ts || new Date(r.created_at).getTime()
-        };
-      });
-    } else {
-      // Fallback a localStorage si Supabase falla
-      hAll = lsR(K_HST, []);
-    }
-  } catch(e) {
-    hAll = lsR(K_HST, []);
-  }
-
-  console.log("renderKPIs: Supabase historial total=", hAll.length, "negocio=", negocioId);
-
-  var hF = filtrHst(hAll, per);
-  var totalJuegos = hF.length;
-
-  var d = calcDinamica();
-  var utilidadAcumulada = totalJuegos * d.utilidadJuego;
-  var juegosMensuales   = totalJuegos * 30;
-  var utilidadMensual   = juegosMensuales * d.utilidadJuego;
-
-  document.getElementById('kpi-tot').textContent  = totalJuegos;
-  document.getElementById('kpi-prem').textContent = totalJuegos;
-  document.getElementById('kpi-ing').textContent  =
-    '$' + utilidadAcumulada.toLocaleString('es-CL')
-    + ' \u2022 $' + d.utilidadJuego.toLocaleString('es-CL') + '/juego';
-
-  var proyEl = document.getElementById('kpi-proy');
-  if (proyEl) {
-    proyEl.textContent = juegosMensuales + ' juegos \u2192 $' + utilidadMensual.toLocaleString('es-CL');
-  }
-
-  var lista = document.getElementById('h-list');
-  if (totalJuegos === 0) {
-    lista.innerHTML = '<li class="empty">Sin registros en el per\xEDodo seleccionado</li>';
-    return;
-  }
-  var html = '';
-  var rev  = hF.slice().reverse();
-  for (var i = 0; i < rev.length; i++) {
-    var e = rev[i];
-    var nombrePremio = e.txt || e.premio_ganado || e.premio || e.Premio || 'Premio entregado';
-    html += '<li class="h-item">'
-          + '<span style="flex:1">' + (e.gano ? '\uD83C\uDFC6' : '\uD83C\uDF9F\uFE0F')
-          + ' ' + nombrePremio + '</span>'
-          + '<span class="h-date">' + (e.fecha || '&#8212;') + '</span>'
-          + '</li>';
-  }
-  lista.innerHTML = html;
-}
-
-function calcTicket() {
-  var el = document.getElementById('calc-r');
-  if (!el) return;
-
-  var d = calcDinamica();
-
-  if (d.TK <= 0 && d.adicional <= 0) { el.classList.remove('show'); return; }
-
-  var hAll = lsR(K_HST, []);
-  var jProy = hAll.length * 30;
-  var uProy = jProy * d.utilidadJuego;
-
-  el.innerHTML =
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem .8rem;font-size:.86rem">'
-    + '<div style="color:var(--mt);font-weight:700">Ticket Promedio Real</div>'
-    + '<div style="color:var(--tx);font-weight:800">$' + d.TK.toLocaleString('es-CL') + '</div>'
-    + '<div style="color:var(--mt);font-weight:700">Monto Adicional (Variable X)</div>'
-    + '<div style="color:var(--tx);font-weight:800">$' + d.adicional.toLocaleString('es-CL') + '</div>'
-    + '<div style="color:var(--mt);font-weight:700;border-top:1px solid rgba(124,58,237,.2);padding-top:.4rem">Meta Final (Ticket + Adicional)</div>'
-    + '<div style="color:var(--ac2);font-weight:900;font-size:1rem;border-top:1px solid rgba(124,58,237,.2);padding-top:.4rem">$' + d.meta.toLocaleString('es-CL') + '</div>'
-    + '<div style="color:var(--mt);font-weight:700">Utilidad por Juego (80% neto)</div>'
-    + '<div style="color:var(--gd);font-weight:900;font-size:1rem">$' + d.utilidadJuego.toLocaleString('es-CL') + '</div>'
-    + '<div style="color:var(--mt);font-weight:700;border-top:1px solid rgba(16,185,129,.15);padding-top:.4rem">Proy. 30 d\xEDas (' + jProy + ' juegos)</div>'
-    + '<div style="color:#10b981;font-weight:900;border-top:1px solid rgba(16,185,129,.15);padding-top:.4rem">$' + uProy.toLocaleString('es-CL') + '</div>'
-    + '</div>';
-  el.classList.add('show');
-
-  var fMetaEl = document.getElementById('f-meta');
-  if (fMetaEl) fMetaEl.value = d.meta.toLocaleString('es-CL');
-
-  actualizarSugerenciaMoneda(d.TK);
-}
-
-// Pauta sugerida para el valor de la moneda: ~30% del ticket promedio real,
-// para que una compra típica entregue entre 2 y 4 monedas. Es solo una
-// sugerencia — el campo queda libre para que el emprendedor decida lo que quiera.
-function actualizarSugerenciaMoneda(TK) {
-  var el = document.getElementById('mon-sugerencia');
-  if (!el) return;
-  if (!TK || TK <= 0) { el.innerHTML = ''; return; }
-  var sugerido = Math.round((TK * 0.30) / 100) * 100;
-  if (sugerido < 500) sugerido = 500;
-  el.innerHTML = '&#128161; Con tu ticket promedio ($' + TK.toLocaleString('es-CL')
-    + '), una pauta justa es <strong>$' + sugerido.toLocaleString('es-CL')
-    + '</strong> por moneda (~30% del ticket, para que una compra t\xEDpica d\xE9 2 a 4 monedas). '
-    + '<button type="button" class="btn btn-gh" style="width:auto;padding:.3rem .7rem;font-size:.72rem;margin-top:.35rem;display:inline-flex"'
-    + ' onclick="document.getElementById(\'f-valormoneda\').value=' + sugerido + '">Usar sugerencia</button>';
-}
-
-async function exportCSV() {
-  var negocioId = NEG_SLUG || 'carinito';
-  var hAll = [];
-  try {
-    var { data: rows, error } = await supabaseClient.rpc('leer_historial', { p_neg: negocioId, p_clave: ADMIN_CLAVE, p_asc: true });
-    if (!error && rows) {
-      hAll = rows.map(function(r){
-        return { txt: r.premio, gano: r.gano, cod: r.codigo,
-          fecha: r.fecha, hora: r.hora, ts: r.ts || new Date(r.created_at).getTime() };
-      });
-    } else { hAll = lsR(K_HST, []); }
-  } catch(e) { hAll = lsR(K_HST, []); }
-  var per  = document.getElementById('kpi-fil').value;
-  var hF   = filtrHst(hAll, per);
-  var may  = hF.filter(function(e){ return e.gano; }).length;
-  var totalJuegos = hF.length;
-
-  var d = calcDinamica();
-  var utilidadAcumulada = totalJuegos * d.utilidadJuego;
-  var juegosMensuales   = totalJuegos * 30;
-  var utilidadMensual   = juegosMensuales * d.utilidadJuego;
-
-  var etiq = {hoy:'Hoy', semana:'\xDAltimos 7 d\xEDas', mes:'Este mes'};
-
-  var lineas = [
-    'AUMVEN;Reporte de Caja',
-    'Negocio;' + (d.cfg.nombre || '\u2014'),
-    'Per\xEDodo;' + (etiq[per] || per),
-    'Exportado;' + new Date().toLocaleString('es-CL'),
-    ';;',
-    'Ticket promedio real (CLP);' + d.TK,
-    'Monto adicional por juego (CLP);' + d.adicional,
-    'Meta calculada TK+Adicional (CLP);' + d.meta,
-    'Utilidad por juego 80% del adicional (CLP);' + d.utilidadJuego,
-    ';;',
-    'Juegos totales en per\xEDodo;' + totalJuegos,
-    'Premios entregados;' + totalJuegos,
-    'Premios mayores;' + may,
-    'Consolaciones;' + (totalJuegos - may),
-    'Utilidad acumulada real (CLP);' + utilidadAcumulada,
-    ';;',
-    'Proyecci\xF3n 30 d\xEDas (juegos);' + juegosMensuales,
-    'Proyecci\xF3n 30 d\xEDas utilidad (CLP);' + utilidadMensual,
-    ';;',
-    'Fecha;Hora;Premio;Tipo;C\xF3digo'
-  ];
-
-  for (var i = 0; i < hF.length; i++) {
-    var e = hF[i];
-    var partes     = (e.fecha || '').split(', ');
-    var fechaParte = partes[0] || '';
-    var horaParte  = partes[1] || '';
-    var tipo       = e.gano ? 'Premio Mayor' : 'Consolaci\xF3n';
-    var premio     = (e.txt || '').replace(/;/g, ',');
-    lineas.push(fechaParte + ';' + horaParte + ';' + premio + ';' + tipo + ';' + (e.cod || ''));
-  }
-
-  var csvContent = 'sep=;\r\n' + lineas.join('\r\n');
-  var blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-  var url  = URL.createObjectURL(blob);
-  var a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'AUMVEN_' + (d.cfg.nombre || 'Tienda') + '_'
-               + new Date().toLocaleDateString('es-CL').replace(/\//g, '-') + '.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast('\uD83D\uDCCA CSV descargado \u2014 Utilidad real: $' + utilidadAcumulada.toLocaleString('es-CL') + ' CLP');
-}
-
-function renderLeyenda() {
-  var raw = document.getElementById('f-prem').value;
-  var arr = raw.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-  var el  = document.getElementById('prob-leg');
-  var n   = arr.length;
-  if (!n) { el.innerHTML=''; return; }
-  var r = '';
-  if (n <= 2) {
-    r = '<div class="prob-row"><div class="prob-dot" style="background:#a855f7"></div>'
-      + '<span style="color:var(--mt)">80% Premio Mayor &#183; 20% Consolaci\xF3n</span></div>';
-  } else {
-    var tiers=[
-      {c:'#22c55e',l:'60% &#8212; Bajo costo', ii:[0,1]},
-      {c:'#f59e0b',l:'30% &#8212; Mediana cuant&#xEDa',ii:[2,3]},
-      {c:'#ef4444',l:'10% &#8212; Mayor costo',  ii:[4]}
-    ];
-    tiers.forEach(function(t){
-      var names=t.ii.filter(function(i){return i<n;})
-        .map(function(i){return '<em>'+arr[i]+'</em>';}).join(', ');
-      if(!names) return;
-      r+='<div class="prob-row"><div class="prob-dot" style="background:'+t.c+'"></div>'
-        +'<span style="color:var(--mt)">'+t.l+': '+names+'</span></div>';
     });
   }
-  el.innerHTML = r;
-}
-
-function prevLogo(src) {
-  if (!src) { hideLogo(); return; }
-  var w=document.getElementById('lp-wrap'), img=document.getElementById('lp-img');
-  img.src=src; w.style.display='block'; img.onerror=function(){hideLogo();};
-}
-function hideLogo() {
-  document.getElementById('lp-wrap').style.display='none';
-  document.getElementById('lp-img').src='';
-}
-function loadLogoFile(e) {
-  var f=e.target.files[0]; if(!f) return;
-  var rd=new FileReader();
-  rd.onload=function(ev){
-    var d=ev.target.result;
-    var cfg=lsR(K_CFG,CFG0); cfg.logoData=d;
-    localStorage.removeItem(K_CFG); localStorage.setItem(K_CFG,JSON.stringify(cfg));
-    prevLogo(d); document.getElementById('f-logo').value=f.name;
-    toast('\uD83D\uDDBC\uFE0F Logo cargado');
-  };
-  rd.readAsDataURL(f);
-}
-
-function mostrarBases() {
-  alert(
-    'BASES LEGALES Y CONDICIONES \u2014 AUMVEN\n\n'
-    + '1. V\xE1lido por compras iguales o superiores a la meta de compra establecida por el local, en una misma boleta.\n\n'
-    + '2. Un solo uso por c\xF3digo correlativo de caja. El c\xF3digo se bloquea de forma permanente e irrevocable tras ser utilizado para jugar.\n\n'
-    + '3. Se garantiza un premio autom\xE1tico por cada c\xF3digo v\xE1lido. El motor de probabilidades distribuye: 80% premios mayores (60% bajo costo / 30% mediana cuant\xEDa / 10% mayor costo) y 20% premio de consolaci\xF3n garantizado.\n\n'
-    + '4. Los premios son personales e intransferibles. No son canjeables por dinero en efectivo ni por productos distintos a los informados en pantalla.\n\n'
-    + '5. Ante quiebre de stock de cualquier premio mayor, el local se reserva el derecho de sustituir el premio sorteado por el premio de consolaci\xF3n vigente sin previo aviso.'
-  );
-}
-
-// ================================================================
-//  IMPRIMIR LOTE DE 500 CÓDIGOS
-// ================================================================
-async function imprimirLote() {
-  var pfx = (CFG0.prefijo || 'CARI').toUpperCase();
-  var negocio = CFG0.nombre || 'Mi Negocio';
-  var codigos = [];
-  var ventana = window.open('', '_blank'); // se abre de inmediato para que el navegador no la bloquee
-  try {
-    var rl = await supabaseClient.rpc('generar_lote', { p_neg: NEG_SLUG || 'carinito', p_clave: ADMIN_CLAVE, p_cantidad: 500 });
-    if (rl.error) {
-      if (String(rl.error.message).indexOf('MODO_ABIERTO') === -1) { if (ventana) ventana.close(); alerta('\u26A0\uFE0F No se pudo generar el lote: ' + rl.error.message); return; }
-    } else { codigos = rl.data || []; }
-  } catch (e) { if (ventana) ventana.close(); alerta('\u26A0\uFE0F No se pudo generar el lote.'); return; }
-  if (!codigos.length) { // negocios con códigos impresos antiguos (PREFIJO + número)
-    for (var i = 1; i <= 500; i++) { codigos.push(pfx + String(i).padStart(3, '0')); }
-  }
-
-  var filas = '';
-  for (var j = 0; j < codigos.length; j += 4) {
-    filas += '<tr>';
-    for (var k = 0; k < 4; k++) {
-      var idx = j + k;
-      filas += '<td>' + (codigos[idx] || '') + '</td>';
-    }
-    filas += '</tr>';
-  }
-
-  ventana.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'
-    + '<title>C\xF3digos ' + negocio + '</title>'
-    + '<style>'
-    + 'body{font-family:Arial,sans-serif;margin:10mm;}'
-    + 'h2{text-align:center;font-size:14px;margin-bottom:4px;}'
-    + 'p.sub{text-align:center;font-size:10px;color:#666;margin-bottom:8px;}'
-    + 'table{width:100%;border-collapse:collapse;}'
-    + 'td{border:1px dashed #aaa;padding:6px 4px;text-align:center;'
-    +    'font-size:11px;font-weight:bold;letter-spacing:.08em;width:25%;}'
-    + '@media print{'
-    +   'body{margin:5mm;}'
-    +   'h2,p.sub{margin-bottom:3px;}'
-    +   'td{padding:4px 2px;font-size:10px;}'
-    +   '.no-print{display:none;}'
-    + '}'
-    + '</style></head><body>'
-    + '<h2>&#127873; ' + negocio + ' \u2014 C\xF3digos de Participaci\xF3n</h2>'
-    + '<p class="sub">Recorta cada c\xF3digo y entr\xE9gaselo al cliente al momento de la compra. Un uso por c\xF3digo.</p>'
-    + '<p class="sub no-print" style="margin-bottom:8px">'
-    +   '<button onclick="window.print()" style="padding:6px 18px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">&#128424;&#65039; Imprimir ahora</button>'
-    + '</p>'
-    + '<table>' + filas + '</table>'
-    + '</body></html>');
-  ventana.document.close();
-}
-
-// ================================================================
-//  ANTI-INSPECCIÓN
-// ================================================================
-document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
-document.addEventListener('keydown', function(e){
-  if (e.key === 'F12') { e.preventDefault(); return false; }
-  if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].indexOf(e.key) !== -1) { e.preventDefault(); return false; }
-  if (e.ctrlKey && ['U','u'].indexOf(e.key) !== -1) { e.preventDefault(); return false; }
-});
-
-function devReset() {
-  localStorage.removeItem(K_USD);
-  localStorage.removeItem(K_HST);
-  localStorage.removeItem(K_BLK);
-  inq={premios:[],consolacion:'',wa:''}; cod=null; used=false;
-  document.getElementById('cod-in').value='';
-  document.getElementById('game-zone').innerHTML='';
-  document.getElementById('game-hdr').innerHTML='';
-  document.getElementById('result-card').innerHTML='';
-  goLogin();
-  alerta('\u2705 Reset: c\xF3digos usados, av_usd y av_hst limpiados. av_cfg intacto.','ok');
-}
-
-// Bloqueo anti-inspección desactivado temporalmente para depuración
-
 </script>
 </body>
 </html>
