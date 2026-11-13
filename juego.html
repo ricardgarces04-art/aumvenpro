@@ -458,7 +458,7 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
       <option value="3_cofres">&#129521; 3 Cofres &#8212; elige uno</option>
       <option value="globos" selected>&#127880; Globos &#8212; pincha uno</option>
       <option value="raspe">&#128133; Raspa y Gana</option>
-      
+      <option value="monedas">&#129689; Monedas de Oro &#8212; acumula y canjea</option>
     </select>
     <label>Premios Mayores (3 a 5, separados por coma)</label>
     <p class="l-hint" style="margin-top:0">De <strong>menor a mayor costo</strong>: 1&#xBA; y 2&#xBA; = 60%, 3&#xBA; y 4&#xBA; = 30%, 5&#xBA; = 10%.</p>
@@ -825,22 +825,30 @@ function toast(msg) {
 // ================================================================
 //  ENTRAR — validación centralizada en Supabase (anti-fraude real)
 // ================================================================
-async function intentarAdmin(raw) {
-  try {
-    var neg = NEG_SLUG || 'carinito';
-    var r = await supabaseClient.rpc('verificar_admin', { p_neg: neg, p_clave: raw });
-    if (!r.error && r.data === true) {
-      ADMIN_CLAVE = raw;
-      document.getElementById('cod-in').value = '';
-      abrirAdmin();
-      return true;
-    }
-  } catch (e) {}
+async function intentarAdmin(raw, rawOrig) {
+  // Prueba primero la clave tal como fue escrita (respeta mayúsculas/minúsculas)
+  // y luego la versión en mayúsculas, por si la clave guardada está así.
+  var intentos = [];
+  if (rawOrig) intentos.push(rawOrig);
+  if (intentos.indexOf(raw) === -1) intentos.push(raw);
+  var neg = NEG_SLUG || 'carinito';
+  for (var i = 0; i < intentos.length; i++) {
+    try {
+      var r = await supabaseClient.rpc('verificar_admin', { p_neg: neg, p_clave: intentos[i] });
+      if (!r.error && r.data === true) {
+        ADMIN_CLAVE = intentos[i];
+        document.getElementById('cod-in').value = '';
+        abrirAdmin();
+        return true;
+      }
+    } catch (e) {}
+  }
   return false;
 }
 
 async function entrar() {
-  var raw = document.getElementById('cod-in').value.trim().toUpperCase();
+  var rawOrig = document.getElementById('cod-in').value.trim();
+  var raw = rawOrig.toUpperCase();
   if (!raw) { alerta('\u26A0\uFE0F Ingresa tu c\xF3digo'); return; }
 
   // (la entrada de admin ya no es una clave fija: se verifica en el servidor más abajo)
@@ -853,6 +861,8 @@ async function entrar() {
   if (esMonedas) {
     telRaw = document.getElementById('tel-in').value.replace(/[^0-9]/g, '');
     if (telRaw.length < 8) {
+      // Sin teléfono: puede ser la clave de admin del negocio (no necesita WhatsApp)
+      if (await intentarAdmin(raw, rawOrig)) return;
       alerta('\u26A0\uFE0F Ingresa tu WhatsApp (solo n\xFAmeros)');
       return;
     }
@@ -889,7 +899,7 @@ async function entrar() {
     if (estadoCodigo !== 'ok') {
       // No es un código de juego: ¿es la clave de admin del negocio?
       if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
-      if (!(await intentarAdmin(raw))) { alerta('\u274C C\xF3digo inv\xE1lido. Revisa el c\xF3digo que recibiste.'); }
+      if (!(await intentarAdmin(raw, rawOrig))) { alerta('\u274C C\xF3digo inv\xE1lido. Revisa el c\xF3digo que recibiste.'); }
       return;
     }
 
