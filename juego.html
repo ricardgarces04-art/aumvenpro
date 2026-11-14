@@ -1323,7 +1323,7 @@ async function procesarMoneda(telefono, codigo) {
       codigo: codigo,
       monedas_acumuladas: monedas,
       meta_alcanzada: metaAlcanzada,
-      fecha: ahora.toLocaleDateString('es-CL'),
+      fecha: ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0'),
       hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
       ts: Date.now()
     });
@@ -1442,7 +1442,7 @@ async function canjearMoneda(metaNum) {
       codigo: '(canje)',
       monedas_acumuladas: 0,
       meta_alcanzada: 'META' + metaNum + '_CANJEADA',
-      fecha: ahora.toLocaleDateString('es-CL'),
+      fecha: ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0'),
       hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
       ts: Date.now()
     });
