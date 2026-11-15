@@ -1288,6 +1288,7 @@ async function procesarMoneda(telefono, codigo) {
 
   var monedas = 1;
   var meta1Perdida = false;
+  var errGuardado = '';
 
   try {
     var { data: cliente, error: errSel } = await supabaseClient
@@ -1300,15 +1301,18 @@ async function procesarMoneda(telefono, codigo) {
     if (!errSel && cliente) {
       monedas = (cliente.monedas || 0) + 1;
       meta1Perdida = !!cliente.meta1_perdida;
-      await supabaseClient.from('monedas_clientes')
+      var ru = await supabaseClient.from('monedas_clientes')
         .update({ monedas: monedas, updated_at: new Date().toISOString() })
         .eq('negocio_id', negocioId).eq('telefono', telefono);
+      if (ru.error) errGuardado = ru.error.message;
     } else {
-      await supabaseClient.from('monedas_clientes')
+      var ri = await supabaseClient.from('monedas_clientes')
         .insert({ negocio_id: negocioId, telefono: telefono, monedas: 1, meta1_perdida: false });
+      if (ri.error) errGuardado = ri.error.message;
     }
   } catch(e) {
     console.error('Error actualizando saldo de monedas:', e);
+    errGuardado = (e && e.message) || 'error desconocido';
   }
 
   var ahora = new Date();
@@ -1317,7 +1321,7 @@ async function procesarMoneda(telefono, codigo) {
   else if (monedas >= meta1 && !meta1Perdida) metaAlcanzada = 'META1';
 
   try {
-    await supabaseClient.from('monedas_historial').insert({
+    var rh = await supabaseClient.from('monedas_historial').insert({
       negocio_id: negocioId,
       telefono: telefono,
       codigo: codigo,
@@ -1327,13 +1331,18 @@ async function procesarMoneda(telefono, codigo) {
       hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
       ts: Date.now()
     });
+    if (rh.error && !errGuardado) errGuardado = rh.error.message;
   } catch(e) {
     console.error('Error guardando historial de monedas:', e);
+    if (!errGuardado) errGuardado = (e && e.message) || 'error desconocido';
   }
 
   window._monTelActual = telefono;
   renderPantallaMonedas(monedas, meta1Perdida);
   if (typeof renderKPIs === 'function') renderKPIs();
+  if (errGuardado) {
+    alert('\u26A0\uFE0F No pudimos guardar tu moneda (' + errGuardado + '). Avisa al local para que lo revise.');
+  }
 }
 
 function renderPantallaMonedas(monedas, meta1Perdida) {
@@ -1393,6 +1402,7 @@ function renderPantallaMonedas(monedas, meta1Perdida) {
   } else {
     html += '<div class="mon-msg">Te faltan ' + faltan + ' moneda' + (faltan===1?'':'s') + ' para tu próximo premio</div>';
   }
+  html += '<div class="mon-btns" style="margin-top:.9rem"><button class="btn btn-gh" onclick="goLogin()">\u21A9 Volver al inicio</button></div>';
   html += '</div>';
 
   document.getElementById('monedas-zone').innerHTML = html;
@@ -1483,6 +1493,7 @@ function mostrarResMoneda(premio, metaNum) {
       + '<p class="r-sub">Válido en tu próxima compra.</p>'
       + '<a class="btn btn-wa" href="' + linkWhatsApp + '" target="_blank" rel="noopener" onclick="this.style.opacity=\'0.5\';this.style.pointerEvents=\'none\';this.textContent=\'✅ Mensaje enviado\'">' + ico + ' Mostrar al vendedor</a>';
   }
+  card.insertAdjacentHTML('beforeend', '<button class="btn btn-gh" style="width:100%;margin-top:.7rem" onclick="goLogin()">\u21A9 Volver al inicio</button>');
   goScreen('sc-result');
 }
 
