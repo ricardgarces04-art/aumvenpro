@@ -189,11 +189,32 @@ textarea{resize:vertical;min-height:72px;line-height:1.5}
     <div class="card" id="card-2" style="display:none">
       <div class="card-title">&#127918; Configura tu Juego</div>
       <label>Tipo de juego</label>
-      <select id="f-juego">
+      <select id="f-juego" onchange="toggleMonedasOnb()">
         <option value="globos">&#127880; Globos &#8212; pincha uno</option>
         <option value="3_cofres">&#129521; 3 Cofres &#8212; elige uno</option>
         <option value="raspe">&#128133; Raspa y Gana</option>
+        <option value="monedas">&#129689; Monedas de Oro &#8212; acumula y canjea</option>
       </select>
+      <div id="onb-mon" style="display:none">
+        <p class="hint" style="margin-top:.4rem">&#129689; El cliente acumula monedas con cada compra y las canjea por premios.</p>
+        <label>Valor de 1 Moneda de Oro ($)</label>
+        <input type="number" id="f-valormoneda" placeholder="Ej: 2000, 3500, 5000">
+        <p class="hint">&#128176; Monto extra que el cliente gasta para ganar 1 moneda.</p>
+        <div class="row2">
+          <div>
+            <label>Meta 1 &#8212; N&#176; monedas</label>
+            <input type="number" id="f-meta1mon" value="5">
+          </div>
+          <div>
+            <label>Meta 2 &#8212; N&#176; monedas</label>
+            <input type="number" id="f-meta2mon" value="10">
+          </div>
+        </div>
+        <label>Premios Meta 1 (1 o m&#225;s, separados por coma; con varios sale uno al azar)</label>
+        <textarea id="f-premmeta1" placeholder="Ej: Snack gratis, Caf&#233;, Sorpresa"></textarea>
+        <label>Premios Meta 2 (1 o m&#225;s, separados por coma; con varios sale uno al azar)</label>
+        <textarea id="f-premmeta2" placeholder="Ej: 10% dcto, Combo gratis, Premio VIP"></textarea>
+      </div>
       <label>Prefijo de c&#243;digos</label>
       <input type="text" id="f-prefijo" placeholder="Ej: CARI, PAN, REST"
         style="text-transform:uppercase;letter-spacing:.1em" maxlength="6"
@@ -316,6 +337,11 @@ function irPaso1() {
   actualizarSteps(1); ocultarError();
 }
 
+function toggleMonedasOnb() {
+  var m = document.getElementById('f-juego').value === 'monedas';
+  document.getElementById('onb-mon').style.display = m ? 'block' : 'none';
+}
+
 function irPaso2() {
   var nombre = document.getElementById('f-nombre').value.trim();
   var wa = document.getElementById('f-wa').value.replace(/[^0-9]/g,'');
@@ -337,6 +363,13 @@ function irPaso3() {
   if (prefijo.length < 2) { mostrarError('Ingresa un prefijo de al menos 2 letras.'); return; }
   if (!premios) { mostrarError('Ingresa al menos un premio mayor.'); return; }
   if (!consolacion) { mostrarError('Ingresa el premio de consolación.'); return; }
+  if (document.getElementById('f-juego').value === 'monedas') {
+    var vm = parseFloat(document.getElementById('f-valormoneda').value) || 0;
+    var pm1 = document.getElementById('f-premmeta1').value.trim();
+    var pm2 = document.getElementById('f-premmeta2').value.trim();
+    if (vm <= 0) { mostrarError('Ingresa el valor de 1 Moneda de Oro.'); return; }
+    if (!pm1 || !pm2) { mostrarError('Ingresa los premios de Meta 1 y Meta 2 para Monedas de Oro.'); return; }
+  }
   var nombre = document.getElementById('f-nombre').value.trim();
   var wa = document.getElementById('f-wa').value.replace(/[^0-9]/g,'');
   var tipoEl = document.getElementById('f-tipo');
@@ -357,7 +390,11 @@ function irPaso3() {
     '🔑 <strong style="color:var(--tx)">Prefijo:</strong> ' + prefijo + '<br>' +
     '🎯 <strong style="color:var(--tx)">Meta de compra:</strong> ' + metaTxt + '<br>' +
     '🎁 <strong style="color:var(--tx)">Premios:</strong> ' + premios + '<br>' +
-    '🎫 <strong style="color:var(--tx)">Consolación:</strong> ' + consolacion;
+    '🎫 <strong style="color:var(--tx)">Consolación:</strong> ' + consolacion +
+    (juegoEl.value === 'monedas'
+      ? '<br>🪙 <strong style="color:var(--tx)">Moneda:</strong> $' + (parseFloat(document.getElementById('f-valormoneda').value)||0).toLocaleString('es-CL')
+        + ' · Metas: ' + (parseInt(document.getElementById('f-meta1mon').value,10)||5) + ' y ' + (parseInt(document.getElementById('f-meta2mon').value,10)||10) + ' monedas'
+      : '');
   document.getElementById('card-1').style.display = 'none';
   document.getElementById('card-2').style.display = 'none';
   document.getElementById('card-3').style.display = 'block';
@@ -394,6 +431,11 @@ async function activarTienda() {
     var nombre = document.getElementById('f-nombre').value.trim();
     var wa = document.getElementById('f-wa').value.replace(/[^0-9]/g,'');
     var juego = document.getElementById('f-juego').value;
+    var valorMoneda = parseFloat((document.getElementById('f-valormoneda')||{}).value) || 0;
+    var meta1Mon = parseInt((document.getElementById('f-meta1mon')||{}).value, 10) || 5;
+    var meta2Mon = parseInt((document.getElementById('f-meta2mon')||{}).value, 10) || 10;
+    var premMeta1 = ((document.getElementById('f-premmeta1')||{}).value || '').split(',').map(function(p){return p.trim();}).filter(Boolean);
+    var premMeta2 = ((document.getElementById('f-premmeta2')||{}).value || '').split(',').map(function(p){return p.trim();}).filter(Boolean);
     var prefijo = document.getElementById('f-prefijo').value.trim().toUpperCase();
     var premiosArr = document.getElementById('f-premios').value.trim().split(',').map(function(p){return p.trim();}).filter(Boolean);
     var consolacion = document.getElementById('f-consolacion').value.trim();
@@ -410,7 +452,7 @@ async function activarTienda() {
     var venceStr = vence.toISOString().split('T')[0];
 
     var res = await sb.rpc('crear_negocio', { p_payload: {
-      id: slug, nombre: nombre, juego: juego, premios: premiosArr,
+      id: slug, nombre: nombre, juego: (juego === 'monedas' ? 'globos' : juego), premios: premiosArr,
       consolacion: consolacion, wa: wa, prefijo: prefijo,
       meta: meta, adicional: adicional, ticket: ticket,
       ventasGuard: ventas, pedidosGuard: pedidos
@@ -420,6 +462,19 @@ async function activarTienda() {
       throw new Error(res.error.message);
     }
     var claveAdmin = (res.data && res.data.clave) || '';
+
+    // Monedas de Oro: se activa con la misma función que usa el panel de admin
+    var avisoMonedas = '';
+    if (juego === 'monedas') {
+      try {
+        var rm = await sb.rpc('guardar_config', { p_neg: slug, p_clave: claveAdmin, p_payload: {
+          nombre: nombre, juego: 'monedas', premios: premiosArr, consolacion: consolacion,
+          wa: wa, prefijo: prefijo, valor_moneda: valorMoneda,
+          meta1_monedas: meta1Mon, meta2_monedas: meta2Mon,
+          premios_meta1: premMeta1, premios_meta2: premMeta2 } });
+        if (rm.error) avisoMonedas = rm.error.message;
+      } catch (em) { avisoMonedas = (em && em.message) || 'error desconocido'; }
+    }
     var linkJuego = BASE_URL + '/juego.html?neg=' + slug;
 
     // (el aviso a AUMVEN lo envía el servidor al crear el negocio)
@@ -442,6 +497,9 @@ async function activarTienda() {
     document.getElementById('steps-ind').style.display = 'none';
     document.getElementById('sc-success').style.display = 'block';
     window.scrollTo(0,0);
+    if (avisoMonedas) {
+      alert('Tu tienda se creó y tu clave ya está en pantalla, pero quedó con el juego Globos porque no se pudo activar Monedas de Oro (' + avisoMonedas + '). Entra a tu panel con la clave y cámbialo a Monedas de Oro.');
+    }
     console.log('✅ Negocio activado con éxito bajo límite controlado:', slug);
 
   } catch(e) {
