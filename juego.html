@@ -487,9 +487,9 @@ textarea{resize:vertical;min-height:68px;line-height:1.5}
           <input type="number" id="f-meta2mon" placeholder="10" value="10">
         </div>
       </div>
-      <label>Premios Meta 1 (3 a 5, separados por coma)</label>
+      <label>Premios Meta 1 (1 o m&#225;s, separados por coma; con varios sale uno al azar)</label>
       <textarea id="f-premmeta1" placeholder="Ej: &#127838; Snack gratis, &#9749; Caf&#xe9;, &#127873; Sorpresa"></textarea>
-      <label>Premios Meta 2 (3 a 5, separados por coma)</label>
+      <label>Premios Meta 2 (1 o m&#225;s, separados por coma; con varios sale uno al azar)</label>
       <textarea id="f-premmeta2" placeholder="Ej: &#128176; 10% dcto, &#127829; Combo gratis, &#127942; Premio VIP"></textarea>
       <p class="l-hint">&#127895; Usa el mismo Premio de Consolaci&#xF3;n de arriba para cuando no caiga premio mayor en el canje.</p>
     </div>
@@ -1433,7 +1433,11 @@ async function canjearMoneda(metaNum) {
   var negocioId = NEG_SLUG || 'carinito';
   var tel = window._monTelActual;
   var listaPremios = metaNum === 1 ? CFG0.premiosMeta1 : CFG0.premiosMeta2;
-  var premio = sortearPremio(listaPremios, CFG0.consolacion);
+  // Monedas de Oro: el cliente ya se ganó el premio con sus monedas, por eso NO hay consolación.
+  // Si la meta tiene un solo premio, sale ese; si tiene varios, sale uno al azar (todos con igual chance).
+  var premio = (listaPremios && listaPremios.length)
+    ? { gano: true, txt: listaPremios[Math.floor(Math.random() * listaPremios.length)] }
+    : sortearPremio(listaPremios, CFG0.consolacion);
 
   // Resetea el saldo del cliente para empezar un nuevo ciclo
   try {
