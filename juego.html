@@ -883,7 +883,13 @@ async function entrar() {
 
   try {
     var negocioId = NEG_SLUG || 'carinito';
-    var { data: estadoCodigo, error: errCanje } = await supabaseClient.rpc('canjear_codigo', { p_neg: negocioId, p_codigo: raw });
+    var respRpc, errCanje;
+    if (esMonedas) {
+      ({ data: respRpc, error: errCanje } = await supabaseClient.rpc('jugar_moneda', { p_neg: negocioId, p_codigo: raw, p_telefono: telRaw }));
+    } else {
+      ({ data: respRpc, error: errCanje } = await supabaseClient.rpc('canjear_codigo', { p_neg: negocioId, p_codigo: raw }));
+    }
+    var estadoCodigo = esMonedas ? (respRpc && respRpc.estado) : respRpc;
     if (errCanje) {
       alerta('\u26A0\uFE0F No pudimos verificar el c\xF3digo. Revisa tu conexi\xF3n e int\xE9ntalo de nuevo.');
       if (btnEntrar) { btnEntrar.textContent = '✨ Ingresar y Jugar'; btnEntrar.disabled = false; }
@@ -915,7 +921,7 @@ async function entrar() {
 
     if (esMonedas) {
       document.getElementById('tel-in').value = '';
-      procesarMoneda(telRaw, raw);
+      aplicarResultadoMoneda(telRaw, respRpc);
     } else {
       launchGame();
     }
@@ -1281,68 +1287,10 @@ function renderRaspe(zone) {
 // 1) Suma 1 moneda al saldo del cliente (por teléfono) en Supabase.
 // 2) Registra la fila en monedas_historial (para el Panel Admin en vivo).
 // 3) Pinta la pantalla de progreso.
-async function procesarMoneda(telefono, codigo) {
-  var negocioId = NEG_SLUG || 'carinito';
-  var meta1 = CFG0.meta1Monedas || 5;
-  var meta2 = CFG0.meta2Monedas || 10;
-
-  var monedas = 1;
-  var meta1Perdida = false;
-  var errGuardado = '';
-
-  try {
-    var { data: cliente, error: errSel } = await supabaseClient
-      .from('monedas_clientes')
-      .select('*')
-      .eq('negocio_id', negocioId)
-      .eq('telefono', telefono)
-      .maybeSingle();
-
-    if (!errSel && cliente) {
-      monedas = (cliente.monedas || 0) + 1;
-      meta1Perdida = !!cliente.meta1_perdida;
-      var ru = await supabaseClient.from('monedas_clientes')
-        .update({ monedas: monedas, updated_at: new Date().toISOString() })
-        .eq('negocio_id', negocioId).eq('telefono', telefono);
-      if (ru.error) errGuardado = ru.error.message;
-    } else {
-      var ri = await supabaseClient.from('monedas_clientes')
-        .insert({ negocio_id: negocioId, telefono: telefono, monedas: 1, meta1_perdida: false });
-      if (ri.error) errGuardado = ri.error.message;
-    }
-  } catch(e) {
-    console.error('Error actualizando saldo de monedas:', e);
-    errGuardado = (e && e.message) || 'error desconocido';
-  }
-
-  var ahora = new Date();
-  var metaAlcanzada = null;
-  if (monedas >= meta2) metaAlcanzada = 'META2';
-  else if (monedas >= meta1 && !meta1Perdida) metaAlcanzada = 'META1';
-
-  try {
-    var rh = await supabaseClient.from('monedas_historial').insert({
-      negocio_id: negocioId,
-      telefono: telefono,
-      codigo: codigo,
-      monedas_acumuladas: monedas,
-      meta_alcanzada: metaAlcanzada,
-      fecha: ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0'),
-      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
-      ts: Date.now()
-    });
-    if (rh.error && !errGuardado) errGuardado = rh.error.message;
-  } catch(e) {
-    console.error('Error guardando historial de monedas:', e);
-    if (!errGuardado) errGuardado = (e && e.message) || 'error desconocido';
-  }
-
+function aplicarResultadoMoneda(telefono, r) {
+  // El servidor (jugar_moneda) ya validó el código, sumó la moneda y guardó el historial.
   window._monTelActual = telefono;
-  renderPantallaMonedas(monedas, meta1Perdida);
-  if (typeof renderKPIs === 'function') renderKPIs();
-  if (errGuardado) {
-    alert('\u26A0\uFE0F No pudimos guardar tu moneda (' + errGuardado + '). Avisa al local para que lo revise.');
-  }
+  renderPantallaMonedas((r && r.monedas) || 1, !!(r && r.meta1_perdida));
 }
 
 function renderPantallaMonedas(monedas, meta1Perdida) {
@@ -1414,56 +1362,36 @@ async function seguirJuntando() {
   var tel = window._monTelActual;
   if (!tel) return;
   try {
-    await supabaseClient.from('monedas_clientes')
-      .update({ meta1_perdida: true, updated_at: new Date().toISOString() })
-      .eq('negocio_id', negocioId).eq('telefono', tel);
-  } catch(e) { console.error('Error marcando meta1 perdida:', e); }
-
-  try {
-    var { data: cliente } = await supabaseClient
-      .from('monedas_clientes').select('monedas')
-      .eq('negocio_id', negocioId).eq('telefono', tel).maybeSingle();
-    renderPantallaMonedas((cliente && cliente.monedas) || 0, true);
-  } catch(e) {
+    var { data: rs, error: errS } = await supabaseClient.rpc('seguir_juntando', { p_neg: negocioId, p_telefono: tel });
+    if (errS) throw errS;
+    renderPantallaMonedas((rs && rs.monedas) || 0, true);
+  } catch (e) {
+    console.error('Error en seguir juntando:', e);
     renderPantallaMonedas(CFG0.meta1Monedas || 5, true);
   }
 }
 
 async function canjearMoneda(metaNum) {
   var negocioId = NEG_SLUG || 'carinito';
-  var tel = window._monTelActual;
-  var listaPremios = metaNum === 1 ? CFG0.premiosMeta1 : CFG0.premiosMeta2;
-  // Monedas de Oro: el cliente ya se ganó el premio con sus monedas, por eso NO hay consolación.
-  // Si la meta tiene un solo premio, sale ese; si tiene varios, sale uno al azar (todos con igual chance).
-  var premio = (listaPremios && listaPremios.length)
-    ? { gano: true, txt: listaPremios[Math.floor(Math.random() * listaPremios.length)] }
-    : sortearPremio(listaPremios, CFG0.consolacion);
-
-  // Resetea el saldo del cliente para empezar un nuevo ciclo
+  var tel = window._monTelActual || '';
+  var premio = null;
   try {
-    if (tel) {
-      await supabaseClient.from('monedas_clientes')
-        .update({ monedas: 0, meta1_perdida: false, updated_at: new Date().toISOString() })
-        .eq('negocio_id', negocioId).eq('telefono', tel);
+    var { data: rc, error: errC } = await supabaseClient.rpc('canjear_moneda', { p_neg: negocioId, p_telefono: tel, p_meta: metaNum });
+    if (errC) throw errC;
+    if (!rc || rc.estado !== 'ok') {
+      alert(rc && rc.estado === 'insuficiente'
+        ? 'Aún no tienes las monedas necesarias para este canje.'
+        : 'No se pudo canjear. Avisa al local para que lo revise.');
+      return;
     }
-  } catch(e) { console.error('Error reseteando saldo tras canje:', e); }
-
-  var ahora = new Date();
-  try {
-    await supabaseClient.from('monedas_historial').insert({
-      negocio_id: negocioId,
-      telefono: tel || '',
-      codigo: '(canje)',
-      monedas_acumuladas: 0,
-      meta_alcanzada: 'META' + metaNum + '_CANJEADA',
-      fecha: ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0'),
-      hora: ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' }),
-      ts: Date.now()
-    });
-  } catch(e) { console.error('Error guardando canje en historial:', e); }
-
+    // Monedas de Oro: sin consolación. El servidor entrega el premio de la meta (uno al azar si hay varios).
+    premio = { gano: true, txt: rc.premio || CFG0.consolacion || 'Premio' };
+  } catch (e) {
+    console.error('Error canjeando monedas:', e);
+    alert('No se pudo canjear. Revisa tu conexión e inténtalo de nuevo.');
+    return;
+  }
   mostrarResMoneda(premio, metaNum);
-  if (typeof renderKPIs === 'function') renderKPIs();
 }
 
 function mostrarResMoneda(premio, metaNum) {
@@ -1748,10 +1676,7 @@ async function renderKPIs() {
     var hAllM = [];
     try {
       var { data: rowsM, error: errM } = await supabaseClient
-        .from('monedas_historial')
-        .select('*')
-        .eq('negocio_id', negocioId)
-        .order('ts', { ascending: false });
+        .rpc('leer_historial_monedas', { p_neg: negocioId, p_clave: ADMIN_CLAVE });
       if (!errM && rowsM) hAllM = rowsM;
     } catch(e) { console.error('Error leyendo monedas_historial:', e); }
 
